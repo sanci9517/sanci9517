@@ -126,14 +126,14 @@ for(const width of [390,1366])test(`selected Canvas element can be moved and und
   await lockedRow.focus();await editor.keyboard.press('Control+Space');
   await editor.keyboard.press('Delete');
   assert.equal(await backspaceRow.count(),1,'a mixed selection containing a locked element is rejected atomically');
-  assert.equal(await lockedRow.count(),1);assert.equal(await backspaceRow.getAttribute('aria-pressed'),'true');
+  assert.equal(await lockedRow.count(),1);assert.equal(await backspaceRow.getAttribute('aria-selected'),'true');
   assert.equal(writes.length,2,'a rejected mixed selection cannot write to the draft or public page');
   await backspaceRow.click();
   await backspaceRow.focus();await editor.keyboard.press('Backspace');
   await editor.locator(`.layer-row[data-node-id="${backspaceId}"]`).waitFor({state:'detached'});
   assert.equal(writes.length,2,'Backspace deletion is local to the draft');
   await editor.keyboard.press('Control+z');await backspaceRow.waitFor({state:'visible'});
-  assert.equal(await editor.locator(`.layer-row[data-node-id="${backspaceId}"]`).getAttribute('aria-pressed'),'true','Undo restores the deleted node and its selection');
+  assert.equal(await editor.locator(`.layer-row[data-node-id="${backspaceId}"]`).getAttribute('aria-selected'),'true','Undo restores the deleted node and its selection');
 
   const rootRow=editor.locator(`.layer-row[data-node-id="${rootId}"]`);
   await backspaceRow.focus();await editor.keyboard.press('Home');
@@ -143,7 +143,7 @@ for(const width of [390,1366])test(`selected Canvas element can be moved and und
 
   const movableRow=editor.locator(`.layer-row[data-node-id="${movableId}"]`),deleteRow=editor.locator(`.layer-row[data-node-id="${deleteId}"]`);
   await movableRow.click();await deleteRow.focus();await editor.keyboard.press('Control+Space');
-  assert.equal(await movableRow.getAttribute('aria-pressed'),'true');assert.equal(await deleteRow.getAttribute('aria-pressed'),'true');
+  assert.equal(await movableRow.getAttribute('aria-selected'),'true');assert.equal(await deleteRow.getAttribute('aria-selected'),'true');
   assert.match(await deleteRow.getAttribute('aria-keyshortcuts'),/Delete Backspace/,'the layer row announces its deletion alternatives');
   assert.match(await deleteRow.getAttribute('aria-description'),/Delete vagy Backspace.*zárolt/i,'assistive technology explains the deletion guard');
   await editor.keyboard.press('Delete');
@@ -154,7 +154,7 @@ for(const width of [390,1366])test(`selected Canvas element can be moved and und
   await editor.keyboard.press('Control+z');
   await editor.locator(`.layer-row[data-node-id="${movableId}"]`).waitFor({state:'visible'});
   await editor.locator(`.layer-row[data-node-id="${deleteId}"]`).waitFor({state:'visible'});
-  assert.equal(await movableRow.getAttribute('aria-pressed'),'true');assert.equal(await deleteRow.getAttribute('aria-pressed'),'true','Undo restores the complete multi-selection');
+  assert.equal(await movableRow.getAttribute('aria-selected'),'true');assert.equal(await deleteRow.getAttribute('aria-selected'),'true','Undo restores the complete multi-selection');
   await editor.keyboard.press('Control+Shift+z');
   await editor.locator(`.layer-row[data-node-id="${movableId}"]`).waitFor({state:'detached'});
   await editor.locator(`.layer-row[data-node-id="${deleteId}"]`).waitFor({state:'detached'});

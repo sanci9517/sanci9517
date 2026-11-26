@@ -77,20 +77,20 @@ for(const width of [390,1366])test(`layer rename pending draft survives save, pu
  await row.waitFor({state:'visible'});await middleRow.waitFor({state:'visible'});await thirdRow.waitFor({state:'visible'});await secondRow.waitFor({state:'visible'});
  const waitForLayerFocus=async nodeId=>{
   try{await editor.waitForFunction(expected=>document.activeElement?.classList.contains('layer-row')&&document.activeElement.dataset.nodeId===expected&&document.querySelector('.layer-row.active')?.dataset.nodeId===expected,nodeId)}
-  catch(error){const detail=await editor.evaluate(()=>({active:{className:document.activeElement?.className,nodeId:document.activeElement?.dataset?.nodeId},leftDock:document.querySelector('#leftDock')?.className,layersPanel:document.querySelector('#leftPanelLayers')?.className,rows:[...document.querySelectorAll('.layer-row')].map(item=>({id:item.dataset.nodeId,tabIndex:item.tabIndex,pressed:item.getAttribute('aria-pressed'),active:item.classList.contains('active'),rects:item.getClientRects().length}))}));throw new Error(`Layer keyboard focus failed for ${nodeId}: ${JSON.stringify(detail)}`,{cause:error})}
+  catch(error){const detail=await editor.evaluate(()=>({active:{className:document.activeElement?.className,nodeId:document.activeElement?.dataset?.nodeId},leftDock:document.querySelector('#leftDock')?.className,layersPanel:document.querySelector('#leftPanelLayers')?.className,rows:[...document.querySelectorAll('.layer-row')].map(item=>({id:item.dataset.nodeId,tabIndex:item.tabIndex,pressed:item.getAttribute('aria-selected'),active:item.classList.contains('active'),rects:item.getClientRects().length}))}));throw new Error(`Layer keyboard focus failed for ${nodeId}: ${JSON.stringify(detail)}`,{cause:error})}
  };
  assert.equal(await row.getAttribute('tabindex'),'0','the primary selection is the single layer-tree Tab stop');
- assert.equal(await row.getAttribute('aria-keyshortcuts'),'Shift+ArrowUp Shift+ArrowDown Control+Space Meta+Space Alt+ArrowUp Alt+ArrowDown Delete Backspace','the layer exposes range-selection, toggle, reorder, and deletion shortcuts to assistive technology');
+ assert.equal(await row.getAttribute('aria-keyshortcuts'),'ArrowLeft ArrowRight Shift+ArrowUp Shift+ArrowDown Control+Space Meta+Space Alt+ArrowUp Alt+ArrowDown Delete Backspace','the layer exposes hierarchy navigation, range-selection, toggle, reorder, and deletion shortcuts to assistive technology');
  assert.match(await editor.locator('#leftPanelLayers .hierarchy-move-help').first().textContent(),/Shift\+nyíl.*Ctrl\/⌘\+Space/,'the Layers panel explains keyboard multi-selection');
  assert.equal(await secondRow.getAttribute('tabindex'),'-1');
- assert.equal(await secondRow.getAttribute('aria-pressed'),'false');
+ assert.equal(await secondRow.getAttribute('aria-selected'),'false');
  await row.focus();assert.equal(await row.evaluate(element=>document.activeElement===element),true,'the selected layer row accepts keyboard focus');await editor.keyboard.press('ArrowDown');
  await waitForLayerFocus(middleId);
  assert.equal(await middleRow.getAttribute('tabindex'),'0','arrow selection updates the roving Tab stop');
- assert.equal(await middleRow.getAttribute('aria-pressed'),'true','arrow navigation keeps the target selected');
+ assert.equal(await middleRow.getAttribute('aria-selected'),'true','arrow navigation keeps the target selected');
  await editor.keyboard.press('ArrowDown');await waitForLayerFocus(thirdId);
  await editor.keyboard.press('ArrowDown');await waitForLayerFocus(textId);
- assert.equal(await secondRow.getAttribute('aria-pressed'),'true','the locked layer remains selectable and exposes its selected state');
+ assert.equal(await secondRow.getAttribute('aria-selected'),'true','the locked layer remains selectable and exposes its selected state');
  assert.equal(await secondRow.evaluate(element=>element.classList.contains('locked')),true,'keyboard navigation preserves the locked-layer state');
  await editor.keyboard.press('ArrowUp');await waitForLayerFocus(thirdId);
  await editor.keyboard.press('ArrowUp');await waitForLayerFocus(middleId);
@@ -98,9 +98,9 @@ for(const width of [390,1366])test(`layer rename pending draft survives save, pu
  await editor.keyboard.press('Home');
  await waitForLayerFocus(rootId);
  const rootRow=editor.locator(`.layer-row[data-node-id="${rootId}"]`);
- assert.equal(await rootRow.getAttribute('aria-pressed'),'true');
+ assert.equal(await rootRow.getAttribute('aria-selected'),'true');
  await editor.keyboard.press('Control+Space');
- assert.equal(await rootRow.getAttribute('aria-pressed'),'true','Ctrl+Space cannot toggle the non-selectable root layer');
+ assert.equal(await rootRow.getAttribute('aria-selected'),'true','Ctrl+Space cannot toggle the non-selectable root layer');
  await editor.keyboard.press('End');
  await waitForLayerFocus(nestedId);
  await editor.keyboard.press('ArrowUp');await waitForLayerFocus(sectionId);
@@ -116,15 +116,15 @@ for(const width of [390,1366])test(`layer rename pending draft survives save, pu
  await editor.keyboard.press('Shift+ArrowDown');await waitForLayerFocus(textId);
  assert.equal(await editor.locator('#groupSelection').isEnabled(),false,'a range containing a locked layer cannot be grouped');
  await editor.keyboard.press('Shift+ArrowUp');await waitForLayerFocus(thirdId);
- assert.equal(await middleRow.getAttribute('aria-pressed'),'true','Shift+Arrow keeps the first focused layer as the range anchor');
- assert.equal(await thirdRow.getAttribute('aria-pressed'),'true','Shift+Arrow extends an inclusive sibling range');
- assert.equal(await secondRow.getAttribute('aria-pressed'),'false','moving back contracts from the original anchor rather than moving the anchor');
+ assert.equal(await middleRow.getAttribute('aria-selected'),'true','Shift+Arrow keeps the first focused layer as the range anchor');
+ assert.equal(await thirdRow.getAttribute('aria-selected'),'true','Shift+Arrow extends an inclusive sibling range');
+ assert.equal(await secondRow.getAttribute('aria-selected'),'false','moving back contracts from the original anchor rather than moving the anchor');
  assert.equal(await editor.locator('#groupSelection').isEnabled(),true,'a same-parent keyboard range enables the existing Group action');
  await editor.keyboard.press('Control+Space');
- assert.equal(await middleRow.getAttribute('aria-pressed'),'true');assert.equal(await thirdRow.getAttribute('aria-pressed'),'false','Control+Space toggles the focused layer out of the selection');
+ assert.equal(await middleRow.getAttribute('aria-selected'),'true');assert.equal(await thirdRow.getAttribute('aria-selected'),'false','Control+Space toggles the focused layer out of the selection');
  assert.equal(await thirdRow.evaluate(element=>document.activeElement===element),true,'toggling a focused row preserves keyboard focus after rerender');
  await editor.keyboard.press('Meta+Space');
- assert.equal(await thirdRow.getAttribute('aria-pressed'),'true','Meta+Space is the equivalent macOS selection toggle');
+ assert.equal(await thirdRow.getAttribute('aria-selected'),'true','Meta+Space is the equivalent macOS selection toggle');
  assert.equal(await editor.locator('#groupSelection').isEnabled(),true);
  await editor.locator('#groupSelection').click();
  const groupId=await editor.locator('.layer-row.active').getAttribute('data-node-id');
@@ -134,8 +134,8 @@ for(const width of [390,1366])test(`layer rename pending draft survives save, pu
  assert.equal(await editor.locator('#groupSelection').isEnabled(),true,'Undo restores the range selection for the existing Group action');
  await secondRow.focus();await editor.keyboard.press('Shift+ArrowDown');await waitForLayerFocus(sectionId);
  await editor.keyboard.press('Shift+ArrowDown');await waitForLayerFocus(nestedId);
- assert.equal(await secondRow.getAttribute('aria-pressed'),'false','Shift cannot span parent boundaries from the previous sibling range');
- assert.equal(await editor.locator(`.layer-row[data-node-id="${nestedId}"]`).getAttribute('aria-pressed'),'true','cross-parent Shift navigation safely selects only its target');
+ assert.equal(await secondRow.getAttribute('aria-selected'),'false','Shift cannot span parent boundaries from the previous sibling range');
+ assert.equal(await editor.locator(`.layer-row[data-node-id="${nestedId}"]`).getAttribute('aria-selected'),'true','cross-parent Shift navigation safely selects only its target');
  assert.equal(await editor.locator('#groupSelection').isEnabled(),false);
  await middleRow.click();
  assert.equal(await editor.locator(`.layer-row[data-node-id="${groupId}"]`).count(),0,'Undo restores the selected siblings and removes their group');

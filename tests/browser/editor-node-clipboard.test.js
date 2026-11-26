@@ -71,7 +71,7 @@ test('node clipboard keyboard flow duplicates nested nodes into the draft; Save 
   await tab.waitForFunction(({firstId,sectionId})=>{
     const firstRow=document.querySelector(`.layer-row[data-node-id="${CSS.escape(firstId)}"]`);
     const sectionRow=document.querySelector(`.layer-row[data-node-id="${CSS.escape(sectionId)}"]`);
-    return firstRow?.getAttribute('aria-pressed')==='true'&&sectionRow?.getAttribute('aria-pressed')==='true'&&document.activeElement===sectionRow;
+    return firstRow?.getAttribute('aria-selected')==='true'&&sectionRow?.getAttribute('aria-selected')==='true'&&document.activeElement===sectionRow;
   },{firstId:first.id,sectionId:section.id});
   await tab.keyboard.press('Control+c');
   await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.includes('2 elem másolva'));

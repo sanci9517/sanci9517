@@ -69,6 +69,7 @@ function propertyInput(property,label,current,onChange,options={}){
 async function loadEditorTokens(){try{const response=await fetch('/api/public/presentation?preview=1',{cache:'no-store',credentials:'same-origin'});const result=await response.json();if(response.ok&&result?.data?.tokens){editorTokens=result.data.tokens;const target=canvas.querySelector('.page-canvas');if(target)applyTokenVariables(target,editorTokens)}}catch{} }
 let statePreview='none';
 let pendingLayerRename=null;
+const collapsedLayerNodesByPage=new Map();
 function flushLayerRename(){return pendingLayerRename?.()!==false}
 let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTab='character';
 
@@ -1942,14 +1943,16 @@ function beginLayerRename(id){
   input.select();
   return true;
 }
-function renderLayers(){
+function renderLayers({focusId=null}={}){
   if(!flushLayerRename())return;
   $('#leftPanelLayers')?.querySelector('[data-validation-kind="publication"][data-recovery-kind="unsupported-node"]')?.remove();
   const root=$('#layersTree');
   const current=page();
   if(!root||!current)return;
   root.replaceChildren();
-  const walk=(id,depth=0)=>{
+  const collapsedLayerNodes=collapsedLayerNodesByPage.get(current.id)||new Set();
+  collapsedLayerNodesByPage.set(current.id,collapsedLayerNodes);
+  const walk=(id,depth=0,siblingIndex=0,siblingCount=1)=>{
     const node=getNode(current,id);
     if(!node)return;
     const locked=isNodeEffectivelyLocked(current,node);
@@ -1957,18 +1960,25 @@ function renderLayers(){
     const entry=document.createElement('div');
     entry.className='layer-entry';
     entry.dataset.nodeId=id;
+    entry.setAttribute('role','none');
     const row=document.createElement('button');
     row.type='button';
     row.dataset.nodeId=id;
     row.draggable=node.id!==current.rootId&&!locked;
     row.className=`layer-row ${state.selection.primaryId===id?'active':''} ${locked?'locked':''} ${inheritedLock?'locked-ancestor':''}`;
     row.tabIndex=state.selection.primaryId===id?0:-1;
-    row.setAttribute('aria-pressed',String(state.selection.ids.includes(id)));
-    row.setAttribute('aria-keyshortcuts','Shift+ArrowUp Shift+ArrowDown Control+Space Meta+Space Alt+ArrowUp Alt+ArrowDown Delete Backspace');
-    row.setAttribute('aria-description','Nyilak: rétegnavigáció; Shift+nyíl: tartomány kijelölése; Ctrl vagy Command+Space: többes kijelölés; Alt+fel/le: egy kijelölt réteg átrendezése; Delete vagy Backspace: kijelölt elemek törlése; F2: átnevezés. A gyökér és a zárolt elemek nem mozgathatók vagy törölhetők.');
+    row.setAttribute('role','treeitem');
+    row.setAttribute('aria-level',String(depth+1));
+    row.setAttribute('aria-posinset',String(siblingIndex+1));
+    row.setAttribute('aria-setsize',String(siblingCount));
+    row.setAttribute('aria-selected',String(state.selection.ids.includes(id)));
+    row.setAttribute('aria-keyshortcuts','ArrowLeft ArrowRight Shift+ArrowUp Shift+ArrowDown Control+Space Meta+Space Alt+ArrowUp Alt+ArrowDown Delete Backspace');
+    row.setAttribute('aria-description','Fel/le: rétegnavigáció; balra: összecsukás vagy szülő; jobbra: kinyitás vagy első gyermek; Shift+fel/le: tartomány kijelölése; Ctrl vagy Command+Space: többes kijelölés; Alt+fel/le: egy kijelölt réteg átrendezése; Delete vagy Backspace: kijelölt elemek törlése; F2: átnevezés. A gyökér és a zárolt elemek nem mozgathatók vagy törölhetők.');
     row.style.paddingLeft=`${8+depth*14}px`;
     const children=getChildren(current,id);
-    row.innerHTML=`<span class="layer-caret">${children.length?'▸':'·'}</span><strong>${escapeHtml(node.name||node.type)}</strong><small>${escapeHtml(node.type)}</small><span class="layer-drag-handle" role="button" tabindex="-1" aria-label="Elem mozgatása">⠿</span>${locked?`<span class="layer-lock" title="${node.locked?'Zárolt elem':'Zárolt tároló része'}" aria-label="${node.locked?'Zárolt elem':'Zárolt tároló része'}">🔐</span>`:''}`;
+    const collapsed=children.length>0&&collapsedLayerNodes.has(id);
+    if(children.length)row.setAttribute('aria-expanded',String(!collapsed));
+    row.innerHTML=`<span class="layer-caret" aria-hidden="true">${children.length?(collapsed?'▸':'▾'):'·'}</span><strong>${escapeHtml(node.name||node.type)}</strong><small>${escapeHtml(node.type)}</small><span class="layer-drag-handle" aria-hidden="true">⠿</span>${locked?`<span class="layer-lock" title="${node.locked?'Zárolt elem':'Zárolt tároló része'}" aria-label="${node.locked?'Zárolt elem':'Zárolt tároló része'}">🔐</span>`:''}`;
     row.addEventListener('keydown',event=>{
       if(event.key==='F2'&&node.id!==current.rootId&&!locked){event.preventDefault();event.stopPropagation();beginLayerRename(id)}
       if(event.altKey&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&['ArrowUp','ArrowDown'].includes(event.key)){
@@ -1976,6 +1986,18 @@ function renderLayers(){
         if(state.selection.ids.length!==1||state.selection.primaryId!==id){setStatus('Réteg-átrendezéshez pontosan egy elemet jelölj ki.');return}
         const moved=moveSelectedLayer(event.key==='ArrowUp'?'up':'down',{restoreFocus:true});
         if(!moved)setStatus(locked||node.id===current.rootId?'A gyökér vagy zárolt réteg nem rendezhető át.':'Nincs átrendezhető réteg ebbe az irányba.');
+        return;
+      }
+      if(!event.altKey&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&['ArrowLeft','ArrowRight'].includes(event.key)){
+        event.preventDefault();event.stopPropagation();
+        const collapsedNow=collapsedLayerNodes.has(id);
+        if(event.key==='ArrowLeft'){
+          if(children.length&&!collapsedNow){collapsedLayerNodes.add(id);renderLayers({focusId:id});return}
+          if(node.parentId)selectNodeInteraction(node.parentId,event,{focusLayerRow:true});
+          return;
+        }
+        if(children.length&&collapsedNow){collapsedLayerNodes.delete(id);renderLayers({focusId:id});return}
+        const firstChild=children[0];if(firstChild)selectNodeInteraction(firstChild.id,event,{focusLayerRow:true});
         return;
       }
       const modifier=event.ctrlKey||event.metaKey;
@@ -2014,7 +2036,7 @@ function renderLayers(){
     row.onpointermove=event=>{if(event.pointerType==='touch')handleMobilePointerMove(event)};
     row.onpointerup=event=>{if(event.pointerType==='touch'){event.stopPropagation();handleMobilePointerUp(id,event)}};
     row.onpointercancel=event=>{if(event.pointerType==='touch')handleMobilePointerCancel(event)};
-    row.onclick=event=>{event.stopPropagation();if(mobileTouch.active&&mobileTouch.suppressClick){mobileTouch.suppressClick=false;return}selectNodeInteraction(id,event,{focusLayerRow:true})};
+    row.onclick=event=>{event.stopPropagation();if(mobileTouch.active&&mobileTouch.suppressClick){mobileTouch.suppressClick=false;return}if(event.target?.closest('.layer-caret')&&children.length){selectNodeInteraction(id,event);toggleLayerCollapsed(id);return}selectNodeInteraction(id,event,{focusLayerRow:true})};
     entry.append(row);
     if(node.id!==current.rootId){
       const rename=document.createElement('button');
@@ -2045,9 +2067,17 @@ function renderLayers(){
       entry.append(toggle);
     }
     root.append(entry);
-    for(const child of children)walk(child.id,depth+1);
+    if(!collapsed)children.forEach((child,index)=>walk(child.id,depth+1,index,children.length));
   };
-  walk(current.rootId);
+  walk(current.rootId,0,0,1);
+  if(focusId){const focused=root.querySelector(`.layer-row[data-node-id="${CSS.escape(focusId)}"]`);focused?.focus({preventScroll:true});focused?.scrollIntoView({block:'nearest'})}
+}
+function toggleLayerCollapsed(nodeId){
+  const current=page(),node=current&&getNode(current,nodeId),children=current&&node?getChildren(current,nodeId):[];
+  if(!current||!node||children.length===0)return false;
+  let collapsed=collapsedLayerNodesByPage.get(current.id);if(!collapsed){collapsed=new Set();collapsedLayerNodesByPage.set(current.id,collapsed)}
+  if(collapsed.has(nodeId))collapsed.delete(nodeId);else collapsed.add(nodeId);
+  renderLayers({focusId:nodeId});return true;
 }
 function syncPublishControls(){const current=page();const meta=current&&pages.find(x=>x.id===current.id);const published=Boolean(meta?.isPublished);const dirty=Boolean(state?.persistence?.dirty||pendingLayerRename?.dirty?.());const draftAhead=published&&(Boolean(meta?.hasUnpublishedChanges)||Number(meta?.publishedRevisionVersion??0)<Number(meta?.revision??0));const publishLabel=published?(dirty||draftAhead?'Újrapublikálás':'Publikálva'):'Publikálás';const publishDisabled=!current||(!dirty&&!draftAhead&&published);const publish=$('#publish'),unpublish=$('#unpublish'),mobilePublish=$('#mobilePublish'),mobileUnpublish=$('#mobileUnpublish');if(publish){publish.textContent=publishLabel;publish.disabled=publishDisabled}if(unpublish)unpublish.hidden=!published;if(mobilePublish){mobilePublish.textContent=publishLabel;mobilePublish.disabled=publishDisabled}if(mobileUnpublish)mobileUnpublish.hidden=!published}
 function showUnsupportedPublishRecovery(){
