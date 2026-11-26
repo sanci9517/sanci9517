@@ -63,6 +63,22 @@ class PlanContractTest(unittest.TestCase):
         self.assertIn('nem átfedő fájlmódosítási területeken', section)
         self.assertIn('nem öröklődik belőle', section)
 
+    def test_parallel_editor_policy_is_one_extension_of_the_existing_batch_rule(self):
+        text = (self.root / MASTER).read_text(encoding='utf-8')
+        marker = '**77.44.7.D ismétlésmentes batch-végrehajtása (2026-11-23):**'
+        self.assertEqual(text.count(marker), 1)
+        section = text.split(marker, 1)[1].split('\n- **Következő aktív munka:**', 1)[0]
+        for phrase in [
+            '2026-11-26-tól ez a szabály az Editor teljes A–F és D-01–D-07 munkájára is érvényes',
+            'a kizárólagos írási fájlkört és a bizonyíték útját',
+            'nem átfedő fájlmódosítási területeken',
+            'egyetlen integrált forrásállapotból, sorrendben',
+            'nem indítunk redundáns teljes CI-rerunt',
+            'a részbatch státusza nem öröklődik belőle',
+        ]:
+            self.assertIn(phrase, section)
+        self.assertNotIn('77.44.7.D párhuzamos, ismétlésmentes Editor-végrehajtás', text)
+
     def test_valid_contract_does_not_certify_functionality(self):
         report = validate(self.root)
         self.assertEqual(report['feature_count'], 396)
