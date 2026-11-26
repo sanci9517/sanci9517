@@ -12,7 +12,10 @@
     "runtime_sha_under_test": "187b16a8a6f8335b43f70b9692a1c3d8a279db39",
     "active_plan_cursor": "77.44 / WEB-011 -> 77.44.7.D",
     "feature_count": 396,
-    "source_status_counts": {"PARTIAL_SOURCE": 148, "UNVERIFIED": 248},
+    "source_status_counts": {
+      "PARTIAL_SOURCE": 148,
+      "UNVERIFIED": 248
+    },
     "functional_acceptance": "NOT_CERTIFIED"
   },
   "ci": {
@@ -64,5 +67,28 @@
     "worker_deploy": false,
     "cost_huf": 0
   },
-  "next_step": "Read the final exact-SHA Editor Core result. If a test fails, reproduce and repair that exact issue; if it succeeds, continue the next unverified canonical D-06 capability without repeating the covered layer/clipboard behavior. Keep the full D and Visual Editor acceptance OPEN until all planned gates are satisfied."
+  "next_step": "Read the final exact-SHA Editor Core result. If a test fails, reproduce and repair that exact issue; if it succeeds, continue the next unverified canonical D-06 capability without repeating the covered layer/clipboard behavior. Keep the full D and Visual Editor acceptance OPEN until all planned gates are satisfied.",
+  "follow_up_observations": {
+    "checked_at": "2026-11-26T13:26:24Z",
+    "local_checkout_head": "d838bfdf21e7d3dc06b97a4148fcb51cce0ce831",
+    "local_checkout_status": "clean; behind remote by the two docs-only follow-up commits (not fetched: shell GitHub proxy unavailable)",
+    "github_branch_head_before_this_evidence_commit": "a00b8e71cd95be5a0efb06399996b09652a78cb1",
+    "ci_latest": {
+      "run_id": 45824175142,
+      "source_sha": "187b16a8a6f8335b43f70b9692a1c3d8a279db39",
+      "job_id": 139923912127,
+      "status": "IN_PROGRESS",
+      "completed_steps": 15,
+      "active_step": "Run Editor browser layout regression",
+      "later_steps_pending": 7,
+      "live_logs": "GitHub workflow job log URL returned Azure BlobNotFound at 2026-11-26T13:26:10Z; no failure or hang inferred."
+    },
+    "production_readback": {
+      "deployment_id": "3e4dbe7b-aa54-4662-9910-85869cc87f9c",
+      "worker_version": "e7bffe23-cbd6-41bd-973c-20d785f2de1f",
+      "traffic_percentage": 100,
+      "source_sha": "187b16a8a6f8335b43f70b9692a1c3d8a279db39"
+    },
+    "this_follow_up": "Read-only branch/CI/deployment reconciliation; no code, test, D1/R2 data, CI dispatch, or Worker deployment mutation. The existing exact-source CI has not finished, so the D-06/full-D/Editor acceptance remains open."
+  }
 }
