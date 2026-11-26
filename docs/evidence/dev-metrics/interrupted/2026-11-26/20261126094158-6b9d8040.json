@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261126094158-6b9d8040",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-26T09:41:58.714Z",
+  "abandoned_at": "2026-11-26T10:38:34.993Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Work block crossed session boundary; precise active completion time cannot be recovered.",
+  "started_revision": "9183cc360374410008950d512218695a0fe1d4b4",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

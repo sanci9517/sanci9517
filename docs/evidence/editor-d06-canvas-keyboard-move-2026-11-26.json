@@ -8,7 +8,7 @@
   },
   "finding": "Pointer dragging had no equivalent for a keyboard-only user to reposition a selected Canvas element. The existing Page Model command and undo history support responsive geometry updates, so native keyboard controls can use the same path without changing Save/Publish semantics.",
   "change": {
-    "runtime_commit": "PENDING",
+    "runtime_commit": "2895aa041f8f3aee04bd7e7a432278d4b63fdc89",
     "branch": "v2/foundation",
     "files": [
       "public/editor-v2/app.js",
@@ -107,14 +107,89 @@
     }
   },
   "release": {
-    "push": "PENDING",
-    "exact_sha_ci": "PENDING",
-    "cloudflare_build_and_deploy": "PENDING",
-    "production_smoke_for_changed_source": "PENDING"
+    "push": "NORMAL_FAST_FORWARD_VERIFIED",
+    "github_branch_head": "2895aa041f8f3aee04bd7e7a432278d4b63fdc89",
+    "cloudflare_build": {
+      "build_uuid": "35802e08-51b2-46c8-a6d0-a5f7e0b24a5f",
+      "source_sha": "2895aa041f8f3aee04bd7e7a432278d4b63fdc89",
+      "outcome": "success",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "deployment_id": "2a55c93f-fbbd-4352-b540-98c2b2ffd073",
+    "worker_version_id": "a5b872e3-3956-47f8-887b-31e5c63c9fec",
+    "worker_version_number": 4205,
+    "traffic_percent": 100,
+    "production_smoke": {
+      "workflow_run_id": 45801929614,
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?release=2895aa041f8f3aee04bd7e7a432278d4b63fdc89",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "changed_public_asset_hashes": {
+        "public/editor-v2/index.html": {
+          "path": "/editor-v2/",
+          "source_sha256": "8849938fafc599a7ab020e93b1f6aefe0ab0dced9ef75291c4c0a5aec79c5a0a",
+          "production_sha256": "8849938fafc599a7ab020e93b1f6aefe0ab0dced9ef75291c4c0a5aec79c5a0a",
+          "matches": true
+        },
+        "public/editor-v2/app.js": {
+          "path": "/editor-v2/app.js",
+          "source_sha256": "ed9bce4995de5e99d1d2af6627abf61a45626734677d9ccc81419158301d5b85",
+          "production_sha256": "ed9bce4995de5e99d1d2af6627abf61a45626734677d9ccc81419158301d5b85",
+          "matches": true
+        },
+        "public/editor-v2/editor-refresh.css": {
+          "path": "/editor-v2/editor-refresh.css",
+          "source_sha256": "180f212701ddd188175b661ee3a88b03f99f8fa5964db155d46c3b41253a5bfc",
+          "production_sha256": "180f212701ddd188175b661ee3a88b03f99f8fa5964db155d46c3b41253a5bfc",
+          "matches": true
+        }
+      }
+    },
+    "github_actions_exact_sha": {
+      "workers_build": {
+        "check_run_id": 139847151977,
+        "build_uuid": "35802e08-51b2-46c8-a6d0-a5f7e0b24a5f",
+        "status": "SUCCESS"
+      },
+      "production_source_smoke": {
+        "run_id": 45801929614,
+        "status": "SUCCESS"
+      },
+      "verify": {
+        "run_id": 45801929674,
+        "status": "SUCCESS"
+      },
+      "source_audit": {
+        "run_id": 45801929792,
+        "status": "SUCCESS"
+      },
+      "twitch_integration": {
+        "run_id": 45801929578,
+        "status": "SUCCESS"
+      },
+      "canonical_plan": {
+        "run_id": 45801929533,
+        "status": "SUCCESS"
+      },
+      "editor_core": {
+        "run_id": 45801929401,
+        "status_at_evidence_capture": "IN_PROGRESS",
+        "active_step": "Run Editor browser layout regression",
+        "active_step_number": 16,
+        "steps_1_to_15": "SUCCESS",
+        "steps_17_to_22": "PENDING"
+      }
+    }
   },
   "acceptance": {
-    "this_slice": "IMPLEMENTED; release pending",
-    "EDT_037": "PARTIAL_SOURCE; layer-list navigation and Canvas keyboard movement do not certify all planned keyboard operations or complete feature acceptance",
+    "this_slice": "IMPLEMENTED_AND_PRODUCTION_VERIFIED",
+    "EDT_037": "PARTIAL_SOURCE; this slice adds keyboard movement for a selected Canvas node, but does not certify every planned keyboard alternative or complete Editor acceptance",
     "D_06": "OPEN / NOT CERTIFIED",
     "D_01_to_D_07": "OPEN / NOT CERTIFIED",
     "visual_editor": "OPEN / NOT CERTIFIED",
@@ -127,5 +202,5 @@
     "production_d1_migration_or_mutation": false,
     "r2_mutation_or_deletion": false
   },
-  "next_gate": "Push by normal fast-forward after exact-head check; verify exact-SHA hosted Editor Core CI and Cloudflare release before changing the pending release evidence fields."
+  "next_gate": "Wait for exact-SHA Editor Core run 45801929401 to finish; if it fails, inspect logs and fix the cause. Full EDT-037, D-06, D-01 to D-07, Visual Editor and manual acceptance remain open."
 }
