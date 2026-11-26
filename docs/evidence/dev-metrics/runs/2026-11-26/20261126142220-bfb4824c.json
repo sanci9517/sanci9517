@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261126142220-bfb4824c",
+  "task": "77.44.7.D-06-keyboard-layer-reorder",
+  "trigger": "manual",
+  "started_at": "2026-11-26T14:22:20.702Z",
+  "finished_at": "2026-11-26T14:45:43.994Z",
+  "wall_seconds": 1403,
+  "paused_seconds": 0,
+  "measured_seconds": 1403,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-037 rétegsorrend billentyűzetes átrendezése implementálva és a5d0d032 alatt éles; célzott regressziók, Editor unit és typecheck zöldek. Pontos SHA hosted Editor Core CI még fut.",
+  "evidence": [
+    "docs/evidence/editor-d06-layer-keyboard-reorder-2026-11-26.json"
+  ],
+  "checks": "targeted Chromium 8/8 + keyboard-shortcut 2/2; npm run test:editor 25/25; typecheck; canonical/traceability/plan 16/16; D1 SELECT-only; Wrangler dry-run; Cloudflare build and health/hash smoke PASS; hosted Editor Core IN_PROGRESS",
+  "started_revision": "f65b17d5116ebf2aaac7ad3d51dec3aa4e629f84",
+  "finished_revision": "0d558486ef2f73f56bf6a77ef46dd8e1fc39fffe",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
