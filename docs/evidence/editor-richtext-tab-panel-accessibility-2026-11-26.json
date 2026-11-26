@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-26",
+  "canonical_plan": {
+    "path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "sha256_before_work": "6fd481c21f118812a482039dfc6519cc9cae72d825f4adae164307cc64de4a18",
+    "active_item": "77.44.7.D / D-06; bounded accessibility slice of EDT-043; 77.44.5"
+  },
+  "finding": "Rich Text Inspector already supported ArrowLeft/ArrowRight/Home/End between its Karakter, Bekezdés and Színek tabs, but those tabs did not reference their content groups with aria-controls and the groups were not exposed as named tabpanels.",
+  "change": {
+    "runtime_commit": "b00e1129abc129ae4a8db1aff8912c5ba8d17c60",
+    "branch": "v2/foundation",
+    "files": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html",
+      "tests/browser/editor-richtext-selection.test.js",
+      "tests/editor-public-asset-cache-bust.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "details": [
+      "Each Rich Text Inspector tab now has a stable node-scoped ID and aria-controls reference; its corresponding controls group has role=tabpanel and aria-labelledby.",
+      "Existing arrow/Home/End keyboard navigation, selected state, hidden-panel behavior, draft Save and separate Publish behavior are preserved.",
+      "The Editor app.js cache-bust token was advanced in the routed index, with both cache-bust contract assertions updated.",
+      "The generated feature traceability source hashes were refreshed and checked."
+    ],
+    "third_party_code_or_dependency": "NONE; native DOM/WAI-ARIA tab semantics were used."
+  },
+  "local_checks": {
+    "node_check_app_and_browser_test": "PASS",
+    "node_test_cache_bust": "PASS; 1/1 test file",
+    "chromium_richtext_selection": {
+      "result": "PASS; 1/1 test file covering desktop and mobile viewports",
+      "assertions": [
+        "Every tool tab points to its panel; every panel has role=tabpanel and is labeled by its tab.",
+        "Exactly one tab is selected and its panel is exposed.",
+        "ArrowRight and Home update selection and visible panel.",
+        "Tab and panel IDs remain stable after navigation and Inspector tab changes."
+      ],
+      "first_attempt": "BLOCKED by sandbox listen EPERM on local 127.0.0.1 test server",
+      "verified_retry": "PASS using temporary local-loopback permission; no external test service was contacted."
+    },
+    "npm_run_test_editor": "PASS; 24/24 test files; Linux subreaper 4/4",
+    "npm_run_typecheck": "PASS",
+    "plan_contract": "PASS; 16/16",
+    "canonical_plan_integrity": "PASS; one complete 13-file master and one current cursor",
+    "feature_traceability": "PASS; 396/396 mappings",
+    "active_plan_audit": {
+      "result": "PASS",
+      "cursor": "77.44.7.D",
+      "features": 396,
+      "partial_source": 148,
+      "unverified": 248,
+      "acceptance": "NOT_CERTIFIED"
+    },
+    "deploy_safe_migration_gate": "PASS; deploy:safe does not apply D1 migrations",
+    "wrangler_dry_run": {
+      "result": "PASS",
+      "version": "4.130.0",
+      "assets_read": 203,
+      "upload_kib": 476.54,
+      "gzip_kib": 118.24,
+      "migration_apply": false
+    },
+    "git_diff_check": "PASS"
+  },
+  "production_d1": {
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "preflight": {
+      "method": "Cloudflare D1 Query API; only standalone SELECT statements",
+      "queries": [
+        "SELECT COUNT(*) AS migration_count FROM d1_migrations",
+        "SELECT id,name,applied_at FROM d1_migrations ORDER BY id DESC LIMIT 5",
+        "SELECT type,name,tbl_name FROM sqlite_master WHERE type IN ('table','view','trigger','index') ORDER BY type,name",
+        "SELECT id,name,applied_at FROM d1_migrations ORDER BY id DESC LIMIT 1",
+        "SELECT type,COUNT(*) AS object_count FROM sqlite_master WHERE type IN ('table','view','trigger','index') GROUP BY type ORDER BY type"
+      ],
+      "migration_count": 38,
+      "latest_marker": "0032_forms_service.sql",
+      "schema_object_counts_by_type": {
+        "index": 97,
+        "table": 38,
+        "trigger": 29
+      },
+      "all_query_metadata": {
+        "rows_written": 0,
+        "changes": 0,
+        "changed_db": false
+      }
+    },
+    "postflight": {
+      "method": "Cloudflare D1 Query API; SELECT only",
+      "query": "SELECT COUNT(*) AS migration_count,MAX(id) AS latest_id FROM d1_migrations",
+      "result": {
+        "migration_count": 38,
+        "latest_id": 38
+      },
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "migration_or_business_data_write": false,
+    "r2_operation": "NONE"
+  },
+  "release": {
+    "push": "NORMAL_FAST_FORWARD_VERIFIED",
+    "github_branch_head": "b00e1129abc129ae4a8db1aff8912c5ba8d17c60",
+    "cloudflare_build": {
+      "build_uuid": "1f781051-1638-41b3-80b8-283165e82499",
+      "source_sha": "b00e1129abc129ae4a8db1aff8912c5ba8d17c60",
+      "outcome": "success",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "deployment_id": "83728ebf-e243-4e12-9c8b-421e66fa02d2",
+    "worker_version_id": "d081e68c-f007-408f-b37c-1890b71a223c",
+    "worker_version_number": 4203,
+    "traffic_percent": 100,
+    "production_health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_public_asset_hashes": {
+      "public/editor-v2/index.html": {
+        "source_sha256": "b44410efc1c384b544b4da01f2e022cabc9f26f171c22ee3b74a5db439a3f3e1",
+        "production_sha256": "b44410efc1c384b544b4da01f2e022cabc9f26f171c22ee3b74a5db439a3f3e1",
+        "matches": true
+      },
+      "public/editor-v2/app.js": {
+        "source_sha256": "d427f6529cc1d33c42ed756b706c3777ea0601cebd1af926febce4c4c9d28333",
+        "production_sha256": "d427f6529cc1d33c42ed756b706c3777ea0601cebd1af926febce4c4c9d28333",
+        "matches": true
+      }
+    },
+    "github_actions_exact_sha": {
+      "f0_baseline": {"run_id": 45787949106, "status": "SUCCESS"},
+      "twitch_integration": {"run_id": 45787949225, "status": "SUCCESS"},
+      "canonical_plan": {"run_id": 45787949102, "status": "SUCCESS"},
+      "active_point_audit": {"run_id": 45787949235, "status": "SUCCESS"},
+      "production_source_smoke": {"run_id": 45787949286, "status": "SUCCESS"},
+      "editor_core": {
+        "run_id": 45787949084,
+        "status_at_evidence_capture": "IN_PROGRESS",
+        "active_step": "Run Editor browser layout regression"
+      }
+    },
+    "previous_fixture_only_editor_core": {
+      "run_id": 45783680598,
+      "status": "SUCCESS",
+      "source_sha": "0aa48b5040e5babbcda2beba446654894a248fcd"
+    }
+  },
+  "acceptance": {
+    "this_slice": "IMPLEMENTED_AND_PRODUCTION_VERIFIED",
+    "EDT_043": "PARTIAL_SOURCE; schema, safe-renderer, full round-trip and comprehensive accessibility acceptance are still open",
+    "D_06": "OPEN / NOT CERTIFIED",
+    "D_01_to_D_07": "OPEN / NOT CERTIFIED",
+    "visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_and_physical_device_acceptance": "DEFERRED_UNTIL_COMPLETE_VISUAL_EDITOR",
+    "save_and_publish_are_separate": true
+  },
+  "cost_and_data_safety": {
+    "new_paid_service_or_dependency": false,
+    "new_cost": "0 Ft",
+    "production_d1_migration_or_mutation": false,
+    "r2_mutation_or_deletion": false
+  },
+  "next_gate": "Wait for exact-SHA Editor Core run 45787949084 to complete; do not mark the full Editor/D block accepted from this slice."
+}
