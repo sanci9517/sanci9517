@@ -340,6 +340,13 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   assert.equal(await liveNode(tabsId).getByRole('tab').nth(1).getAttribute('aria-selected'),'true','Publish enables the delayed action on the public page');
   assert.equal(new URL(live.url()).searchParams.has('creator-tab'),false,'public timer selection does not mutate the browser URL');
 
+  await live.goto(`${base}/p/page-actions?campaign=timer-detached-source-test`);
+  await liveNode(buttonId).waitFor({state:'attached'});
+  await liveNode(buttonId).evaluate(el=>el.remove());
+  await live.waitForTimeout(10300);
+  assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true',
+    'a pending page timer is revoked if its authored trigger is removed while the page root remains connected');
+
   await live.goto(`${base}/p/page-actions?campaign=timer-test&creator-tab=${encodeURIComponent(`${tabsId}:0`)}`);
   await live.waitForTimeout(10300);
   assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','an explicit deep link prevents the timer from overriding the requested tab');

@@ -30,9 +30,10 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'the stylesheet referenced by the versioned link must include the palette-favorites UI');
   const recoveryVersion='20261124-edt042-publish-recovery-safe-label-v1';
   const editorEntryVersion='20261125-edt016-child-reference-limit-v1';
-  const editorScriptVersion='20261126-canvas-keyboard-resize-v1';
+  const editorScriptVersion='20261126-edt039-detached-action-timer-v1';
+  const pageActionTimerVersion='20261126-edt039-detached-action-timer-v1';
   const mediaPlaybackVersion='20261125-forms-service-v1';
-  const structuredContentVersion='20261125-forms-service-v1';
+  const publicRendererVersion='20261126-edt039-detached-action-timer-v1';
   assert.match(html,new RegExp(`src="/editor-v2/app\\.js\\?v=${editorScriptVersion}"`),
     'the deployed entry page must request the unsupported-Publish recovery handler');
   assert.match(html,/src="\/editor-v2\/ui\/shell\.js\?v=20261123-edt044-account-scoped-preferences-v2"/,
@@ -57,10 +58,12 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'the versioned entry script must request the structured Inspector accessible-name controls, including Accordion');
   assert.match(app,/ui\/forms-inspector\.js\?v=20261125-form-inspector-v1/,
     'the versioned entry script must request the first-party form editor and inbox');
-  assert.match(publicHtml,new RegExp(`page-renderer\\.js\\?v=${structuredContentVersion}`),
+  assert.match(app,new RegExp(`core/authored-content\\.js\\?v=${pageActionTimerVersion}`),
+    'the Editor must load the page-action timer lifecycle guard');
+  assert.match(publicHtml,new RegExp(`page-renderer\\.js\\?v=${publicRendererVersion}`),
     'published pages must request the renderer version containing reduced-motion playback behavior');
-  assert.match(publicRenderer,new RegExp(`authored-content\\.js\\?v=${mediaPlaybackVersion}`),
-    'the public renderer must request the cache-busted authored content playback behavior');
+  assert.match(publicRenderer,new RegExp(`authored-content\\.js\\?v=${pageActionTimerVersion}`),
+    'the public renderer must request the cache-busted authored content timer and playback behavior');
   assert.match(publicRenderer,new RegExp(`legacy-media-source\\.js\\?v=${mediaPlaybackVersion}`),
     'the public renderer must request the cache-busted legacy media playback behavior');
   assert.match(publicRenderer,/matchMedia\('\(prefers-reduced-motion: reduce\)'\)/,
@@ -88,9 +91,9 @@ test('the EDT-040 in-view trigger refreshes both renderers and the shared motion
   const motionVersion='20261123-edt040-in-view-motion-v1';
   const domIdVersion='20261125-d06-authored-carousel-slide-semantics-v1';
   const editorEntryVersion='20261125-edt016-child-reference-limit-v1';
-  const editorScriptVersion='20261126-canvas-keyboard-resize-v1';
+  const editorScriptVersion='20261126-edt039-detached-action-timer-v1';
   const mediaPlaybackVersion='20261125-forms-service-v1';
-  const structuredContentVersion='20261125-forms-service-v1';
+  const publicRendererVersion='20261126-edt039-detached-action-timer-v1';
   assert.match(editorHtml,new RegExp(`editor-motion\\.css\\?v=${motionVersion}`));
   assert.match(editorHtml,new RegExp(`app\\.js\\?v=${editorScriptVersion}`));
   assert.match(editor,new RegExp(`core/property-registry\\.js\\?v=${motionVersion}`));
@@ -99,7 +102,7 @@ test('the EDT-040 in-view trigger refreshes both renderers and the shared motion
   assert.match(canvasEngine,/motion-style\.js/);
   assert.match(motionStyle,/MOTION_TRIGGER_OPTIONS/);
   assert.match(publicHtml,new RegExp(`editor-motion\\.css\\?v=${motionVersion}`));
-  assert.match(publicHtml,new RegExp(`page-renderer\\.js\\?v=${structuredContentVersion}`));
+  assert.match(publicHtml,new RegExp(`page-renderer\\.js\\?v=${publicRendererVersion}`));
   assert.match(publicRenderer,new RegExp(`motion-style\\.js\\?v=${motionVersion}`));
   assert.match(publicRenderer,/data-motion-trigger="\$\{motionTrigger\}"/);
   assert.match(css,/animation-timeline:\s*view\(\)/);

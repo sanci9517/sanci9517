@@ -535,7 +535,11 @@ export function initContentInteractions(root){
         if(typeof targetId!=='string'||urlState.has(targetId)||loadTargets.has(targetId)||pendingTimers.has(targetId)||!PAGE_ACTION_TIMER_DELAYS_MS.includes(delayMs))continue;
         const timer=view.setTimeout(()=>{
           pendingTimers.delete(targetId);
-          if(root.isConnected&&!view.document?.hidden)runPageAction(source,{writeUrl:false});
+          // A page may keep its interaction root while replacing a dynamic
+          // subtree. A timer is owned by its authored trigger, so detaching
+          // that trigger must revoke the pending action even if the target
+          // still exists elsewhere in the page.
+          if(root.isConnected&&root.contains(source)&&!view.document?.hidden)runPageAction(source,{writeUrl:false});
         },delayMs);
         pendingTimers.set(targetId,timer);
       }
