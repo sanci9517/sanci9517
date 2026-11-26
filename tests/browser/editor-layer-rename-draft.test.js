@@ -17,6 +17,8 @@ for(const width of [390,1366])test(`layer rename pending draft survives save, pu
  execute(model,{type:'schedule.config.set',payload:{nodeId:id,patch:{statuses:['completed'],emptyText:'Mentett adásrend'}}});
  execute(model,{type:'element.add',payload:{type:'text',parentId:activePage(model).rootId}});
  const textId=model.selection.primaryId;
+ execute(model,{type:'element.update',payload:{nodeId:textId,patch:{name:'Zárolt második réteg'}}});
+ execute(model,{type:'element.lock.set',payload:{nodeId:textId,locked:true}});
  execute(model,{type:'selection.set',payload:{ids:[id],primaryId:id}});
  const otherPage=createPage({name:'Másik',slug:'other'}),otherDocument=createDocument(otherPage);
  let draft=structuredClone(model.document),published=structuredClone(draft),version=2,hold=false,releaseResponse=null,onRequest=()=>{};
@@ -54,8 +56,39 @@ for(const width of [390,1366])test(`layer rename pending draft survives save, pu
  for(const page of [editor]){page.setDefaultTimeout(15000);page.setDefaultNavigationTimeout(12000);page.on('pageerror',error=>errors.push(error.message));}
  await editor.goto(base+'/editor-v2/index.html');
  await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
- if(await editor.locator('.rail-btn[data-tab="layers"]').isVisible())await editor.locator('.rail-btn[data-tab="layers"]').click();else await editor.evaluate(()=>{window.sanciEditor.showLeftTab('layers');window.sanciEditor.openPanel('left')});
+ await editor.waitForFunction(()=>typeof window.sanciEditor?.showLeftTab==='function');
+ // Start with Layers open on both viewport sizes; the test below exercises
+ // keyboard-only selection/focus within the tree, independent of dock setup.
+ await editor.evaluate(()=>window.sanciEditor.showLeftTab('layers',{save:false}));
  const row=editor.locator(`.layer-row[data-node-id="${id}"]`), field=editor.getByRole('textbox',{name:'Réteg neve',exact:true});
+ const secondRow=editor.locator(`.layer-row[data-node-id="${textId}"]`);
+ await row.waitFor({state:'visible'});await secondRow.waitFor({state:'visible'});
+ const waitForLayerFocus=async nodeId=>{
+  try{await editor.waitForFunction(expected=>document.activeElement?.classList.contains('layer-row')&&document.activeElement.dataset.nodeId===expected&&document.querySelector('.layer-row.active')?.dataset.nodeId===expected,nodeId)}
+  catch(error){const detail=await editor.evaluate(()=>({active:{className:document.activeElement?.className,nodeId:document.activeElement?.dataset?.nodeId},leftDock:document.querySelector('#leftDock')?.className,layersPanel:document.querySelector('#leftPanelLayers')?.className,rows:[...document.querySelectorAll('.layer-row')].map(item=>({id:item.dataset.nodeId,tabIndex:item.tabIndex,pressed:item.getAttribute('aria-pressed'),active:item.classList.contains('active'),rects:item.getClientRects().length}))}));throw new Error(`Layer keyboard focus failed for ${nodeId}: ${JSON.stringify(detail)}`,{cause:error})}
+ };
+ assert.equal(await row.getAttribute('tabindex'),'0','the primary selection is the single layer-tree Tab stop');
+ assert.equal(await secondRow.getAttribute('tabindex'),'-1');
+ assert.equal(await secondRow.getAttribute('aria-pressed'),'false');
+ await row.focus();assert.equal(await row.evaluate(element=>document.activeElement===element),true,'the selected layer row accepts keyboard focus');await editor.keyboard.press('ArrowDown');
+ await waitForLayerFocus(textId);
+ assert.equal(await secondRow.getAttribute('tabindex'),'0','arrow selection updates the roving Tab stop');
+ assert.equal(await secondRow.getAttribute('aria-pressed'),'true','the locked layer remains selectable and exposes its selected state');
+ assert.equal(await secondRow.evaluate(element=>element.classList.contains('locked')),true,'keyboard navigation preserves the locked-layer state');
+ await editor.keyboard.press('ArrowUp');
+ await waitForLayerFocus(id);
+ await editor.keyboard.press('Home');
+ const rootId=model.document.pages[pageId].rootId;
+ await waitForLayerFocus(rootId);
+ await editor.keyboard.press('End');
+ await waitForLayerFocus(textId);
+ const inspectorToggle=editor.locator('#openInspector');await inspectorToggle.focus();await editor.keyboard.press('Enter');
+ await editor.waitForFunction(()=>document.querySelector('#openInspector')?.getAttribute('aria-expanded')==='true');
+ assert.equal(await editor.locator('.inspector-selection b').textContent(),'Zárolt második réteg','keyboard-only layer selection updates the Inspector target');
+ assert.match(await editor.locator('.inspector-locked-note').textContent(),/zárolt/i,'the selected locked layer stays read-only in the Inspector');
+ await inspectorToggle.focus();await editor.keyboard.press('Enter');
+ await editor.waitForFunction(()=>document.querySelector('#openInspector')?.getAttribute('aria-expanded')==='false');
+ await editor.evaluate(()=>window.sanciEditor.showLeftTab('layers',{save:false}));
  // Focus and F2 stay in one browser action so a render after a save cannot
  // leave a gap between focusing the layer and dispatching its rename shortcut.
  const open=async()=>{

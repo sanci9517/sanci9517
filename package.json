@@ -25,7 +25,7 @@
     "test:site-access": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-site-membership.test.js tests/web013-admin-tenant-gate.test.js",
     "test:site-settings": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-site-scoped-settings.test.js",
     "test:forms": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/forms-contract.test.js tests/forms-migration-candidate.test.js tests/forms-migration-release.test.js tests/forms-retention.test.js tests/forms-routes.test.js",
-    "test:forms:browser": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-form-public-page.test.js tests/browser/editor-forms-inspector.test.js",
+    "test:forms:browser": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-form-public-page.test.js tests/browser/editor-forms-inspector.test.js tests/browser/admin-forms-inbox.test.js",
     "test:web013:migration-chain": "node --test tests/web013-manual-migration-chain.test.js",
     "test:tenant-preview": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-tenant-preview.test.js",
     "test:tenant-navigation": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-tenant-navigation.test.js",

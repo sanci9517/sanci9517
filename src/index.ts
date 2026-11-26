@@ -119,13 +119,21 @@ export default {
       }
       return env.ASSETS.fetch(assetRequest("/admin-media.html", request));
     }
+    if (pathname === "/admin/forms") {
+      const user = await getAuthenticatedUser(request, env);
+      if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
+      if (env.SITE_MEMBERSHIP_ENFORCEMENT !== "enabled" && !hasRole(user, "editor")) {
+        return new Response("Forbidden", { status: 403 });
+      }
+      return env.ASSETS.fetch(assetRequest("/admin-forms.html", request));
+    }
     if (pathname === "/admin/editor") {
       const user = await getAuthenticatedUser(request, env);
       if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
       return env.ASSETS.fetch(assetRequest("/editor-v2/index.html", request));
     }
     // Retired entry points must not expose the backing HTML assets directly.
-    if (["/admin-media", "/admin-schedule", "/admin-design", "/admin-login", "/admin-home", "/admin-media.html", "/admin-schedule.html", "/admin-design.html", "/admin-login.html", "/admin-home.html", "/admin.html", "/admin/home", "/editor-v2", "/editor-v2/index.html", "/about.html", "/community.html", "/contact.html", "/schedule.html", "/tiktok.html", "/twitch.html", "/vod.html", "/youtube.html"].includes(pathname)) {
+    if (["/admin-media", "/admin-schedule", "/admin-design", "/admin-login", "/admin-home", "/admin-media.html", "/admin-schedule.html", "/admin-forms.html", "/admin-design.html", "/admin-login.html", "/admin-home.html", "/admin.html", "/admin/home", "/editor-v2", "/editor-v2/index.html", "/about.html", "/community.html", "/contact.html", "/schedule.html", "/tiktok.html", "/twitch.html", "/vod.html", "/youtube.html"].includes(pathname)) {
       return new Response("Gone", { status: 410 });
     }
     // Legacy SANCI-only sections were consolidated into single-purpose pages.

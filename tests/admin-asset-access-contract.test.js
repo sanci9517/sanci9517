@@ -6,7 +6,7 @@ const worker = readFileSync(new URL("../src/index.ts", import.meta.url), "utf8")
 const workerConfig = JSON.parse(readFileSync(new URL("../wrangler.jsonc", import.meta.url), "utf8"));
 
 test("canonical Admin and Editor routes require authentication", () => {
-  for (const path of ["/admin", "/admin/editor", "/admin/media", "/admin/schedule"]) {
+  for (const path of ["/admin", "/admin/editor", "/admin/media", "/admin/schedule", "/admin/forms"]) {
     const marker = `if (pathname === "${path}") {`;
     const start = worker.indexOf(marker);
     assert.ok(start >= 0, `Missing ${path} route`);
@@ -17,7 +17,7 @@ test("canonical Admin and Editor routes require authentication", () => {
 });
 
 test("retired entry points return 410 without exposing backing HTML", () => {
-  for (const path of ["/admin-login", "/admin-media", "/admin-schedule", "/admin-design", "/admin-home", "/admin-login.html", "/admin-media.html", "/admin-schedule.html", "/admin-design.html", "/admin-home.html", "/admin.html", "/admin/home", "/editor-v2", "/editor-v2/index.html"]) {
+  for (const path of ["/admin-login", "/admin-media", "/admin-schedule", "/admin-design", "/admin-home", "/admin-login.html", "/admin-media.html", "/admin-schedule.html", "/admin-forms.html", "/admin-design.html", "/admin-home.html", "/admin.html", "/admin/home", "/editor-v2", "/editor-v2/index.html"]) {
     assert.ok(worker.includes(`"${path}"`), `Missing retired entry: ${path}`);
   }
   assert.match(worker, /return new Response\("Gone", \{ status: 410 \}\)/);

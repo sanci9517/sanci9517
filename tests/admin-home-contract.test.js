@@ -80,6 +80,11 @@ test("dashboard reads real canonical APIs instead of hard-coded creator metrics"
   assert.match(dashboard, /A provider állapota nem érhető el/);
 });
 
+test("dashboard routes its Forms capability to the authenticated submission inbox", () => {
+  assert.match(dashboard, /<a class="capability-cta" href="\/admin\/forms">Űrlapbeküldések megnyitása<\/a>/);
+  assert.match(worker, /if \(pathname === "\/admin\/forms"\) \{[\s\S]*?getAuthenticatedUser\(request, env\)[\s\S]*?assetRequest\("\/admin-forms\.html", request\)/);
+});
+
 test("dashboard offers a purple-accented light/dark theme toggle", () => {
   assert.match(dashboard, /id="themeToggle"/);
   assert.match(dashboard, /data-theme="light"/);
@@ -159,7 +164,7 @@ test("future modules are visibly disabled rather than presented as implemented",
 
 test("every dashboard link targets the canonical Admin, Editor, public site, or an existing section", () => {
   const destinations = [...dashboard.matchAll(/\bhref="([^"]+)"/g)].map((match) => match[1]);
-  const allowed = new Set(["/admin", "/admin/editor", "/admin/design", "/admin/media", "/admin/schedule", "/", "#platformCapabilities"]);
+  const allowed = new Set(["/admin", "/admin/editor", "/admin/design", "/admin/media", "/admin/schedule", "/admin/forms", "/", "#platformCapabilities"]);
   assert.ok(destinations.length > 0, "dashboard must contain navigable destinations");
   for (const destination of destinations) {
     assert.ok(allowed.has(destination), `unexpected dashboard destination: ${destination}`);

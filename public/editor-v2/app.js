@@ -1902,11 +1902,24 @@ function renderLayers(){
     row.dataset.nodeId=id;
     row.draggable=node.id!==current.rootId&&!locked;
     row.className=`layer-row ${state.selection.primaryId===id?'active':''} ${locked?'locked':''} ${inheritedLock?'locked-ancestor':''}`;
+    row.tabIndex=state.selection.primaryId===id?0:-1;
+    row.setAttribute('aria-pressed',String(state.selection.ids.includes(id)));
     row.style.paddingLeft=`${8+depth*14}px`;
     const children=getChildren(current,id);
     row.innerHTML=`<span class="layer-caret">${children.length?'▸':'·'}</span><strong>${escapeHtml(node.name||node.type)}</strong><small>${escapeHtml(node.type)}</small><span class="layer-drag-handle" role="button" tabindex="-1" aria-label="Elem mozgatása">⠿</span>${locked?`<span class="layer-lock" title="${node.locked?'Zárolt elem':'Zárolt tároló része'}" aria-label="${node.locked?'Zárolt elem':'Zárolt tároló része'}">🔐</span>`:''}`;
     row.addEventListener('keydown',event=>{
       if(event.key==='F2'&&node.id!==current.rootId&&!locked){event.preventDefault();event.stopPropagation();beginLayerRename(id)}
+      if(event.altKey||event.ctrlKey||event.metaKey||!['ArrowUp','ArrowDown','Home','End'].includes(event.key))return;
+      const rows=[...root.querySelectorAll('.layer-row')],index=rows.indexOf(row);
+      if(index<0||rows.length===0)return;
+      const nextIndex=event.key==='Home'?0:event.key==='End'?rows.length-1:index+(event.key==='ArrowDown'?1:-1);
+      event.preventDefault();event.stopPropagation();
+      const targetId=rows[Math.max(0,Math.min(rows.length-1,nextIndex))]?.dataset.nodeId;
+      if(!targetId||targetId===id)return;
+      selectNodeInteraction(targetId,{});
+      if(state.selection.primaryId!==targetId)return;
+      const target=root.querySelector(`.layer-row[data-node-id="${CSS.escape(targetId)}"]`);
+      if(target){target.focus({preventScroll:true});target.scrollIntoView({block:'nearest'})}
     });
     const handle=row.querySelector('.layer-drag-handle');
     row.ondragstart=event=>handleLayerDragStart(id,event,row);

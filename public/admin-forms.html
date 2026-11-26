@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="color-scheme" content="dark light">
+  <title>Űrlapbeküldések | SANCI9517 Admin</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0c0a13;--surface:#15121e;--surface-raised:#201a2d;--line:#49385f;--text:#f6f2fb;--muted:#c0b8cc;--accent:#d5b5ff;--danger:#ff9da9;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 10% 0,#28203a 0,transparent 48%),var(--bg);color:var(--text)}
+    a{color:var(--accent)}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+    .wrap{width:min(1180px,calc(100% - 32px));margin:auto}.top{border-bottom:1px solid var(--line);background:#0c0a13eF}.top-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 0}.brand{font-size:14px;font-weight:900;letter-spacing:.12em;color:#fff;text-decoration:none}.topnav{display:flex;gap:8px;flex-wrap:wrap}.topnav a{display:inline-flex;align-items:center;min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;color:var(--muted);text-decoration:none;font-size:13px}
+    main{padding:clamp(24px,5vw,52px) 0 80px}h1{font-size:clamp(30px,5vw,50px);line-height:1.08;letter-spacing:-.045em;margin:8px 0 12px}.eyebrow{font-size:11px;letter-spacing:.16em;font-weight:850;color:var(--accent)}.intro{max-width:850px;margin:0 0 28px;color:var(--muted)}
+    .panel{border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#191522,#11101a);padding:clamp(16px,3vw,26px);min-width:0}.toolbar{display:grid;grid-template-columns:minmax(210px,.75fr) minmax(240px,1fr) auto;gap:12px;align-items:end}.field{display:grid;gap:6px;color:var(--muted);font-size:13px;font-weight:700}.field select,.field input{width:100%;min-height:46px;padding:10px 12px;border:1px solid #66557d;border-radius:10px;background:#0c0a13;color:var(--text)}.button{min-height:44px;padding:9px 14px;border:1px solid #66557d;border-radius:10px;background:var(--surface-raised);color:var(--text);font-weight:750}.button:hover{border-color:var(--accent)}.button.danger{border-color:#7a3c4b;color:#ffdbe0}.button:disabled{opacity:.55;cursor:wait}
+    .status{min-height:26px;margin:16px 0 8px;color:var(--muted);font-weight:650}.status[data-kind=error]{color:var(--danger)}.status[data-kind=success]{color:#9ce8bd}.list{display:grid;gap:12px;margin-top:14px}.submission{border:1px solid #3f354f;border-radius:14px;padding:16px;background:#100e17;min-width:0}.submission-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap}.submission h2{margin:0;font-size:18px;overflow-wrap:anywhere}.meta{display:flex;gap:8px 18px;flex-wrap:wrap;margin:8px 0 13px;color:var(--muted);font-size:12px}.values{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:8px;margin:0}.value{min-width:0;padding:10px;border-radius:9px;background:#191522;border:1px solid #30273e}.value dt{font-size:11px;color:var(--muted);font-weight:750}.value dd{margin:4px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}.consent{margin-top:12px;border-top:1px solid #3f354f;padding-top:10px;color:var(--muted);font-size:12px}.consent summary{cursor:pointer;min-height:34px;color:var(--accent);font-weight:700}.consent p{white-space:pre-wrap;overflow-wrap:anywhere}.row-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.row-actions label{color:var(--muted);font-size:12px}.row-actions select{min-height:42px;border:1px solid #66557d;border-radius:9px;padding:7px 9px;background:#0c0a13;color:var(--text)}.pager{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:18px}.pager p{margin:0;color:var(--muted);font-size:13px}.empty{padding:30px 16px;border:1px dashed #66557d;border-radius:12px;color:var(--muted);text-align:center}
+    @media(max-width:760px){.toolbar{grid-template-columns:1fr}.toolbar>.button{width:100%}.submission-head{display:grid}.row-actions{width:100%}.row-actions select{flex:1}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <header class="top"><div class="wrap top-inner"><a class="brand" href="/admin">SANCI9517 / ADMIN</a><nav class="topnav" aria-label="Admin navigáció"><a href="/admin">Vezérlőpult</a><a href="/admin/editor">Visual Editor</a><a href="/admin/media">Médiatár</a></nav></div></header>
+  <main class="wrap">
+    <span class="eyebrow">ŰRLAPOK / BEÉRKEZŐ ÜZENETEK</span>
+    <h1>Űrlapbeküldések</h1>
+    <p class="intro">A kiválasztott webhely beérkezett üzeneteit itt keresheted és kezelheted. Az űrlap vagy az oldal piszkozatának mentése nem publikál; a publikálás továbbra is külön művelet az Editorban.</p>
+    <section class="panel" aria-labelledby="inboxTitle" aria-busy="true" id="inbox">
+      <h2 id="inboxTitle">Beérkező üzenetek</h2>
+      <div class="toolbar">
+        <label class="field" for="formSelect">Űrlap<select id="formSelect" disabled><option value="">Űrlapok betöltése…</option></select></label>
+        <label class="field" for="searchInput">Keresés a beküldött adatokban<input id="searchInput" type="search" maxlength="100" autocomplete="off" placeholder="Név, e-mail vagy üzenetrészlet" disabled></label>
+        <button class="button" type="button" id="refreshButton" disabled>Frissítés</button>
+      </div>
+      <p class="status" id="status" role="status" aria-live="polite">Űrlapok betöltése…</p>
+      <div class="list" id="submissions" aria-live="polite" aria-busy="true"></div>
+      <div class="pager"><button class="button" type="button" id="previousPage" disabled>Előző oldal</button><p id="pageStatus" role="status" aria-live="polite"></p><button class="button" type="button" id="nextPage" disabled>További beküldések</button></div>
+    </section>
+  </main>
+  <script type="module" src="/assets/admin-forms.js?v=20261126-forms-inbox-v1"></script>
+</body>
+</html>
