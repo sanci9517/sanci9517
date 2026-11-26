@@ -171,6 +171,37 @@ function pasteSelectedNodes(){
  if(pasted)setStatus(`${nodeClipboard.rootIds.length} elem beillesztve a piszkozatba`);
  return pasted;
 }
+function isCanvasDeleteShortcut(event){
+ if(!['Delete','Backspace'].includes(event.key)||event.altKey||event.ctrlKey||event.metaKey||event.shiftKey)return false;
+ const target=event.target instanceof Element?event.target:null;
+ const active=document.activeElement instanceof Element?document.activeElement:null;
+ const editing='input,textarea,select,[contenteditable="true"],[role="textbox"],.rich-text-editor,.plain-text-editor';
+ if(target?.closest(editing)||active?.closest(editing))return false;
+ if(active?.closest('a,button,summary,video,audio,[role="button"]')&&!active.closest('.layer-row,.canvas-keyboard-move,.canvas-resize-handle'))return false;
+ return Boolean(state?.selection?.ids?.length&&(document.activeElement===document.body||active?.closest('#canvas,#layersTree')));
+}
+function deleteSelectedNodes(){
+ if(!state||!flushLayerRename()||!commitActiveInspectorControl()||flushRichTextDraft?.()===false)return false;
+ const current=page(),ids=state.selection.ids||[],roots=selectedClipboardRoots(current,ids);
+ if(!current||!ids.length||roots.length===0||ids.some(id=>{
+   const node=current.nodes[id];return !node||id===current.rootId||isNodeEffectivelyLocked(current,node)
+ })){
+   setStatus('A gyökér-, zárolt vagy nem törölhető kijelölés változatlan maradt.');return false;
+ }
+ const focusId=current.nodes[roots[0]]?.parentId||current.rootId;
+ try{
+   executeBatch(state,roots.map(nodeId=>({type:'element.delete',payload:{nodeId}})),{label:'Kijelölt elemek törlése',atomic:true});
+   setSelection(state,[focusId],focusId);
+   render();
+   const focusRow=$(`#layersTree .layer-row[data-node-id="${CSS.escape(focusId)}"]`);
+   focusRow?.focus({preventScroll:true});focusRow?.scrollIntoView({block:'nearest'});
+   setStatus(`${roots.length} kijelölt elem törölve a piszkozatból`);
+   return true;
+ }catch(error){
+   diagnostics.add({source:'keyboard-delete',code:'SANCI-CMD-E001',message:error instanceof Error?error.message:String(error),context:'selection.delete',error});
+   setStatus('A kijelölés nem törölhető.');return false;
+ }
+}
 function isCanvasClipboardShortcut(event){
  const target=event.target instanceof Element?event.target:null;
  const active=document.activeElement instanceof Element?document.activeElement:null;
@@ -1933,7 +1964,8 @@ function renderLayers(){
     row.className=`layer-row ${state.selection.primaryId===id?'active':''} ${locked?'locked':''} ${inheritedLock?'locked-ancestor':''}`;
     row.tabIndex=state.selection.primaryId===id?0:-1;
     row.setAttribute('aria-pressed',String(state.selection.ids.includes(id)));
-    row.setAttribute('aria-keyshortcuts','Shift+ArrowUp Shift+ArrowDown Control+Space Meta+Space');
+    row.setAttribute('aria-keyshortcuts','Shift+ArrowUp Shift+ArrowDown Control+Space Meta+Space Delete Backspace');
+    row.setAttribute('aria-description','Nyilak: rétegnavigáció; Ctrl vagy Command+Space: kijelölés; Delete vagy Backspace: kijelölt elemek törlése; F2: átnevezés. A gyökér és a zárolt elemek nem törölhetők.');
     row.style.paddingLeft=`${8+depth*14}px`;
     const children=getChildren(current,id);
     row.innerHTML=`<span class="layer-caret">${children.length?'▸':'·'}</span><strong>${escapeHtml(node.name||node.type)}</strong><small>${escapeHtml(node.type)}</small><span class="layer-drag-handle" role="button" tabindex="-1" aria-label="Elem mozgatása">⠿</span>${locked?`<span class="layer-lock" title="${node.locked?'Zárolt elem':'Zárolt tároló része'}" aria-label="${node.locked?'Zárolt elem':'Zárolt tároló része'}">🔐</span>`:''}`;
@@ -2258,7 +2290,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    event.preventDefault();
    activateInspectorTab(INSPECTOR_TABS[nextIndex],{focus:true});
  });
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&mobileTouch.active){e.preventDefault();cancelMobileMultiSelect();return}if((e.ctrlKey||e.metaKey)&&['c','v'].includes(e.key.toLowerCase())&&isCanvasClipboardShortcut(e)){e.preventDefault();if(e.key.toLowerCase()==='c')copySelectedNodes();else pasteSelectedNodes();return}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save(false)}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();if(state&&flushLayerRename()&&commitActiveInspectorControl()&&flushRichTextDraft?.()!==false){execute(state,{type:e.shiftKey?'history.redo':'history.undo'});render()}}});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&mobileTouch.active){e.preventDefault();cancelMobileMultiSelect();return}if(isCanvasDeleteShortcut(e)){e.preventDefault();deleteSelectedNodes();return}if((e.ctrlKey||e.metaKey)&&['c','v'].includes(e.key.toLowerCase())&&isCanvasClipboardShortcut(e)){e.preventDefault();if(e.key.toLowerCase()==='c')copySelectedNodes();else pasteSelectedNodes();return}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save(false)}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();if(state&&flushLayerRename()&&commitActiveInspectorControl()&&flushRichTextDraft?.()!==false){execute(state,{type:e.shiftKey?'history.redo':'history.undo'});render()}}});
  renderPalette();loadTwitchConnection();Promise.all([loadPages(),loadPaletteFavorites()]).then(()=>{if(pendingAccountViewport)applyAccountViewport(pendingAccountViewport);return accountPreferenceWrite}).then(()=>window.__sanciEditorBoot?.ready()).catch(showError);
 });
 
