@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261126131839-b4cde20e",
+  "task": "77.44.7.D-ci-efficiency",
+  "trigger": "manual",
+  "started_at": "2026-11-26T13:18:39.520Z",
+  "finished_at": "2026-11-26T13:20:26.722Z",
+  "wall_seconds": 107,
+  "paused_seconds": 0,
+  "measured_seconds": 107,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "Confirmed the exact-SHA Editor Core browser-layout job is still active and the full 62-file suite is serialized by the Linux subreaper; existing tests already cover layer Shift-range/toggle, keyboard move/resize, and clipboard, so no duplicate implementation or risky concurrency was introduced. Recorded the CI and release snapshot in standalone evidence; no D1/R2 mutation, dispatch, or deployment.",
+  "evidence": [
+    "docs/evidence/editor-d06-ci-and-next-slice-audit-2026-11-26.json"
+  ],
+  "checks": "PASS — evidence JSON parse; scripts/check-canonical-plan.py (13 master files, 396 mappings, acceptance NOT_CERTIFIED); scripts/build-feature-traceability.py --check (396/396); scripts/audit-active-plan-point.py (77.44 -> 77.44.7.D OPEN/NOT_CERTIFIED); git diff --check. No implementation or CI rerun performed.",
+  "started_revision": "d838bfdf21e7d3dc06b97a4148fcb51cce0ce831",
+  "finished_revision": "d838bfdf21e7d3dc06b97a4148fcb51cce0ce831",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
