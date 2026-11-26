@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-26",
+  "canonical_plan": {
+    "path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "sha256_before_work": "03253e0a7d80bae918c1065128f31bcf969b83061aa6344a88fe6382411dd45b",
+    "active_item": "77.44.7.D / D-06; EDT-037 keyboard alternative for Canvas element movement"
+  },
+  "finding": "Pointer dragging had no equivalent for a keyboard-only user to reposition a selected Canvas element. The existing Page Model command and undo history support responsive geometry updates, so native keyboard controls can use the same path without changing Save/Publish semantics.",
+  "change": {
+    "runtime_commit": "PENDING",
+    "branch": "v2/foundation",
+    "files": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/editor-refresh.css",
+      "public/editor-v2/index.html",
+      "package.json",
+      "tests/editor-public-asset-cache-bust.test.js",
+      "tests/browser/editor-canvas-keyboard-move.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "details": [
+      "The selected, effectively-unlocked non-root Canvas element exposes a focusable move control. Arrow keys move by one CSS pixel; Shift plus an arrow moves by ten CSS pixels. Modified browser/system shortcuts are not intercepted.",
+      "Movement uses the existing responsive.set command/history with a per-node/device typing group, rerenders and restores focus to the control, and announces the new location in the live status region.",
+      "Root and effectively-locked nodes do not expose the control. The responsive geometry stays in the Page Model; movement does not autosave or publish.",
+      "The editor cache-bust token and its regression assertion were updated; generated source traceability was rebuilt."
+    ],
+    "third_party_code_or_dependency": "NONE; native HTML button and existing Editor command/history APIs are used."
+  },
+  "local_checks": {
+    "targeted_chromium": {
+      "result": "PASS; 2/2 at 390px and 1366px",
+      "assertions": [
+        "Keyboard movement and 1px/10px step geometry at mobile and desktop viewports.",
+        "Undo/Redo restore and reapply movement without a remote write.",
+        "Save stores the Page Model draft and reload preserves responsive geometry; published state stays unchanged until explicit Publish.",
+        "Root and locked elements cannot be moved through the Canvas keyboard control."
+      ]
+    },
+    "npm_run_test_editor": "PASS; 24/24 test files, preferences 12/12 and Linux subreaper 4/4",
+    "typecheck": "PASS",
+    "web013_migration_gate": "PASS; deploy:safe does not apply production D1 migrations",
+    "plan_contract": "PASS; 16/16",
+    "canonical_plan_integrity": "PASS; one complete 13-file master, one current cursor",
+    "feature_traceability": "PASS; 396/396 mappings",
+    "active_plan_audit": {
+      "result": "PASS",
+      "cursor": "77.44.7.D",
+      "features": 396,
+      "partial_source": 148,
+      "unverified": 248,
+      "acceptance": "NOT_CERTIFIED"
+    },
+    "node_syntax_and_cache_bust": "PASS",
+    "git_diff_check": "PASS",
+    "local_full_editor_browser_layout": "PARTIAL; first 34/62 files completed with no failures, then stopped to avoid duplicating the exact-SHA hosted full-suite gate after the long serial PARTIAL inspector matrix passed. This is not a complete-suite PASS.",
+    "wrangler_dry_run": {
+      "result": "PASS; exit 0",
+      "version": "4.130.0",
+      "assets_read": 205,
+      "upload_kib": 476.98,
+      "gzip_kib": 118.26,
+      "migration_apply": false,
+      "note": "Wrangler reported an EROFS debug-log warning from the read-only home directory; asset bundling completed successfully."
+    }
+  },
+  "production_preflight": {
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "method": "Cloudflare D1 Query API; two standalone SELECT statements",
+    "queries": [
+      {
+        "sql": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+        "latest_marker": "0032_forms_service.sql",
+        "rows_written": 0,
+        "changes": 0,
+        "changed_db": false
+      },
+      {
+        "sql": "SELECT COUNT(*) AS tables_count FROM sqlite_master WHERE type='table'",
+        "table_count": 38,
+        "rows_written": 0,
+        "changes": 0,
+        "changed_db": false
+      }
+    ],
+    "migration_or_business_data_write": false,
+    "r2_operation": "NONE"
+  },
+  "pre_change_production_baseline": {
+    "deployment_id": "3633b3d1-8597-4427-a2e7-9a089ddb4f56",
+    "worker_version_id": "78183ef8-5099-4e4b-9db4-d55e98ca88f3",
+    "traffic_percent": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?release_preflight=20261126",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "current_head_asset_hashes_match_production": {
+      "public/editor-v2/index.html": "1c20d2a7c588f914d5cb20151c30bc9b0babf0de2ff56b3d6fcc098f284e811f",
+      "public/editor-v2/app.js": "c7e2164c95cf2b1cbe0f824c687f47ceee0a983e73175d169567bc3f48839628",
+      "public/editor-v2/editor-refresh.css": "8c6d14bfaa0f8846552e07c9f774cc7d05b20a48f5f57ef2afc73f74416908f4"
+    }
+  },
+  "release": {
+    "push": "PENDING",
+    "exact_sha_ci": "PENDING",
+    "cloudflare_build_and_deploy": "PENDING",
+    "production_smoke_for_changed_source": "PENDING"
+  },
+  "acceptance": {
+    "this_slice": "IMPLEMENTED; release pending",
+    "EDT_037": "PARTIAL_SOURCE; layer-list navigation and Canvas keyboard movement do not certify all planned keyboard operations or complete feature acceptance",
+    "D_06": "OPEN / NOT CERTIFIED",
+    "D_01_to_D_07": "OPEN / NOT CERTIFIED",
+    "visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_and_physical_device_acceptance": "DEFERRED_UNTIL_COMPLETE_VISUAL_EDITOR",
+    "save_and_publish_are_separate": true
+  },
+  "cost_and_data_safety": {
+    "new_paid_service_or_dependency": false,
+    "new_cost": "0 Ft",
+    "production_d1_migration_or_mutation": false,
+    "r2_mutation_or_deletion": false
+  },
+  "next_gate": "Push by normal fast-forward after exact-head check; verify exact-SHA hosted Editor Core CI and Cloudflare release before changing the pending release evidence fields."
+}

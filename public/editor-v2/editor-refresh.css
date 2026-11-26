@@ -259,6 +259,10 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 .page-canvas .node:hover { outline: 1px dashed #8da7d3; outline-offset: 1px; }
 .page-canvas .node.selected { outline: 2px solid var(--accent); }
 .page-canvas .node-head { position: absolute; margin: 0; pointer-events: none; }
+.page-canvas .node-head:has(> .canvas-keyboard-move) { visibility: visible; z-index: 20; }
+.canvas-keyboard-move { position: relative; z-index: 21; min-height: 28px; margin-left: 8px; padding: 3px 8px; border: 1px solid #43669c; border-radius: 6px; background: #142742; color: #e8f0ff; font: 600 11px/1.2 Inter,system-ui,sans-serif; pointer-events: auto; touch-action: manipulation; }
+.canvas-keyboard-move:hover { background: #1d3d67; border-color: #79a7f2; }
+.canvas-keyboard-move:focus-visible { outline: 3px solid #7eb0ff; outline-offset: 3px; }
 .page-canvas .node-content { min-height: 0; }
 .page-canvas .richtext-empty { min-height: 48px; }
 .page-canvas .node:has(> .canvas-edit-richtext) { min-height: 44px; }

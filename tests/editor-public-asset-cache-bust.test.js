@@ -24,13 +24,13 @@ test('the Editor and public renderer release tokens bust the structured accessib
     readFile(resolve(import.meta.dirname,'../public/visual-page.html'),'utf8'),
     readFile(resolve(import.meta.dirname,'../public/assets/page-renderer.js'),'utf8')
   ]);
-  assert.match(html,/href="\/editor-v2\/editor-refresh\.css\?v=20261125-forms-service-v1"/,
-    'the deployed HTML must request the stylesheet version containing palette-favorites styles');
+  assert.match(html,/href="\/editor-v2\/editor-refresh\.css\?v=20261126-canvas-keyboard-move-v1"/,
+    'the deployed HTML must request the stylesheet containing the selected canvas keyboard-move control');
   assert.match(css,/\.element-favorite-toggle\s*\{/,
     'the stylesheet referenced by the versioned link must include the palette-favorites UI');
   const recoveryVersion='20261124-edt042-publish-recovery-safe-label-v1';
   const editorEntryVersion='20261125-edt016-child-reference-limit-v1';
-  const editorScriptVersion='20261126-layer-keyboard-nav-v1';
+  const editorScriptVersion='20261126-canvas-keyboard-move-v1';
   const mediaPlaybackVersion='20261125-forms-service-v1';
   const structuredContentVersion='20261125-forms-service-v1';
   assert.match(html,new RegExp(`src="/editor-v2/app\\.js\\?v=${editorScriptVersion}"`),
@@ -88,7 +88,7 @@ test('the EDT-040 in-view trigger refreshes both renderers and the shared motion
   const motionVersion='20261123-edt040-in-view-motion-v1';
   const domIdVersion='20261125-d06-authored-carousel-slide-semantics-v1';
   const editorEntryVersion='20261125-edt016-child-reference-limit-v1';
-  const editorScriptVersion='20261126-layer-keyboard-nav-v1';
+  const editorScriptVersion='20261126-canvas-keyboard-move-v1';
   const mediaPlaybackVersion='20261125-forms-service-v1';
   const structuredContentVersion='20261125-forms-service-v1';
   assert.match(editorHtml,new RegExp(`editor-motion\\.css\\?v=${motionVersion}`));

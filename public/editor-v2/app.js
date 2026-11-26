@@ -409,6 +409,20 @@ function finishCanvasDrag(id,event,cancelled=false){
 function beginCanvasResize(id,event,element){const current=page();const node=current?getNode(current,id):null;if(!current||!node||id===current.rootId||isNodeEffectivelyLocked(current,node)||event.button!==0)return;const box=element.getBoundingClientRect();canvasResize={nodeId:id,pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,startWidth:box.width/(zoom||1),startHeight:box.height/(zoom||1),width:box.width/(zoom||1),height:box.height/(zoom||1),element,device:state.viewport.device,moved:false,handle:event.currentTarget};try{event.currentTarget.setPointerCapture(event.pointerId)}catch{}event.preventDefault();event.stopPropagation()}
 function moveCanvasResize(id,event){const r=canvasResize;if(!r||r.nodeId!==id||r.pointerId!==event.pointerId)return;const dx=(event.clientX-r.startX)/(zoom||1),dy=(event.clientY-r.startY)/(zoom||1);if(Math.abs(dx)>2||Math.abs(dy)>2)r.moved=true;if(!r.moved)return;r.width=Math.max(24,Math.round(r.startWidth+dx));r.height=Math.max(24,Math.round(r.startHeight+dy));r.element.style.width=r.width+'px';r.element.style.height=r.height+'px';updateCanvasExtent();event.preventDefault();event.stopPropagation()}
 function finishCanvasResize(id,event,cancelled=false){const r=canvasResize;if(!r||r.nodeId!==id||r.pointerId!==event.pointerId)return;canvasResize=null;try{r.handle.releasePointerCapture(event.pointerId)}catch{}if(!cancelled&&r.moved){try{command('responsive.set',{nodeId:id,device:r.device,patch:{width:r.width+'px',height:r.height+'px'}},{render:false})}catch(error){showError(error);return}}render()}
+function moveCanvasNodeByKeyboard(id,event){
+  const direction={ArrowLeft:{x:-1,y:0},ArrowRight:{x:1,y:0},ArrowUp:{x:0,y:-1},ArrowDown:{x:0,y:1}}[event.key];
+  if(!direction||event.altKey||event.ctrlKey||event.metaKey)return;
+  const current=page(),node=current?.nodes?.[id],element=canvas.querySelector(`.node[data-node-id="${CSS.escape(id)}"]`);
+  if(!node||!element||id===current.rootId||isNodeEffectivelyLocked(current,node))return;
+  event.preventDefault();event.stopPropagation();
+  const computed=getComputedStyle(element),left=Number.parseFloat(computed.left),top=Number.parseFloat(computed.top),step=event.shiftKey?10:1;
+  const x=(Number.isFinite(left)?left:0)+direction.x*step,y=(Number.isFinite(top)?top:0)+direction.y*step,device=state.viewport.device;
+  const saved=command('responsive.set',{nodeId:id,device,patch:{x:`${x}px`,y:`${y}px`}},{render:false,typingGroup:`canvas-keyboard-move:${id}:${device}`});
+  if(!saved)return;
+  render();
+  canvas.querySelector(`.canvas-keyboard-move[data-node-id="${CSS.escape(id)}"]`)?.focus({preventScroll:true});
+  setStatus(`Nem mentett módosítás · ${node.name||node.type} helye: ${x}px, ${y}px`);
+}
 function syncTextSurfaces(nodeId,value,source=null){
   const node=page()?.nodes?.[nodeId];if(!node)return;
   const canvasSurface=canvas.querySelector(`.node[data-node-id="${CSS.escape(nodeId)}"] > .node-content`);
@@ -538,7 +552,7 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
   [node.states?.hover?.color,'visual-hover-text','--sanci-hover-color'],
   [node.states?.focus?.outlineColor,'visual-focus-outline','--sanci-focus-outline']
  ]){const color=validHex(value);if(color){el.classList.add(klass);el.style.setProperty(variable,color)}}
- const head=document.createElement('div');head.className='node-head';const headName=document.createElement('span');headName.textContent=node.name||node.type;const headType=document.createElement('small');headType.textContent=node.type;head.append(headName,headType);if(node.type!=='root'&&!visibility.effectiveVisible){const note=document.createElement('span');note.className='node-visibility-indicator';note.textContent=visibility.ownVisible?'Szülő miatt rejtve':'Rejtve';note.title='Ez az elem ebben a nézetben nem jelenik meg a publikus oldalon.';head.append(note)}el.append(head);
+ const head=document.createElement('div');head.className='node-head';const headName=document.createElement('span');headName.textContent=node.name||node.type;const headType=document.createElement('small');headType.textContent=node.type;head.append(headName,headType);if(node.type!=='root'&&!visibility.effectiveVisible){const note=document.createElement('span');note.className='node-visibility-indicator';note.textContent=visibility.ownVisible?'Szülő miatt rejtve':'Rejtve';note.title='Ez az elem ebben a nézetben nem jelenik meg a publikus oldalon.';head.append(note)}if(state.selection.primaryId===id&&id!==currentPage.rootId&&!isNodeEffectivelyLocked(currentPage,node)){const move=document.createElement('button');move.type='button';move.className='canvas-keyboard-move';move.dataset.nodeId=id;move.textContent='Mozgatás';move.setAttribute('aria-label',`${node.name||node.type} elem mozgatása`);move.setAttribute('aria-keyshortcuts','ArrowLeft ArrowRight ArrowUp ArrowDown Shift+ArrowLeft Shift+ArrowRight Shift+ArrowUp Shift+ArrowDown');move.setAttribute('aria-description','A nyilak 1 képponttal, a Shift és nyíl 10 képponttal mozgat. Ctrl+Z visszavon, Ctrl+Shift+Z újra végrehajt.');move.title='Nyilak: 1 képpont · Shift + nyíl: 10 képpont · Ctrl+Z: visszavonás';move.onpointerdown=event=>event.stopPropagation();move.onclick=event=>event.stopPropagation();move.onkeydown=event=>moveCanvasNodeByKeyboard(id,event);head.append(move)}el.append(head);
   if(node.type===NODE_TYPES.CODE&&node.metadata?.codeSnippetVersion===1){
     const host=document.createElement('div');host.className='node-content code-preview';
     host.innerHTML=renderCodeSnippet(node.props?.codeSnippet??defaultCodeSnippet());
