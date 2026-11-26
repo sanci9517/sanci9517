@@ -13,11 +13,16 @@
     "remote_head_before_work": "ea117725f3d2a92f6c6dc49d8a0ccec6ff748729",
     "runtime_commit": "8ee7a093baf57eea99d7e81c414e4dbd736994b2",
     "runtime_changes_pushed": true,
-    "exact_sha_ci": "PARTIAL / IN_PROGRESS: F0, active point audit, and Twitch checks passed on 9fd06ed; Editor Core run 45719856181 remains active at browser layout step 16/24; previous two stale-fixture failures are fixed and corresponding local + D1 CI step checks pass.",
+    "exact_sha_ci": "PARTIAL / IN_PROGRESS: exact SHA ec52b7b2f87f0f7e8af9623843b008207eead385; F0 45725217173 and Twitch 45725217229 SUCCESS; Editor Core 45725217234 still running the browser layout step 16/24. The prior 9fd06ed9 Editor Core 45719856181 remains historical FAIL.",
     "deployment": "a23afc72-a38b-4f95-aa40-fcbfea709e41",
     "remote_head_after_runtime_push": "8ee7a093baf57eea99d7e81c414e4dbd736994b2",
     "test_evidence_follow_up_commit": "9fd06ed99eb706b980f4ca7bfc0fc4a3b0790ceb",
-    "remote_head_after_test_evidence_follow_up": "9fd06ed99eb706b980f4ca7bfc0fc4a3b0790ceb"
+    "remote_head_after_test_evidence_follow_up": "9fd06ed99eb706b980f4ca7bfc0fc4a3b0790ceb",
+    "test_matrix_follow_up_commits": [
+      "192cacdc test: align PARTIAL Inspector matrices with Forms",
+      "ec52b7b2 test: refresh complete PARTIAL type matrix"
+    ],
+    "remote_head_after_test_matrix_follow_up": "ec52b7b2f87f0f7e8af9623843b008207eead385"
   },
   "implementation": {
     "forms_editor": [
@@ -133,6 +138,49 @@
       "last_observed": "2026-11-25T23:34Z",
       "conclusion": null,
       "other_editor_core_steps_after_browser_layout": "WEB-013, schedule, domain, design system, Admin home are pending"
+    },
+    "forms_partial_inspector_matrix_follow_up": {
+      "files_updated": 17,
+      "fix": "Replace hard-coded 44/45 PARTIAL counts with a capability-matrix-derived count; background-image applicability count includes root and all editable PARTIAL nodes.",
+      "changed_runtime_source": false,
+      "local_chromium": [
+        {
+          "test": "tests/browser/editor-inspector-partial-types.test.js",
+          "passed": 1,
+          "failed": 0
+        },
+        {
+          "test": "tests/browser/editor-inspector-opacity-shadow-reset.test.js",
+          "passed": 1,
+          "failed": 0
+        },
+        {
+          "test": "tests/browser/editor-inspector-visual-effects-partial-types.test.js",
+          "passed": 1,
+          "failed": 0
+        },
+        {
+          "test": "tests/browser/editor-inspector-background-image-partial-types.test.js",
+          "passed": 2,
+          "failed": 0,
+          "note": "Rerun after correcting expected applicable count to include root."
+        }
+      ],
+      "local_node_check": "17/17 PASS",
+      "git_diff_check": "PASS",
+      "exact_sha_editor_core_ci": {
+        "run_id": 45725217234,
+        "status": "IN_PROGRESS",
+        "active_step": "Run Editor browser layout regression (16/24)"
+      },
+      "exact_sha_f0_baseline": {
+        "run_id": 45725217173,
+        "status": "SUCCESS"
+      },
+      "exact_sha_twitch_integration": {
+        "run_id": 45725217229,
+        "status": "SUCCESS"
+      }
     }
   },
   "production_d1": {
@@ -195,8 +243,8 @@
     "github_actions_dispatch_started": false,
     "github_repository_visibility": "public",
     "github_actions_policy": "No paid usage authorized; exact-SHA follow-up CI is user-authorized. Public repository standard runners are free.",
-    "github_actions_follow_up_rerun": "Triggered by test/evidence follow-up commit 9fd06ed; F0, plan audit and Twitch SUCCESS, Editor Core IN_PROGRESS; public repo standard runners only, no paid use",
+    "github_actions_follow_up_rerun": "User-authorized public-repository CI triggered by test commits 192cacdc/ec52b7b2. Exact-SHA F0 45725217173 and Twitch 45725217229 SUCCESS; Editor Core 45725217234 IN_PROGRESS at browser layout step 16/24 at evidence capture.",
     "cloudflare_test_only_build": "No redeploy: tests/docs excluded by verified path_excludes; latest deployment readback remains a23afc72-a38b-4f95-aa40-fcbfea709e41 with 243b2295-07b5-409d-893d-f29fdbad5053 at 100%"
   },
-  "next_gate": "Observe the already-running Editor Core run 45719856181 through completion and verify every remaining browser/schedule/domain/design/admin step. Do not start another CI job, deploy, or certify the full Editor/D point from an in-progress run."
+  "next_gate": "Poll exact-SHA Editor Core run 45725217234 to completion. If it fails, inspect job logs, repair verified failures, rerun targeted local Chromium, and only then trigger one new exact-SHA Actions run. Do not mark D-06/full Editor acceptance PASS."
 }
