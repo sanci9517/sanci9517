@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "evidence_id": "canonical-plan-recovery-2026-11-26",
+  "created_at": "2026-11-26T13:40:00Z",
+  "branch": "v2/foundation",
+  "problem_commit": "4dd8cbc0043d687b0f75e8d9db8cf25190b331d1",
+  "problem": "A GitHub Contents API read of the large canonical plan returned only its 1,195-byte tail; that truncated response was used as replacement content, reducing the plan from 1,915,780 bytes to 1,254 bytes.",
+  "recovery_source_commit": "8c59a27d7d99cda00b1b9a0f6ee6a0dda889b65b",
+  "recovery_source_bytes": 1915780,
+  "recovery_source_sha256": "4cef6aeed9d7e391a47cc6d8fc24cc707f88136c1f99b7fd9432278b861f7978",
+  "current_plan_bytes": 1917037,
+  "current_plan_lines": 5040,
+  "current_plan_sha256": "fd35ea859eec1eb9ce520f41b94e14a8d2daed802f18ad08e284826e4fbcae1f",
+  "recovery": "Restored the full canonical plan from the verified pre-truncation Git blob and appended the exact-SHA Editor Core CI success record. Removed one historical trailing-space character flagged by git diff --check.",
+  "validation": {
+    "canonical_master": "PASS: 13 master files, 396 mappings",
+    "traceability": "PASS: 396/396",
+    "active_point": "77.44 / WEB-011 -> 77.44.7.D; NOT_CERTIFIED",
+    "git_diff_check": "PASS",
+    "exact_sha_editor_core_ci": "SUCCESS: run 45824175142, source 187b16a8a6f8335b43f70b9692a1c3d8a279db39, Chromium suite 62/62 files, post-layout checks success"
+  },
+  "runtime_changed": false,
+  "worker_deploy": false,
+  "production_d1_or_r2_mutation": false,
+  "new_cost_huf": 0
+}

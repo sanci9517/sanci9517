@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261126133917-e2e99670",
+  "task": "77.44.7.D-ci-recovery",
+  "trigger": "manual",
+  "started_at": "2026-11-26T13:39:17.948Z",
+  "finished_at": "2026-11-26T13:40:24.006Z",
+  "wall_seconds": 66,
+  "paused_seconds": 0,
+  "measured_seconds": 66,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "Restored the full canonical plan after detecting a truncated Contents API update, appended verified Editor Core exact-SHA CI success, and validated canonical 13-file master/396 mapping/active-point gates. Runtime unchanged; D-06 and full Editor remain open.",
+  "evidence": [
+    "docs/evidence/canonical-plan-recovery-2026-11-26.json",
+    "docs/evidence/editor-d06-ci-and-next-slice-audit-2026-11-26.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "81af7b7c5e4f80bfc44b3aa2ecf49370bda43448",
+  "finished_revision": "81af7b7c5e4f80bfc44b3aa2ecf49370bda43448",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
