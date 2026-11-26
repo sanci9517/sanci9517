@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "evidence_id": "editor-d06-layer-keyboard-multiselect-2026-11-26",
+  "plan_point": "77.44.7.D / D-06 — EDT-037 keyboard layer multi-selection slice",
+  "status": "PARTIAL — implemented, verified, pushed, and deployed; exact-SHA Editor Core workflow was still in progress when recorded",
+  "scope": "Adds accessible keyboard multi-selection in the Layers tree while preserving the existing selection model, group/undo behavior, and draft/publish boundary. This is a bounded EDT-037 slice, not full EDT-037, D-06, or Editor acceptance.",
+  "branch": "v2/foundation",
+  "base_sha": "ef3f29dc48ed869906c4574b10a74c7c72d5d776",
+  "runtime_commit": "426a43da38cb9b726faf77b3be2df526196fa944",
+  "canonical_plan_sha256": "4cef6aeed9d7e391a47cc6d8fc24cc707f88136c1f99b7fd9432278b861f7978",
+  "change": {
+    "summary": "Layers now supports inclusive Shift+Arrow range selection anchored to the original focused layer and Ctrl/Meta+Space toggling, with focus retained after rerender, cross-parent fallback, root protection, and shortcut help/ARIA exposure.",
+    "files": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html",
+      "tests/browser/editor-layer-rename-draft.test.js",
+      "tests/editor-public-asset-cache-bust.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "public_asset_sha256": {
+      "public/editor-v2/app.js": "6be5fddcb5eaff34ecc5f810b5e179ff462a49914e16de1a5411d58f26c47b94",
+      "public/editor-v2/index.html": "f5c9881cd5bb3446b3f9ac5b475605e19910676e98d5e62f71c8fde378b751e3"
+    },
+    "new_dependency": false,
+    "production_d1_mutation": false,
+    "r2_operation": false,
+    "save_publish_separation": "unchanged; selection/group edits remain in the editor draft, Save persists draft only, and Publish remains a separate explicit action"
+  },
+  "checks": [
+    {
+      "command": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-layer-rename-draft.test.js",
+      "result": "PASS",
+      "summary": "2/2 real Chromium viewports, 390px and 1366px; range expansion/contraction, Ctrl/Meta toggle, focus and ARIA state, locked/root boundaries, grouping, undo/redo, cross-parent fallback, and the existing separate Save/Publish lifecycle."
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "summary": "25/25 Editor unit test files; preferences 12/12; Linux subreaper contract 4/4."
+    },
+    {
+      "command": "npm run test:editor:clipboard-browser",
+      "result": "PASS",
+      "summary": "1/1 Chromium clipboard browser regression; the first sandbox-only attempt was blocked from loopback listen, and the permitted local rerun passed."
+    },
+    {
+      "command": "node --check public/editor-v2/app.js && node --check tests/browser/editor-layer-rename-draft.test.js && node --test tests/editor-public-asset-cache-bust.test.js",
+      "result": "PASS",
+      "summary": "Syntax checks and cache-bust regression 1/1."
+    },
+    {
+      "command": "npm run typecheck -- --pretty false; python3 tests/plan-contract.test.py; python3 scripts/check-canonical-plan.py; python3 scripts/audit-active-plan-point.py; python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "summary": "Typecheck; plan contract 16/16; intact 13-file canonical master; all 396 traceability mappings; cursor 77.44 / WEB-011 -> 77.44.7.D; functional acceptance remains NOT_CERTIFIED."
+    },
+    {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS",
+      "summary": "Safe deployment migration guard; production release did not apply D1 migrations."
+    },
+    {
+      "command": "npx wrangler deploy --dry-run",
+      "result": "PASS",
+      "summary": "Wrangler 4.130.0; 206 assets, 476.98 KiB (118.26 KiB gzip), exit 0. A sandbox EROFS debug-log warning did not affect the dry-run."
+    }
+  ],
+  "production_preflight": {
+    "method": "Cloudflare D1 Query API, SELECT-only",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "queries": [
+      "SELECT name, applied_at FROM d1_migrations ORDER BY id DESC LIMIT 5",
+      "SELECT COUNT(*) AS migration_count FROM d1_migrations",
+      "SELECT type, name FROM sqlite_master WHERE type IN ('table','index') AND name LIKE 'form%' ORDER BY type,name"
+    ],
+    "migration_count": 38,
+    "latest_migration": "0032_forms_service.sql",
+    "form_schema_objects": 4,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "release": {
+    "github_branch_head": "426a43da38cb9b726faf77b3be2df526196fa944",
+    "source_push": "normal fast-forward from ef3f29dc; GitHub branch API exact-head readback matched runtime_commit",
+    "github_workflows": {
+      "editor_core": {
+        "run_id": 45820240787,
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/45820240787",
+        "status": "IN_PROGRESS at step 15 (real Worker media upload with isolated D1/R2) when recorded",
+        "conclusion": null
+      },
+      "production_source_smoke": {
+        "run_id": 45820240755,
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/45820240755",
+        "status": "SUCCESS",
+        "health_status": 200,
+        "changed_asset_hashes": "PASS for both changed public assets; log showed propagation retries before exact SHA-256 match"
+      },
+      "canonical_plan_active_point_audit": "45820240906 SUCCESS",
+      "twitch_integration": "45820240827 SUCCESS",
+      "canonical_plan": "45820240868 SUCCESS",
+      "f0_baseline": "45820240916 SUCCESS"
+    },
+    "cloudflare_build": {
+      "build_uuid": "c261bb44-bc02-4b1f-8533-fac240cb3078",
+      "outcome": "success",
+      "commit_hash": "426a43da38cb9b726faf77b3be2df526196fa944",
+      "branch": "v2/foundation",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "deployment_id": "d676543c-f39d-432f-a988-832d48db0caa",
+    "traffic_version_id": "5373fd1d-cdab-454b-b533-af259c36212a",
+    "traffic_percentage": 100,
+    "production_source_smoke_run": "45820240755"
+  },
+  "acceptance": {
+    "edt037": "PARTIAL_SOURCE — keyboard layer multi-selection slice implemented; broader keyboard/canvas acceptance remains open",
+    "d06": "OPEN / NOT_CERTIFIED",
+    "d01_d07": "OPEN / NOT_CERTIFIED",
+    "complete_visual_editor": "OPEN / NOT_CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until the complete planned Editor scope is implemented",
+    "save_publish_separation": "UNCHANGED"
+  },
+  "cost_huf": 0
+}

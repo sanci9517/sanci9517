@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261126120622-97bfe054",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-26T12:06:22.417Z",
+  "finished_at": "2026-11-26T12:35:24.140Z",
+  "wall_seconds": 1742,
+  "paused_seconds": 0,
+  "measured_seconds": 1742,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-037 keyboard Layers multi-selection implemented, locally tested, pushed and deployed; source health/hash smoke succeeded, exact-SHA Editor Core still in progress.",
+  "evidence": [
+    "docs/evidence/editor-d06-layer-keyboard-multiselect-2026-11-26.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "ef3f29dc48ed869906c4574b10a74c7c72d5d776",
+  "finished_revision": "426a43da38cb9b726faf77b3be2df526196fa944",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
