@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261126124257-e1744dc2",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-26T12:42:57.227Z",
+  "abandoned_at": "2026-11-26T12:49:02.851Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "The previous session ended before the keyboard range clipboard test and release evidence could be completed; no elapsed idle time is counted.",
+  "started_revision": "906eaabaf0c131f0c05bbce771a20ed43b0a8fad",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

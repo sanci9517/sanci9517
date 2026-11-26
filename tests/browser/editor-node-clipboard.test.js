@@ -60,6 +60,37 @@ test('node clipboard keyboard flow duplicates nested nodes into the draft; Save 
   assert.equal(await tab.locator('#pasteNodes').isEnabled(),false,'paste remains disabled until a same-page clipboard snapshot exists');
   await tab.locator('.more-actions > summary').click();
 
+  // The new keyboard range selection must feed the exact same clipboard path
+  // as pointer/modifier selection, including a nested subtree and one undoable
+  // draft paste. This catches regressions at the EDT-037/EDT-038 boundary.
+  const firstRow=tab.locator(`#layersTree .layer-row[data-node-id="${first.id}"]`);
+  const sectionRow=tab.locator(`#layersTree .layer-row[data-node-id="${section.id}"]`);
+  await firstRow.click();
+  assert.equal(await firstRow.evaluate(row=>document.activeElement===row),true,'clicking a layer keeps keyboard focus on the rerendered row');
+  await tab.keyboard.press('Shift+ArrowDown');
+  await tab.waitForFunction(({firstId,sectionId})=>{
+    const firstRow=document.querySelector(`.layer-row[data-node-id="${CSS.escape(firstId)}"]`);
+    const sectionRow=document.querySelector(`.layer-row[data-node-id="${CSS.escape(sectionId)}"]`);
+    return firstRow?.getAttribute('aria-pressed')==='true'&&sectionRow?.getAttribute('aria-pressed')==='true'&&document.activeElement===sectionRow;
+  },{firstId:first.id,sectionId:section.id});
+  await tab.keyboard.press('Control+c');
+  await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.includes('2 elem másolva'));
+  await tab.keyboard.press('Control+v');
+  await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.includes('2 elem beillesztve'));
+  const copiedFirstRows=tab.locator(`#layersTree .layer-row strong`);
+  assert.equal(await copiedFirstRows.filter({hasText:'Első kijelölhető'}).count(),2,'Shift-selected root siblings are both copied');
+  assert.equal(await copiedFirstRows.filter({hasText:'Másolási próba'}).count(),2,'the copied sibling retains its nested subtree root');
+  const rangeCopyRows=await tab.locator('#layersTree .layer-row').evaluateAll(rows=>rows.map(row=>({id:row.dataset.nodeId,label:row.querySelector('strong')?.textContent})));
+  const clonedSectionId=rangeCopyRows.find(row=>row.id!==first.id&&row.id!==section.id&&row.label==='Másolási próba másolat')?.id;
+  assert.ok(clonedSectionId,'the keyboard range clipboard contains the cloned section');
+  assert.ok(await tab.locator(`#canvas .node[data-node-id="${clonedSectionId}"]`).getByText('Másolatba kerül',{exact:true}).count(),'the copied section includes its child content');
+  assert.equal(posts.length,0,'keyboard range paste stays local until the separate Save action');
+  await tab.keyboard.press('Control+z');
+  await tab.locator(`#layersTree .layer-row[data-node-id="${clonedSectionId}"]`).waitFor({state:'detached'});
+  assert.equal(await copiedFirstRows.filter({hasText:'Első kijelölhető'}).count(),1,'one Undo removes the entire keyboard range paste');
+  await tab.keyboard.press('Control+Shift+z');
+  await tab.locator(`#layersTree .layer-row[data-node-id="${clonedSectionId}"]`).waitFor({state:'visible'});
+
   // The multi-selection contract is driven through the actual Layers UI. Select
   // in reverse canvas order to prove clipboard order is deterministic, and
   // ensure one Undo/Redo treats both pasted roots as a single operation.
@@ -93,10 +124,16 @@ test('node clipboard keyboard flow duplicates nested nodes into the draft; Save 
   assert.equal(await tab.locator('#pasteNodes').isEnabled(),true,'copy enables the explicit pointer paste action');
   await tab.locator('.more-actions > summary').click();
   await tab.locator(`#layersTree .layer-row[data-node-id="${section.id}"]`).click();
+  const copiedRootIdsBeforePaste=await tab.locator('#layersTree .layer-row').evaluateAll(rows=>rows.filter(row=>row.querySelector('strong')?.textContent==='Másolási próba másolat').map(row=>row.dataset.nodeId));
   await tab.keyboard.press('Control+v');
-  const copiedRoot=tab.locator('#canvas .page-canvas > .node > .node').filter({hasText:/Másolatba kerül/}).last();
-  await copiedRoot.waitFor();
-  const copiedId=await copiedRoot.getAttribute('data-node-id');
+  await tab.waitForFunction(previousIds=>[...document.querySelectorAll('#layersTree .layer-row')]
+    .some(row=>row.querySelector('strong')?.textContent==='Másolási próba másolat'&&!previousIds.includes(row.dataset.nodeId)),copiedRootIdsBeforePaste);
+  const copiedRootRows=await tab.locator('#layersTree .layer-row').evaluateAll(rows=>rows
+    .filter(row=>row.querySelector('strong')?.textContent==='Másolási próba másolat')
+    .map(row=>({id:row.dataset.nodeId,label:row.querySelector('strong')?.textContent})));
+  const copiedId=copiedRootRows.find(row=>!copiedRootIdsBeforePaste.includes(row.id))?.id;
+  assert.ok(copiedId,'the latest paste has a new section root');
+  const copiedRoot=tab.locator(`#canvas .node[data-node-id="${copiedId}"]`);
   assert.notEqual(copiedId,section.id);
   assert.match(await copiedRoot.textContent(),/Másolatba kerül/,'paste includes the nested subtree');
   assert.equal(posts.length,0,'copy and paste only change the local editor draft before Save');
@@ -148,9 +185,9 @@ test('node clipboard keyboard flow duplicates nested nodes into the draft; Save 
   await mobile.locator('#mobilePasteNodes').click();
   await mobile.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.includes('2 elem beillesztve'));
   const mobileClones=mobile.locator('#canvas .page-canvas > .node > .node').filter({hasText:/Első kijelölhető|Utolsó kijelölhető/});
-  assert.equal(await mobileClones.count(),6,'mobile paste appends two cloned roots alongside the original and saved desktop copies');
+  assert.equal(await mobileClones.count(),7,'mobile paste appends two roots alongside the original, keyboard-range clone and saved desktop copies');
   assert.equal(posts.length,postsBeforeMobile,'mobile copy/paste adds no server write before an explicit Save');
   await mobile.locator('#mobileUndo').click();
-  assert.equal(await mobileClones.count(),4,'one mobile Undo removes both pasted roots and keeps the original/saved copies');
+  assert.equal(await mobileClones.count(),5,'one mobile Undo removes both pasted roots and keeps the original and desktop copies');
   assert.deepEqual(errors,[]);
 });

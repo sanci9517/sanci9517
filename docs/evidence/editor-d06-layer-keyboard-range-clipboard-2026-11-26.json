@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "evidence_id": "editor-d06-layer-keyboard-range-clipboard-2026-11-26",
+  "plan_point": "77.44 / WEB-011 -> 77.44.7.D / D-06; EDT-037 keyboard Layers selection feeding EDT-038 clipboard",
+  "status": "LOCAL_CHECKS_PASS; GITHUB_PUSH_AND_PRODUCTION_RELEASE_PENDING",
+  "scope": "Keeps focus in the Layers tree after pointer selection rerenders rows, enabling immediate Shift+Arrow range selection followed by the existing keyboard clipboard flow. A selected sibling range is copied and pasted as nested node trees, remains draft-only until Save, and is one undo/redo operation. This is a bounded EDT-037/EDT-038 slice and does not certify either full item or the Editor.",
+  "branch": "v2/foundation",
+  "base_sha": "906eaabaf0c131f0c05bbce771a20ed43b0a8fad",
+  "canonical_plan_sha256": "4cef6aeed9d7e391a47cc6d8fc24cc707f88136c1f99b7fd9432278b861f7978",
+  "changes": {
+    "runtime": {
+      "summary": "After a Layers row click updates selection and rerenders, restore focus to the replacement row. Selection commands used by keyboard and canvas paths preserve their existing rendering behavior.",
+      "files": ["public/editor-v2/app.js", "public/editor-v2/index.html"],
+      "public_asset_sha256": {
+        "public/editor-v2/app.js": "e8601d3f108a3ce91ee451b60ad911f46c986d87ba7818dd5a3d98f9052a06e0",
+        "public/editor-v2/index.html": "8ef3c0b93b7feb9e56d2a5f6c0963da06cddaf64c5d816116c70626c80d78035"
+      }
+    },
+    "tests": {
+      "files": ["tests/browser/editor-node-clipboard.test.js", "tests/editor-public-asset-cache-bust.test.js"],
+      "coverage": [
+        "pointer selection restores focus to the rerendered Layers row",
+        "Shift+Arrow selects a sibling range and moves focus to its new primary row",
+        "Ctrl+C/Ctrl+V copies the selected roots and nested subtree",
+        "keyboard paste remains local until explicit Save",
+        "single Undo removes and Redo restores the range paste",
+        "the existing multi-root pointer clipboard, Save/reload, separate Publish, and mobile paste lifecycle remains covered"
+      ]
+    },
+    "traceability": {
+      "file": "docs/evidence/feature-traceability.json",
+      "sha256": "ec8eff0f79545f47f10c6fe7e46074a9919ae7d000e1c13bc3a613c44912553b"
+    },
+    "save_publish_separation": "unchanged; keyboard copy/paste changes only the in-memory draft, Save persists draft only, and Publish remains a separate explicit action",
+    "new_dependency": false,
+    "production_d1_mutation": false,
+    "r2_operation": false,
+    "cost_huf": 0
+  },
+  "checks": [
+    {
+      "command": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-node-clipboard.test.js tests/browser/editor-layer-rename-draft.test.js",
+      "result": "PASS",
+      "summary": "3/3 real Chromium browser cases: clipboard keyboard range/nested subtree/undo-redo/Save-vs-Publish and layer rename focus lifecycle at 390px and 1366px."
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "summary": "Editor unit 25/25; preferences 12/12; Linux browser subreaper contract 4/4."
+    },
+    {
+      "command": "npm run typecheck -- --pretty false",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py && python3 scripts/check-canonical-plan.py && python3 scripts/audit-active-plan-point.py && python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "summary": "16/16 plan-contract tests; one intact 13-file master; 396 traceability mappings; cursor remains 77.44 / WEB-011 -> 77.44.7.D; functional acceptance NOT_CERTIFIED."
+    },
+    {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS",
+      "summary": "Safe deploy gate does not apply production D1 migrations."
+    },
+    {
+      "command": "npx wrangler deploy --dry-run",
+      "result": "PASS",
+      "summary": "Wrangler 4.130.0 packaged 206 assets (476.98 KiB / 118.26 KiB gzip) and exited 0; sandbox log-file EROFS warning did not block the dry-run."
+    },
+    {
+      "command": "node --check public/editor-v2/app.js && node --check tests/browser/editor-node-clipboard.test.js && node --test tests/editor-public-asset-cache-bust.test.js && git diff --check",
+      "result": "PASS",
+      "summary": "Syntax, cache-bust (1/1), and diff whitespace checks pass."
+    }
+  ],
+  "production_preflight": {
+    "method": "Cloudflare D1 REST Query API; three SELECT statements only",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "latest_migrations": [
+      "0032_forms_service.sql",
+      "0031_media_archive_malformed_json_guard.sql",
+      "0030_media_library_organization.sql",
+      "0029_media_archive_unicode_additive.sql",
+      "0028_media_archive.sql"
+    ],
+    "migration_count": 38,
+    "form_schema_objects": ["form_revisions", "form_submission_rate_limits", "form_submissions", "forms"],
+    "all_queries_rows_written": 0,
+    "all_queries_changes": 0,
+    "database_changed": false
+  },
+  "release": {
+    "branch_head_before_release": "906eaabaf0c131f0c05bbce771a20ed43b0a8fad",
+    "source_commit": "PENDING",
+    "push": "PENDING",
+    "github_ci": "PENDING exact runtime SHA",
+    "cloudflare_build": "PENDING exact runtime SHA",
+    "worker_traffic": "PENDING",
+    "production_health_and_asset_hashes": "PENDING"
+  },
+  "acceptance": {
+    "edt037": "PARTIAL_SOURCE; this keyboard focus/range-selection/clipboard integration slice is not complete EDT-037 acceptance",
+    "edt038": "PARTIAL_SOURCE; existing node clipboard plus this regression does not certify full EDT-038",
+    "d06": "OPEN / NOT_CERTIFIED",
+    "d01_d07": "OPEN / NOT_CERTIFIED",
+    "complete_visual_editor": "OPEN / NOT_CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until the full planned Editor scope is implemented",
+    "save_publish_separation": "UNCHANGED"
+  }
+}
