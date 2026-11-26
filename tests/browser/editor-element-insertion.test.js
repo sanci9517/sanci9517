@@ -561,6 +561,11 @@ test('Layers hierarchy reparent works with desktop drag and touch long-press, wi
   assert.deepEqual(published.pages[pageId].nodes[rootId].children,[sectionId,textId],'reorder does not publish automatically');
   await tab.keyboard.press('Alt+ArrowUp');
   assert.deepEqual((await rowOrder()).filter(id=>id!==rootId),[textId,sectionId],'a boundary reorder is safely a no-op');
+  await source.focus();await tab.keyboard.press('Shift+ArrowDown');
+  assert.equal(await source.getAttribute('aria-pressed'),'true');assert.equal(await target.getAttribute('aria-pressed'),'true','range selection remains available alongside reorder');
+  await tab.keyboard.press('Alt+ArrowUp');
+  assert.deepEqual((await rowOrder()).filter(id=>id!==rootId),[textId,sectionId],'a multi-selection cannot be reordered as if it were a single layer');
+  assert.equal(await tab.locator('#saveStatus').textContent(),'Réteg-átrendezéshez pontosan egy elemet jelölj ki.');
   await tab.locator('#save').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
   assert.equal(writes.length,1);assert.equal(writes[0].publish,false,'Save persists the reordered draft only');
   assert.deepEqual(draft.pages[pageId].nodes[rootId].children,[textId,sectionId]);

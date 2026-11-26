@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-26",
+  "active_item": "77.44.7.D / D-06; EDT-037 keyboard-accessible layer movement",
+  "status": "PARTIAL_FEATURE_RELEASED; EDT-037, D-06, D-01–D-07 and complete Visual Editor remain OPEN / NOT_CERTIFIED",
+  "finding": "The Layers panel had accessible move-up/down buttons but lacked the planned keyboard alternative for reordering. The existing Page Model hierarchy.reorder command and history can provide the same operation without adding a second mutation path.",
+  "change": {
+    "runtime_commit": "a5d0d032838230a8469a0170d64de5fbe6837db7",
+    "branch": "v2/foundation",
+    "files": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html",
+      "tests/browser/editor-element-insertion.test.js",
+      "tests/browser/editor-layer-rename-draft.test.js",
+      "tests/editor-public-asset-cache-bust.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "details": [
+      "Alt+ArrowUp and Alt+ArrowDown reorder exactly one selected layer through the existing hierarchy.reorder Page Model command and undo history.",
+      "Root, locked, locked-ancestor, boundary, and multi-selection cases cannot move; boundary cases are safe no-ops and multi-selection receives an explicit status message.",
+      "After a successful command, keyboard focus returns to the moved row and a status message communicates that Save is required.",
+      "Layer rows advertise shortcuts and their meaning to assistive technology. The versioned Editor app URL is cache-busted.",
+      "Save persists only the draft and survives reload; Publish is separately explicit and only then updates the published representation.",
+      "The exact-SHA Editor Core workflow failure on parent 20eb714 was traced to an outdated exact aria-keyshortcuts assertion after the keyboard-delete feature. The assertion now expects reorder and delete shortcuts too; its mobile and desktop cases pass locally."
+    ],
+    "third_party_code_or_dependency": "NONE; reuses the existing hierarchy command, selection model, and history."
+  },
+  "local_checks": {
+    "targeted_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-element-insertion.test.js",
+      "result": "PASS; 8/8",
+      "coverage": [
+        "Alt+ArrowUp reorder and focus restoration.",
+        "Accessible shortcut metadata and status announcement.",
+        "Boundary no-op and multi-selection refusal.",
+        "Draft-only state before Save, Save persistence/reload, and separate explicit Publish.",
+        "Existing hierarchy drag/touch, explicit toolbar reorder, and history regressions."
+      ]
+    },
+    "keyboard_shortcut_contract_browser": "PASS; tests/browser/editor-layer-rename-draft.test.js, 2/2 at mobile and desktop widths.",
+    "editor_unit": "PASS; npm run test:editor, 25/25 files; preference route 12/12; runner harness 4/4.",
+    "typecheck": "PASS; npm run typecheck.",
+    "canonical_plan": "PASS; python3 scripts/check-canonical-plan.py; one complete canonical 13-file master.",
+    "traceability": "PASS; scripts/build-feature-traceability.py --check; 396/396 source mappings; 148 PARTIAL_SOURCE and 248 UNVERIFIED; functional acceptance NOT_CERTIFIED.",
+    "plan_contract": "PASS; python3 tests/plan-contract.test.py, 16/16.",
+    "active_point_audit": "PASS; cursor 77.44.7.D; 396 source mappings; no acceptance inferred.",
+    "migration_safety_gate": "PASS; npm run test:web013:migration-gate; no migration applied.",
+    "asset_cache_contract": "PASS; node --test tests/editor-public-asset-cache-bust.test.js, 1/1.",
+    "syntax_and_diff": "PASS; node --check for app.js and changed browser tests; git diff --check.",
+    "wrangler_dry_run": {
+      "result": "PASS; exit 0, dry-run only",
+      "version": "4.130.0",
+      "assets_read": 206,
+      "upload_kib": 476.98,
+      "gzip_kib": 118.26
+    },
+    "hosted_editor_core": {
+      "workflow_run_id": 45840676352,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/45840676352",
+      "status_at_evidence_capture": "IN_PROGRESS",
+      "step_at_evidence_capture": "Run Editor browser layout regression",
+      "note": "The full serial 62-file regression is the hosted release gate. Its final result must be updated after it completes; no PASS is inferred while it is running."
+    }
+  },
+  "production_preflight": {
+    "method": "Cloudflare D1 Query API; SELECT-only",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "queries": [
+      {
+        "sql": "SELECT name FROM d1_migrations ORDER BY name",
+        "rows_read": 38,
+        "latest_marker": "0032_forms_service.sql",
+        "rows_written": 0,
+        "changes": 0,
+        "changed_db": false
+      },
+      {
+        "sql": "SELECT COUNT(*) AS schema_objects FROM sqlite_master WHERE sql IS NOT NULL AND name NOT LIKE 'sqlite_%'",
+        "schema_objects": 111,
+        "rows_read": 164,
+        "rows_written": 0,
+        "changes": 0,
+        "changed_db": false
+      }
+    ],
+    "migration_or_business_data_write": false,
+    "r2_operation": "NONE"
+  },
+  "release": {
+    "remote_branch_head": "a5d0d032838230a8469a0170d64de5fbe6837db7",
+    "push": "NORMAL_FAST_FORWARD_VERIFIED",
+    "cloudflare_build": {
+      "build_uuid": "d4afb0e8-39bf-406d-b872-8e5603930002",
+      "source_sha": "a5d0d032838230a8469a0170d64de5fbe6837db7",
+      "outcome": "SUCCESS",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "deployment_id": "d422cd02-dbc1-4927-a65b-3b7c7282af9b",
+    "worker_version_id": "b76a28c0-3696-45b3-8e32-a2ccf69efa5c",
+    "worker_version_number": 4212,
+    "traffic_percent": 100,
+    "github_exact_sha_workflows": {
+      "canonical_plan": {"run_id": 45840676328, "conclusion": "success"},
+      "active_point_audit": {"run_id": 45840676377, "conclusion": "success"},
+      "production_worker_source_smoke": {"run_id": 45840676442, "conclusion": "success"},
+      "f0_baseline": {"run_id": 45840676484, "conclusion": "success"},
+      "twitch_integration": {"run_id": 45840676363, "conclusion": "success"},
+      "editor_core": {"run_id": 45840676352, "status": "in_progress"}
+    },
+    "production_smoke": {
+      "workflow_run_id": 45840676442,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/45840676442",
+      "health_http_status": 200,
+      "health_ok": true,
+      "changed_public_asset_hashes": {
+        "public/editor-v2/index.html": {
+          "path": "/editor-v2/?release=a5d0d032838230a8469a0170d64de5fbe6837db7",
+          "source_sha256": "c2734cadc9f93a2f18c73dd3b53292a5854491db2f083ce8132510d307f9d157",
+          "production_sha256": "c2734cadc9f93a2f18c73dd3b53292a5854491db2f083ce8132510d307f9d157",
+          "matches": true
+        },
+        "public/editor-v2/app.js": {
+          "path": "/editor-v2/app.js?release=a5d0d032838230a8469a0170d64de5fbe6837db7",
+          "source_sha256": "c5328b510fd59fb9603e859f014f5ef3e203d140c354a7ce164c3ffac72b79d5",
+          "production_sha256": "c5328b510fd59fb9603e859f014f5ef3e203d140c354a7ce164c3ffac72b79d5",
+          "matches": true
+        }
+      }
+    }
+  },
+  "cost_and_data_safety": {
+    "new_cost": "0 Ft",
+    "new_dependency": false,
+    "production_d1_write_or_migration": false,
+    "r2_mutation_or_deletion": false
+  },
+  "plan_cursor_before_append": {
+    "sha256": "2e46ef4971d55210daa66d7d7e2617c5028e5f952d2ad99f90ce3de8ba58bedc",
+    "bytes": 1919863,
+    "active_point": "77.44.7.D"
+  },
+  "acceptance": {
+    "edt_037": "OPEN / NOT_CERTIFIED",
+    "d_06": "OPEN / NOT_CERTIFIED",
+    "d_01_to_d_07": "OPEN / NOT_CERTIFIED",
+    "visual_editor": "OPEN / NOT_CERTIFIED",
+    "manual_and_physical_acceptance": "DEFERRED until full Editor scope is implemented"
+  }
+}

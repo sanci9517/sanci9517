@@ -111,7 +111,7 @@
     "src/routes/public/seo.ts": "fa73a6c252df558862136e85e9a6594d84a19d2fffb130ac5dd38656074be60f",
     "tests/browser/admin-media-organization.test.js": "c8be2bd093487861c2fc8dbdeaaac4b22f2aae7a8104e2a4311ffeee167f0850",
     "tests/browser/editor-diagnostics-redaction.test.js": "c534abc0d1f89cf51b929b870017a14c4f039383226137c705f4dd2c1eed1842",
-    "tests/browser/editor-element-insertion.test.js": "4ae112c2dba6b7105521408015d0f689ecbb9188f34f0fbcd6a51b425bf266ca",
+    "tests/browser/editor-element-insertion.test.js": "c6da612c3ee73c1f1fd1dbbf2c3fcd7b5b3e899a016541572e12b1495a5cbb1e",
     "tests/browser/editor-inspector-breakpoint-lifecycle.test.js": "fb756c7f6fe6e807affa6aa1b8447ae5690a84ebc076bdaaa496abf9c24fa0b9",
     "tests/browser/editor-legacy-media-parity.test.js": "5c18bea8a369b73bcf1f11a7993a8847021c72f8b51ed542f21942593176ecb0",
     "tests/browser/editor-structured-content.test.js": "5ab03af4009e9cc697de7ef183a8c8232ef349ace10942b9137e96ac9f4e5c32",
