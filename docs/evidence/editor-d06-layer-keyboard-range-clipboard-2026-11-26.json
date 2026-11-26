@@ -2,7 +2,7 @@
   "schema_version": 1,
   "evidence_id": "editor-d06-layer-keyboard-range-clipboard-2026-11-26",
   "plan_point": "77.44 / WEB-011 -> 77.44.7.D / D-06; EDT-037 keyboard Layers selection feeding EDT-038 clipboard",
-  "status": "LOCAL_CHECKS_PASS; GITHUB_PUSH_AND_PRODUCTION_RELEASE_PENDING",
+  "status": "RUNTIME_PUSHED_AND_DEPLOYED; EXACT_SHA_SMOKE_PASS; EDITOR_CORE_CI_IN_PROGRESS",
   "scope": "Keeps focus in the Layers tree after pointer selection rerenders rows, enabling immediate Shift+Arrow range selection followed by the existing keyboard clipboard flow. A selected sibling range is copied and pasted as nested node trees, remains draft-only until Save, and is one undo/redo operation. This is a bounded EDT-037/EDT-038 slice and does not certify either full item or the Editor.",
   "branch": "v2/foundation",
   "base_sha": "906eaabaf0c131f0c05bbce771a20ed43b0a8fad",
@@ -91,12 +91,45 @@
   },
   "release": {
     "branch_head_before_release": "906eaabaf0c131f0c05bbce771a20ed43b0a8fad",
-    "source_commit": "PENDING",
-    "push": "PENDING",
-    "github_ci": "PENDING exact runtime SHA",
-    "cloudflare_build": "PENDING exact runtime SHA",
-    "worker_traffic": "PENDING",
-    "production_health_and_asset_hashes": "PENDING"
+    "source_commit": "187b16a8a6f8335b43f70b9692a1c3d8a279db39",
+    "push": "normal fast-forward 906eaabaf0c131f0c05bbce771a20ed43b0a8fad -> 187b16a8a6f8335b43f70b9692a1c3d8a279db39; GitHub branch head exact readback matched",
+    "github_ci": {
+      "editor_core": {
+        "run_id": 45824175142,
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/45824175142",
+        "status": "IN_PROGRESS; TypeScript, editor unit, Forms, D1 ledger, R2 media upload and Showcase steps passed; Editor browser layout and later steps pending"
+      },
+      "production_source_smoke": {
+        "run_id": 45824175085,
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/45824175085",
+        "status": "SUCCESS",
+        "health_http": 200,
+        "source_sha256": "PASS for the 44 tracked public sources; modified app.js and Editor index exact hashes matched after edge propagation retries"
+      },
+      "f0_baseline": "45824175166 SUCCESS",
+      "twitch_integration": "45824175196 SUCCESS",
+      "canonical_plan_active_point_audit": "45824175167 SUCCESS",
+      "canonical_plan": "45824175135 SUCCESS"
+    },
+    "cloudflare_build": {
+      "build_uuid": "cb0a8d6f-3300-4847-bf1f-2e4275867c70",
+      "outcome": "success",
+      "commit_hash": "187b16a8a6f8335b43f70b9692a1c3d8a279db39",
+      "branch": "v2/foundation",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "deployment_id": "3e4dbe7b-aa54-4662-9910-85869cc87f9c",
+    "traffic_version_id": "e7bffe23-cbd6-41bd-973c-20d785f2de1f",
+    "traffic_percentage": 100,
+    "production_source_smoke_run": "45824175085"
+  },
+  "development_metrics": {
+    "run_id": "20261126124902-a6dacae7",
+    "status": "partial",
+    "measured_seconds": 516,
+    "evidence_file": "evidence/dev-metrics/runs/2026-11-26/20261126124902-a6dacae7.json",
+    "interrupted_previous_run": "evidence/dev-metrics/interrupted/2026-11-26/20261126124257-e1744dc2.json"
   },
   "acceptance": {
     "edt037": "PARTIAL_SOURCE; this keyboard focus/range-selection/clipboard integration slice is not complete EDT-037 acceptance",

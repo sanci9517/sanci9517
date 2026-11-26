@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261126124902-a6dacae7",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-26T12:49:02.925Z",
+  "finished_at": "2026-11-26T12:57:39.398Z",
+  "wall_seconds": 516,
+  "paused_seconds": 0,
+  "measured_seconds": 516,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-037/038 keyboard range clipboard focus regression implemented, unit/browser/typecheck/plan checks passed, fast-forwarded and deployed to 100% Worker traffic; exact-SHA Editor Core still in progress",
+  "evidence": [
+    "docs/evidence/editor-d06-layer-keyboard-range-clipboard-2026-11-26.json"
+  ],
+  "checks": "Chromium 3/3; editor unit 25/25; preferences 12/12; subreaper 4/4; typecheck PASS; plan 16/16; canonical 13 files/396 mappings PASS; migration gate PASS; Wrangler dry-run exit 0; exact-SHA source smoke health 200 and 44 public SHA-256 matches; Editor Core IN_PROGRESS",
+  "started_revision": "906eaabaf0c131f0c05bbce771a20ed43b0a8fad",
+  "finished_revision": "187b16a8a6f8335b43f70b9692a1c3d8a279db39",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
