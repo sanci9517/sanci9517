@@ -517,17 +517,17 @@ test('Layers hierarchy reparent works with desktop drag and touch long-press, wi
   const seed=createEditorState(createDocument()),pageId=seed.document.activePageId,rootId=seed.document.pages[pageId].rootId;
   execute(seed,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:rootId}});const sectionId=seed.selection.primaryId;
   execute(seed,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:rootId}});const textId=seed.selection.primaryId;
-  let draft=structuredClone(seed.document),version=1;
+  let draft=structuredClone(seed.document),published=structuredClone(seed.document),writes=[],version=1;
   const root=resolve(import.meta.dirname,'../../public');
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost'),json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};
     if(url.pathname==='/api/admin/pages')return json({ok:true,data:[{id:pageId,slug:'hierarchy',title:'Hierarchy',content:draft,revision:version,isPublished:false}]});
     if(url.pathname==='/api/admin/editor'){
       if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft},revisions:[{id:'rev-'+version,version}]}});
-      let body='';for await(const chunk of req)body+=chunk;const request=JSON.parse(body);draft=structuredClone(request.document);version++;
-      return json({ok:true,data:{pageId,version,revisionId:'rev-'+version,published:false}});
+      let body='';for await(const chunk of req)body+=chunk;const request=JSON.parse(body);writes.push(request);draft=structuredClone(request.document);if(request.publish)published=structuredClone(request.document);version++;
+      return json({ok:true,data:{pageId,version,revisionId:'rev-'+version,published:Boolean(request.publish)}});
     }
-    if(url.pathname==='/api/public/pages')return json({ok:false});
+    if(url.pathname==='/api/public/pages')return json(published?{ok:true,data:{id:pageId,slug:'hierarchy',title:'Hierarchy',content:published.pages[pageId]}}:{ok:false});
     if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
     if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
     if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Test'}});
@@ -542,6 +542,9 @@ test('Layers hierarchy reparent works with desktop drag and touch long-press, wi
   await tab.locator('.rail-btn[data-tab="layers"]').click();await tab.locator(`.layer-row[data-node-id="${textId}"]`).waitFor();
   const source=tab.locator(`.layer-row[data-node-id="${textId}"]`),target=tab.locator(`.layer-row[data-node-id="${sectionId}"]`);
   await source.click();
+  const rowOrder=()=>tab.locator('#layersTree .layer-row').evaluateAll(rows=>rows.map(row=>row.dataset.nodeId));
+  assert.match(await source.getAttribute('aria-keyshortcuts'),/Alt\+ArrowUp Alt\+ArrowDown/,'the Layer row advertises keyboard reorder shortcuts');
+  assert.match(await source.getAttribute('aria-description'),/Alt\+fel\/le.*átrendezése/,'the accessible description explains keyboard reorder');
   assert.equal(await tab.locator('#moveLayerUp').isDisabled(),false,'selected sibling can move up');
   assert.equal(await tab.locator('#moveLayerDown').isDisabled(),true,'last sibling cannot move down');
   assert.equal(await tab.locator('#indentLayer').isDisabled(),false,'compatible previous sibling can contain the selected layer');
@@ -550,10 +553,25 @@ test('Layers hierarchy reparent works with desktop drag and touch long-press, wi
   await tab.locator('#indentLayer').click();assert.notEqual(await source.evaluate(row=>row.style.paddingLeft),originalIndent,'keyboard-accessible layer action nests into previous container');
   assert.equal(await tab.locator('#outdentLayer').isDisabled(),false,'nested layer can be outdented');
   await tab.locator('#outdentLayer').click();assert.equal(await source.evaluate(row=>row.style.paddingLeft),originalIndent,'outdent restores the root-level hierarchy');
-  await tab.locator('#moveLayerUp').click();
-  const rowOrder=()=>tab.locator('#layersTree .layer-row').evaluateAll(rows=>rows.map(row=>row.dataset.nodeId));
+  await source.focus();await tab.keyboard.press('Alt+ArrowUp');
   assert.deepEqual((await rowOrder()).filter(id=>id!==rootId),[textId,sectionId],'move up reorders siblings through the canonical command');
-  await tab.locator('#moveLayerDown').click();assert.deepEqual((await rowOrder()).filter(id=>id!==rootId),[sectionId,textId],'move down restores sibling order');
+  assert.equal(await tab.evaluate(()=>document.activeElement?.dataset.nodeId),textId,'keyboard reorder restores focus to the moved layer row');
+  assert.equal(await tab.locator('#saveStatus').textContent(),'Rétegsorrend frissítve — mentés szükséges');
+  assert.deepEqual(writes,[],'keyboard reorder changes only the unsaved Page Model draft');
+  assert.deepEqual(published.pages[pageId].nodes[rootId].children,[sectionId,textId],'reorder does not publish automatically');
+  await tab.keyboard.press('Alt+ArrowUp');
+  assert.deepEqual((await rowOrder()).filter(id=>id!==rootId),[textId,sectionId],'a boundary reorder is safely a no-op');
+  await tab.locator('#save').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(writes.length,1);assert.equal(writes[0].publish,false,'Save persists the reordered draft only');
+  assert.deepEqual(draft.pages[pageId].nodes[rootId].children,[textId,sectionId]);
+  assert.deepEqual(published.pages[pageId].nodes[rootId].children,[sectionId,textId],'Save leaves the published order unchanged');
+  await tab.reload();await tab.locator('.rail-btn[data-tab="layers"]').click();await tab.locator(`.layer-row[data-node-id="${textId}"]`).waitFor();
+  assert.deepEqual((await rowOrder()).filter(id=>id!==rootId),[textId,sectionId],'draft reload preserves keyboard reorder');
+  await tab.locator('#publish').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Publikálva'));
+  assert.equal(writes.length,2);assert.equal(writes[1].publish,true,'Publish is a separate explicit operation');
+  assert.deepEqual(published.pages[pageId].nodes[rootId].children,[textId,sectionId]);
+  await source.click();await tab.locator('#moveLayerDown').click();assert.deepEqual((await rowOrder()).filter(id=>id!==rootId),[sectionId,textId],'the explicit move-down action remains functional');
+  await tab.locator('#moveLayerUp').click();assert.deepEqual((await rowOrder()).filter(id=>id!==rootId),[textId,sectionId],'the explicit move-up action restores order');
   await tab.locator('#undo').click();await tab.locator('#redo').click();
   const desktopDrop=await source.evaluate((row,{targetId})=>{
     const target=document.querySelector(`.layer-row[data-node-id="${targetId}"]`),dataTransfer=new DataTransfer();
