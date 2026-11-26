@@ -1,0 +1,123 @@
+{
+  "schema": 1,
+  "plan_item": "77.44.7.D / WEB-011 / EDT-037 / D-06",
+  "status": "OPEN_NOT_CERTIFIED",
+  "scope": "Layers tree semantics, selected state, hierarchy metadata, keyboard collapse/expand and focus restoration",
+  "runtime_commit": "aeedac9605daf3a8c40d6614aa1c1b3b8c833678",
+  "runtime_commit_url": "https://github.com/sanci9517/sanci9517/commit/aeedac9605daf3a8c40d6614aa1c1b3b8c833678",
+  "branch": {
+    "name": "v2/foundation",
+    "parent": "f84a6b2eafd1a25058403ec6e34ca9c493909ada",
+    "verified_head": "aeedac9605daf3a8c40d6614aa1c1b3b8c833678",
+    "update": "normal expected-head fast-forward via GitHub Git Data API"
+  },
+  "implementation": {
+    "tree_role": "tree with multi-selection semantics",
+    "row_role": "treeitem with aria-selected, aria-level, aria-posinset, aria-setsize and aria-expanded where applicable",
+    "keyboard": "ArrowLeft collapses or selects parent; ArrowRight expands or selects first child; focus is restored after rerender",
+    "mouse": "disclosure caret toggles groups",
+    "persistence": "collapse state is ephemeral per page and is not written to Page Model; Save and Publish remain distinct",
+    "cache_bust": "20261126-edt037-layer-tree-collapse-v1",
+    "new_dependencies": 0
+  },
+  "local_checks": {
+    "targeted_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-element-insertion.test.js tests/browser/editor-layer-rename-draft.test.js tests/browser/editor-canvas-keyboard-move.test.js tests/browser/editor-node-clipboard.test.js",
+      "result": "PASS",
+      "tests": 15
+    },
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "files": 25
+    },
+    "other_checks": {
+      "typecheck": "PASS",
+      "plan_contract": "PASS 16/16",
+      "canonical_plan": "PASS: one complete 13-file master and current cursor",
+      "active_point_audit": "PASS; 396 features, acceptance NOT_CERTIFIED",
+      "traceability": "PASS: 396 source mappings; acceptance NOT_CERTIFIED",
+      "migration_safety_gate": "PASS",
+      "cache_bust": "PASS",
+      "javascript_syntax": "PASS",
+      "git_diff_check": "PASS",
+      "wrangler_dry_run": "PASS, Wrangler 4.130.0, 206 assets, 476.98 KiB / 118.26 KiB gzip; sandbox log EROFS did not prevent dry-run exit 0"
+    },
+    "corrected_test_fixture": "The first aggregate pass caught stale cache-bust and crosswalk fingerprints after the intended version update; the assertions/crosswalk were refreshed and all final checks passed."
+  },
+  "production_d1_preflight": {
+    "method": "Cloudflare D1 query API, SELECT-only batch",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "schema_objects": {
+      "tables": 37,
+      "indexes": 45,
+      "triggers": 29,
+      "total": 111
+    },
+    "migration_markers": 38,
+    "latest_marker": "0032_forms_service.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "r2_mutations": 0
+  },
+  "cloudflare_release": {
+    "automatic_build_id": "7eaf98a6-f01c-4cb9-badf-8e3e80791eec",
+    "automatic_build_result": "FAILED: npm registry returned a corrupted optional @cloudflare/workerd-linux-64 package; typecheck and migration gate had passed",
+    "retry_build_id": "ef9a55e4-e864-4d01-8c47-ca385a0ff81c",
+    "retry_build_result": "SUCCESS; exact source commit; npm run typecheck and npm run deploy:safe",
+    "deployment_id": "34c465c4-36a8-43ee-8389-af373bc82805",
+    "worker_version_id": "0263359f-f3d6-41f0-aad1-4ec43b0c65df",
+    "worker_version_number": 4213,
+    "traffic_percent": 100
+  },
+  "production_smoke": {
+    "github_run_id": 45858844957,
+    "github_result": "SUCCESS",
+    "url": "https://github.com/sanci9517/sanci9517/actions/runs/45858844957",
+    "health": {
+      "path": "/api/health",
+      "http": 200,
+      "body": "{\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}"
+    },
+    "direct_source_checks": {
+      "editor_entry": {
+        "path": "/editor-v2/",
+        "http": 200,
+        "expected_sha256": "a0a406f50e2f4467b8e7930c1f03c95009a1a1d92ef62d5cd66dc58c4dcd362d",
+        "actual_sha256": "a0a406f50e2f4467b8e7930c1f03c95009a1a1d92ef62d5cd66dc58c4dcd362d"
+      },
+      "editor_app": {
+        "path": "/editor-v2/app.js?v=20261126-edt037-layer-tree-collapse-v1",
+        "http": 200,
+        "expected_sha256": "4889b5cfe1ba7718a984efa154bae8d5b9c4d376aafdb75f3c9934dbdc2d3dbf",
+        "actual_sha256": "4889b5cfe1ba7718a984efa154bae8d5b9c4d376aafdb75f3c9934dbdc2d3dbf"
+      },
+      "explicit_index_html": "GET /editor-v2/index.html returns HTTP 410 by the existing retired-entry guard; production smoke correctly maps the editor entry to its canonical /editor-v2/ directory URL."
+    }
+  },
+  "github_ci": {
+    "editor_core_run_id": 45858844966,
+    "editor_core_url": "https://github.com/sanci9517/sanci9517/actions/runs/45858844966",
+    "editor_core_status_at_evidence": "IN_PROGRESS at Run Editor browser layout regression; steps 1-15 passed, remaining steps not yet certified",
+    "other_exact_sha_runs": {
+      "f0_baseline": "SUCCESS",
+      "canonical_plan": "SUCCESS",
+      "active_point_audit": "SUCCESS",
+      "twitch_integration": "SUCCESS",
+      "production_source_smoke": "SUCCESS"
+    }
+  },
+  "cost": {
+    "new_paid_services_or_dependencies": 0,
+    "new_cost_huf": 0,
+    "free_build_limit_reached": false
+  },
+  "limitations": [
+    "EDT-037, D-06, D-01-D-07, 77.44.7.D and the complete Visual Editor remain OPEN / NOT CERTIFIED.",
+    "Full Editor manual and physical acceptance remains deferred until full scope completion.",
+    "The exact-SHA hosted Editor Core workflow was still running at evidence time; no full CI pass is claimed."
+  ],
+  "save_publish": "Save persists draft only; Publish remains a separate explicit action.",
+  "verification_note": "Hashes/HTTP/deployment were directly checked in this run; CI statuses were read from exact-SHA GitHub Actions runs."
+}
