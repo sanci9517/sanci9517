@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261126134857-2e26dc30",
+  "task": "77.44.7.D-06-keyboard-delete",
+  "trigger": "manual",
+  "started_at": "2026-11-26T13:48:57.538Z",
+  "abandoned_at": "2026-11-26T14:08:29.325Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Previous assistant session ended without reliable finish timestamp; exclude idle time and continue in new measured block",
+  "started_revision": "e36121317b73953cdcf8448da45e8ee417377fcd",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261126140832-12439e49",
+  "task": "77.44.7.D-06-keyboard-delete-evidence",
+  "trigger": "manual",
+  "started_at": "2026-11-26T14:08:32.712Z",
+  "finished_at": "2026-11-26T14:11:19.032Z",
+  "wall_seconds": 166,
+  "paused_seconds": 0,
+  "measured_seconds": 166,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "Rögzítettem az éles keyboard-delete slice gépi bizonyítékát és a canonical plan bejegyzését; exact-SHA Editor Core layout CI még fut.",
+  "evidence": [
+    "docs/evidence/editor-d06-keyboard-delete-2026-11-26.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "plan-contract 16/16; canonical master 13 files; traceability 396/396; exact-SHA production smoke PASS; Editor Core IN_PROGRESS",
+  "started_revision": "20eb714cfd4c6cc75ada06f3941ba16f8a073862",
+  "finished_revision": "20eb714cfd4c6cc75ada06f3941ba16f8a073862",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

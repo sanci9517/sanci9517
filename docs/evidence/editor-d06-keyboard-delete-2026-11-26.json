@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-26",
+  "canonical_plan": {
+    "path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "sha256_before_append": "fd35ea859eec1eb9ce520f41b94e14a8d2daed802f18ad08e284826e4fbcae1f",
+    "bytes_before_append": 1917037
+  },
+  "active_item": "77.44.7.D / D-06; EDT-037 keyboard-accessible Canvas and layer alternatives",
+  "finding": "The Editor had keyboard movement and resize controls, but selected layers could not be deleted from the keyboard. This left a core canvas/layer operation unavailable to keyboard-only users.",
+  "change": {
+    "runtime_commit": "20eb714cfd4c6cc75ada06f3941ba16f8a073862",
+    "branch": "v2/foundation",
+    "files": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html",
+      "tests/browser/editor-canvas-keyboard-move.test.js",
+      "tests/editor-public-asset-cache-bust.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "details": [
+      "Delete and Backspace remove the selected layer roots as one atomic Page Model batch, when keyboard focus is on the canvas/body or a Layers row.",
+      "Text inputs, contenteditable regions, links/media controls and unrelated action buttons are protected from deletion shortcuts; native modifier/browser shortcuts are not intercepted.",
+      "Any root, locked, or missing node in a multi-selection rejects the whole deletion rather than partially mutating the Page Model. Successful deletion restores focus to a surviving parent layer.",
+      "Layer rows expose keyboard shortcut instructions to assistive technology. Undo/Redo retain the batch as one history transaction; Save remains draft-only and Publish remains a separate explicit operation."
+    ],
+    "third_party_code_or_dependency": "NONE; existing Editor Page Model commands and batch history are used."
+  },
+  "local_checks": {
+    "targeted_chromium": {
+      "command": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-canvas-keyboard-move.test.js",
+      "result": "PASS; 4/4",
+      "coverage": [
+        "Canvas keyboard move and resize regressions remain passing at 390px and 1366px.",
+        "Delete and Backspace selection behavior, multi-selection atomicity, protected targets, root/locked rejection, parent focus restoration, Undo/Redo, and Save/Publish separation."
+      ]
+    },
+    "npm_run_test_editor": "PASS; 25/25 test files",
+    "typecheck": "PASS",
+    "canonical_plan_and_traceability": "PASS; canonical master 13 files; generated traceability 396/396 mappings.",
+    "plan_contract_and_active_point_audit": "PASS; plan contract 16/16; cursor 77.44.7.D; acceptance remains NOT_CERTIFIED.",
+    "migration_safety_gate": "PASS; npm run test:web013:migration-gate; no migration applied.",
+    "wrangler_dry_run": {
+      "result": "PASS; exit 0, dry-run only",
+      "version": "4.130.0",
+      "assets_read": 206,
+      "upload_kib": 476.98,
+      "gzip_kib": 118.26
+    },
+    "diff_check": "PASS"
+  },
+  "production_preflight": {
+    "method": "Cloudflare D1 Query API, SELECT-only",
+    "queries": [
+      "SELECT id,name,applied_at FROM d1_migrations ORDER BY id",
+      "SELECT COUNT(*) AS schema_objects FROM sqlite_master WHERE sql IS NOT NULL AND name NOT LIKE 'sqlite_%'"
+    ],
+    "migration_markers": 38,
+    "latest_marker": "0032_forms_service.sql",
+    "schema_objects": 111,
+    "rows_written": 0,
+    "changes": 0,
+    "migration_or_business_data_write": false,
+    "r2_operation": "NONE"
+  },
+  "release": {
+    "push": "NORMAL_FAST_FORWARD_VERIFIED",
+    "runtime_sha": "20eb714cfd4c6cc75ada06f3941ba16f8a073862",
+    "github_exact_sha": "20eb714cfd4c6cc75ada06f3941ba16f8a073862",
+    "cloudflare_build": {
+      "build_uuid": "f258df36-aa26-4c73-b820-26323c0cad08",
+      "source_sha": "20eb714cfd4c6cc75ada06f3941ba16f8a073862",
+      "outcome": "SUCCESS",
+      "commands": ["npm run typecheck", "npm run deploy:safe"]
+    },
+    "deployment_id": "2307dc4a-f76b-4f22-ba8b-900e7ecd07bc",
+    "worker_version_id": "f9981c76-ca8c-4fe5-a234-cff058525d36",
+    "worker_version_number": 4211,
+    "traffic_percent": 100,
+    "production_smoke": {
+      "workflow_run_id": 45834578815,
+      "status": "SUCCESS",
+      "health": {
+        "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?release=20eb714cfd4c6cc75ada06f3941ba16f8a073862",
+        "http_status": 200,
+        "ok": true
+      },
+      "changed_public_asset_hashes": {
+        "public/editor-v2/app.js": {
+          "path": "/editor-v2/app.js?v=20261126-edt037-keyboard-delete-v1",
+          "source_sha256": "ef1162f5f04ccc13411af9ddb2566965179a4322582bb26baf06d5c0067bc2f3",
+          "production_sha256": "ef1162f5f04ccc13411af9ddb2566965179a4322582bb26baf06d5c0067bc2f3",
+          "matches": true
+        },
+        "public/editor-v2/index.html": {
+          "path": "/editor-v2/",
+          "source_sha256": "851fd057769028b53aa893c3d15d34b5bb936b2aa3f5a0a40e09086625cd8f6d",
+          "production_sha256": "851fd057769028b53aa893c3d15d34b5bb936b2aa3f5a0a40e09086625cd8f6d",
+          "matches": true
+        }
+      }
+    },
+    "github_exact_sha_checks": {
+      "editor_core": {
+        "run_id": 45834578776,
+        "status_at_follow_up": "IN_PROGRESS",
+        "active_step": "Run Editor browser layout regression",
+        "previous_steps": "SUCCESS"
+      },
+      "canonical_plan": {"run_id": 45834578922, "status": "SUCCESS"},
+      "active_point_audit": {"run_id": 45834578829, "status": "SUCCESS"},
+      "f0_baseline": {"run_id": 45834578883, "status": "SUCCESS"},
+      "twitch_integration": {"run_id": 45834578825, "status": "SUCCESS"},
+      "production_source_smoke": {"run_id": 45834578815, "status": "SUCCESS"}
+    }
+  },
+  "acceptance": {
+    "keyboard_delete_slice": "IMPLEMENTED_AND_PRODUCTION_VERIFIED",
+    "EDT_037": "PARTIAL_SOURCE; this adds keyboard deletion but does not prove the complete keyboard-accessible canvas contract.",
+    "D_06": "OPEN / NOT CERTIFIED",
+    "D_01_to_D_07": "OPEN / NOT CERTIFIED",
+    "visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_and_physical_device_acceptance": "DEFERRED_UNTIL_COMPLETE_VISUAL_EDITOR",
+    "save_and_publish_are_separate": true
+  },
+  "cost_and_data_safety": {
+    "new_paid_service_or_dependency": false,
+    "new_cost": "0 Ft",
+    "production_d1_migration_or_mutation": false,
+    "r2_mutation_or_deletion": false
+  }
+}
