@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261126145032-6ae41223",
+  "task": "77.44.7.D-06-ci-follow-up-push",
+  "trigger": "manual",
+  "started_at": "2026-11-26T14:50:32.122Z",
+  "finished_at": "2026-11-26T14:51:51.724Z",
+  "wall_seconds": 80,
+  "paused_seconds": 0,
+  "measured_seconds": 80,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "Verified canonical plan and crosswalk; exact-SHA Editor Core remained in progress. Shell GitHub push lacked credentials, so docs follow-up remains unpushed.",
+  "evidence": [
+    "docs/evidence/dev-metrics/runs/2026-11-26/20261126142220-bfb4824c.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "0d558486ef2f73f56bf6a77ef46dd8e1fc39fffe",
+  "finished_revision": "0cfe7f41d1f566c998d57fffdfb4a61a927b1116",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
