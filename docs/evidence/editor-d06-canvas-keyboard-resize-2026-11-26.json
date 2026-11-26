@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-26",
+  "canonical_plan": {
+    "path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "sha256_before_append": "61a4cb4851aba977da9ba261bfefa2fe5d536338473c8cf12ab6daf9e4e9b168",
+    "active_item": "77.44.7.D / D-06; EDT-037 keyboard-resizable Canvas element",
+    "sha256_after_append": "4cef6aeed9d7e391a47cc6d8fc24cc707f88136c1f99b7fd9432278b861f7978"
+  },
+  "finding": "The selected Canvas node resize handle was a pointer-only focusable button. Keyboard-only users had no equivalent to pointer resizing; at reduced Canvas zoom its touch target also fell below its intended CSS-pixel size.",
+  "change": {
+    "runtime_commit": "79b3cdbaeb3abceac5ca281edc43b54ea596d8be",
+    "branch": "v2/foundation",
+    "files": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/editor-refresh.css",
+      "public/editor-v2/index.html",
+      "tests/browser/editor-canvas-keyboard-move.test.js",
+      "tests/editor-public-asset-cache-bust.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "details": [
+      "The selected, effectively-unlocked, non-root Canvas node can be resized from the focused handle: left/right change width and up/down change height by 1 CSS pixel; Shift+arrow changes the matching dimension by 10 CSS pixels. Width and height clamp at 24 CSS pixels; Ctrl/Alt/Meta modified keys are left to system/browser shortcuts.",
+      "Keyboard resize uses the existing responsive.set Page Model command and undo history with a per-node/device typing group; it rerenders, restores focus to the handle, and announces the responsive size. The handle carries a node-specific accessible name, key-shortcuts, and a Hungarian description.",
+      "The handle keeps a 26 CSS-pixel visual target through Canvas zoom, with its position compensated so it remains anchored to the node corner. Root and locked nodes do not expose resize controls.",
+      "Only the active responsive draft changes. Undo/Redo and Save/reload do not publish; explicit Publish is the separate action that changes the public version. Cache tokens and the 396-item source traceability hash were refreshed."
+    ],
+    "third_party_code_or_dependency": "NONE; native button, existing responsive.set command/history, no added package."
+  },
+  "local_checks": {
+    "targeted_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-reporter=spec tests/browser/editor-canvas-keyboard-move.test.js",
+      "result": "PASS; 4/4 at 390px and 1366px",
+      "coverage": [
+        "Existing Canvas keyboard movement remains green at mobile and desktop widths.",
+        "Resize keys, 1px/10px increments, system-modifier pass-through, focus restoration, accessible labeling, and >=24px rendered handle target at mobile/desktop.",
+        "24px size clamp, root/locked protection, Undo/Redo, draft Save and reload, explicit Publish separation, and no browser page errors."
+      ]
+    },
+    "npm_run_test_editor": "PASS; 24/24 test files; preferences 12/12 and Linux subreaper harness 4/4.",
+    "npm_run_typecheck": "PASS",
+    "plan_contract": "PASS; python3 tests/plan-contract.test.py, 16/16.",
+    "canonical_plan_integrity": "PASS; one complete 13-file master and one current cursor.",
+    "feature_traceability": "PASS; 396/396 source mappings; 148 PARTIAL_SOURCE / 248 UNVERIFIED; functional acceptance NOT_CERTIFIED.",
+    "active_plan_audit": "PASS; cursor 77.44.7.D, 396 source mappings, no acceptance inferred.",
+    "migration_safety_gate": "PASS; npm run test:web013:migration-gate.",
+    "asset_cache_contract": "PASS; node --test tests/editor-public-asset-cache-bust.test.js, 1/1.",
+    "syntax_and_diff": "PASS; node --check app.js and browser test, git diff --check.",
+    "local_full_editor_browser_layout": "PARTIAL; the repository's 62-file serial browser matrix was interrupted after it began file 5/62 because the full local sweep was much longer than the focused feature run. No failures were reported among completed cases; this is not a full-suite PASS. The exact-SHA hosted editor-core workflow remains the complete release regression gate.",
+    "wrangler_dry_run": {
+      "result": "PASS; exit 0",
+      "version": "4.130.0",
+      "assets_read": 205,
+      "upload_kib": 476.98,
+      "gzip_kib": 118.26,
+      "migration_apply": false
+    },
+    "dev_metrics_self_test": "BLOCKED / NOT A FEATURE GATE; nested git init failed with sandbox spawnSync EPERM when tests/dev-metrics.test.mjs attempted its temporary repository. The feature/release checks passed independently."
+  },
+  "production_preflight": {
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "method": "Cloudflare D1 Query API; two SELECT-only statements",
+    "queries": [
+      {
+        "sql": "SELECT name FROM d1_migrations ORDER BY name",
+        "rows_returned": 38,
+        "latest_marker": "0032_forms_service.sql",
+        "rows_written": 0,
+        "changes": 0,
+        "changed_db": false
+      },
+      {
+        "sql": "SELECT COUNT(*) AS schema_object_count FROM sqlite_master WHERE type IN ('table','index')",
+        "schema_object_count": 135,
+        "rows_written": 0,
+        "changes": 0,
+        "changed_db": false,
+        "rows_returned": 1,
+        "rows_read": 164
+      }
+    ],
+    "migration_or_business_data_write": false,
+    "r2_operation": "NONE"
+  },
+  "pre_change_production": {
+    "deployment_id": "2a55c93f-fbbd-4352-b540-98c2b2ffd073",
+    "worker_version_id": "a5b872e3-3956-47f8-887b-31e5c63c9fec",
+    "worker_version_number": 4205,
+    "traffic_percent": 100,
+    "health_status": 200,
+    "asset_hashes": {
+      "public/editor-v2/index.html": "8849938fafc599a7ab020e93b1f6aefe0ab0dced9ef75291c4c0a5aec79c5a0a",
+      "public/editor-v2/app.js": "ed9bce4995de5e99d1d2af6627abf61a45626734677d9ccc81419158301d5b85",
+      "public/editor-v2/editor-refresh.css": "180f212701ddd188175b661ee3a88b03f99f8fa5964db155d46c3b41253a5bfc"
+    }
+  },
+  "release": {
+    "push": "NORMAL_FAST_FORWARD_VERIFIED",
+    "parent_sha": "3bca7888d87ff0a4e4c58151ae36ec0762da9180",
+    "runtime_sha": "79b3cdbaeb3abceac5ca281edc43b54ea596d8be",
+    "github_branch": "v2/foundation",
+    "github_branch_head": "79b3cdbaeb3abceac5ca281edc43b54ea596d8be",
+    "cloudflare_build_check_run_id": 139869057414,
+    "cloudflare_build_uuid": "2aeb9e3d-2f6a-4c3f-ad7a-eb70cb5fd114",
+    "cloudflare_build_outcome": "SUCCESS",
+    "deployment_id": "42352a45-9bba-4fdd-9cf0-69fe1220fe0a",
+    "worker_version_id": "f43bf6fc-cff3-44af-bb87-9eed364014fa",
+    "worker_version_number": 4206,
+    "traffic_percent": 100,
+    "production_smoke": {
+      "workflow_run_id": 45808201333,
+      "check_run_id": 139868891839,
+      "status": "SUCCESS",
+      "direct_health": {
+        "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?release=79b3cdbaeb3abceac5ca281edc43b54ea596d8be",
+        "http_status": 200,
+        "body": {
+          "ok": true,
+          "service": "sanci9517-streamer-brand",
+          "version": "2.0.0",
+          "server": "cloudflare-worker"
+        }
+      },
+      "changed_public_asset_hashes": {
+        "public/editor-v2/index.html": {
+          "path": "/editor-v2/",
+          "source_sha256": "f046aa1a9f6b5a8ae4f3423d1f0e7d351863ef0af62fc660a3af37fd97f32dcf",
+          "production_sha256": "f046aa1a9f6b5a8ae4f3423d1f0e7d351863ef0af62fc660a3af37fd97f32dcf",
+          "matches": true
+        },
+        "public/editor-v2/app.js": {
+          "path": "/editor-v2/app.js?v=20261126-canvas-keyboard-resize-v1",
+          "source_sha256": "cdb1002cb23427f9b5b899f58c341237257fcf8a84669c6d9ca5eb9cd6ea359e",
+          "production_sha256": "cdb1002cb23427f9b5b899f58c341237257fcf8a84669c6d9ca5eb9cd6ea359e",
+          "matches": true
+        },
+        "public/editor-v2/editor-refresh.css": {
+          "path": "/editor-v2/editor-refresh.css?v=20261126-canvas-keyboard-resize-v1",
+          "source_sha256": "c38247f0d38fbc9916fb68d90be56166da7e969f1e7be39f4fa98a6eb0f0e4cd",
+          "production_sha256": "c38247f0d38fbc9916fb68d90be56166da7e969f1e7be39f4fa98a6eb0f0e4cd",
+          "matches": true
+        }
+      }
+    },
+    "github_exact_sha_checks": {
+      "workers_build": {
+        "status": "SUCCESS",
+        "id": 139869057414
+      },
+      "source_audit": {
+        "status": "SUCCESS",
+        "run_id": 45808201286
+      },
+      "canonical_plan": {
+        "status": "SUCCESS",
+        "run_id": 45808201374
+      },
+      "verify": {
+        "status": "SUCCESS",
+        "run_id": 45808201326
+      },
+      "twitch_integration": {
+        "status": "SUCCESS",
+        "run_id": 45808201421
+      },
+      "editor_core": {
+        "status_at_evidence_capture": "IN_PROGRESS",
+        "run_id": 45808201289,
+        "active_step": "Run Editor browser layout regression",
+        "step_number": 16,
+        "steps_1_to_15": "SUCCESS"
+      }
+    }
+  },
+  "acceptance": {
+    "this_slice": "IMPLEMENTED_AND_PRODUCTION_VERIFIED",
+    "EDT_037": "PARTIAL_SOURCE; keyboard resize is one portion of planned Canvas keyboard support, not the full feature contract.",
+    "D_06": "OPEN / NOT CERTIFIED",
+    "D_01_to_D_07": "OPEN / NOT CERTIFIED",
+    "visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_and_physical_device_acceptance": "DEFERRED_UNTIL_COMPLETE_VISUAL_EDITOR",
+    "save_and_publish_are_separate": true
+  },
+  "cost_and_data_safety": {
+    "new_paid_service_or_dependency": false,
+    "new_cost": "0 Ft",
+    "production_d1_migration_or_mutation": false,
+    "r2_mutation_or_deletion": false
+  },
+  "next_gate": "Exact-SHA Editor Core run 45808201289 is running the hosted Editor browser-layout regression (step 16); verify its final result later. Full EDT-037, D-06, D-01 to D-07, Visual Editor and manual acceptance remain open.",
+  "review": {
+    "independent_code_review": "PASS; no blocking issue found; native keyboard handling preserves root/lock restrictions, focus, zoom-compensated hit target, Page Model history, and Save/Publish separation."
+  }
+}
