@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261126112336-10481ae6",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-26T11:23:37.000Z",
+  "finished_at": "2026-11-26T11:49:03.973Z",
+  "wall_seconds": 1527,
+  "paused_seconds": 0,
+  "measured_seconds": 1527,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Fixed and deployed EDT-039 detached-trigger timer guard; automated CI Editor Core remains in progress, so D-06 remains open.",
+  "evidence": [
+    "docs/evidence/editor-d06-edt039-detached-timer-2026-11-26.json"
+  ],
+  "checks": "Editor 25/25; typecheck PASS; browser lifecycle 1/1; production health/assets PASS; Editor Core IN_PROGRESS",
+  "started_revision": "d28d9260e28babbc83646ed0da65282ddeb609b1",
+  "finished_revision": "b25a13a0b74342f33109f8ab2205700285bb289b",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

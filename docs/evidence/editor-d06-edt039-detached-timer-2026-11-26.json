@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-26",
+  "canonical_plan": {
+    "path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "active_item": "77.44.7.D / D-06; EDT-039 page interaction timer lifecycle",
+    "status": "OPEN / NOT CERTIFIED"
+  },
+  "finding": "A delayed page action remained armed after its authored trigger was removed from a still-connected page root. If a dynamic subtree removed the trigger before its timer fired, the callback could still change another element on the page.",
+  "change": {
+    "runtime_commit": "b25a13a0b74342f33109f8ab2205700285bb289b",
+    "branch": "v2/foundation",
+    "parent_sha": "d28d9260e28babbc83646ed0da65282ddeb609b1",
+    "files": [
+      "public/editor-v2/core/authored-content.js",
+      "public/editor-v2/app.js",
+      "public/assets/page-renderer.js",
+      "public/editor-v2/index.html",
+      "public/visual-page.html",
+      "public/editor-v2/tests/page-interaction-timer-lifecycle.test.js",
+      "tests/browser/editor-page-interactions.test.js",
+      "tests/editor-public-asset-cache-bust.test.js",
+      "package.json",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "details": [
+      "The timer callback now runs only while the page root is connected, its original trigger remains contained by that root, and the document is visible. The timer still removes its pending entry when it fires.",
+      "Added focused unit and real-Chromium lifecycle regressions: a detached authored trigger cannot change the target; an attached trigger still applies the timer action. A full-page Chromium lifecycle regression removes a published trigger while preserving the page and checks that the destination tabs remain unchanged.",
+      "Refreshed the Editor entry and public renderer cache tokens and updated the cache-bust contract test. Save continues to modify only the draft; Publish remains an explicit separate action."
+    ],
+    "third_party_code_or_dependency": "NONE; native DOM containment check, no new package."
+  },
+  "local_checks": {
+    "syntax": "PASS; node --check for authored-content.js, page-renderer.js, app.js, and editor-page-interactions.test.js.",
+    "asset_cache_bust": "PASS; node tests/editor-public-asset-cache-bust.test.js, 3/3.",
+    "timer_unit": "PASS; node --experimental-vm-modules --test public/editor-v2/tests/page-interaction-timer-lifecycle.test.js.",
+    "editor_unit_suite": "PASS; npm run test:editor; 25/25 Editor unit files, preferences 12/12, Linux subreaper 4/4.",
+    "typecheck": "PASS; npm run typecheck -- --pretty false.",
+    "plan_contract": "PASS; python3 tests/plan-contract.test.py, 16/16.",
+    "canonical_plan": "PASS; python3 scripts/check-canonical-plan.py; one complete 13-file master, one current cursor.",
+    "traceability": "PASS; python3 scripts/build-feature-traceability.py --check; 396 mappings.",
+    "active_point": "PASS; python3 scripts/audit-active-plan-point.py; cursor 77.44.7.D, 148 PARTIAL_SOURCE and 248 UNVERIFIED, acceptance NOT_CERTIFIED.",
+    "migration_safety_gate": "PASS; npm run test:web013:migration-gate.",
+    "targeted_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-page-interactions.test.js",
+      "result": "PASS; 1/1 test file, including the detached-trigger 10-second timer case."
+    },
+    "wrangler_dry_run": {
+      "command": "HOME=/tmp/sanci-wrangler-home WRANGLER_SEND_METRICS=false npx wrangler deploy --dry-run --outdir /tmp/sanci-edt039-dry-run",
+      "result": "PASS; Wrangler 4.130.0, 206 assets, 476.98 KiB upload / 118.26 KiB gzip, no publish or migration apply."
+    },
+    "diff_check": "PASS; git diff --cached --check before runtime commit, and git diff --check after tests."
+  },
+  "production_d1_preflight": {
+    "method": "Cloudflare D1 Query API, SELECT-only; no Wrangler remote migration-list command.",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "sql": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 3",
+    "latest_markers": ["0032_forms_service.sql", "0031_media_archive_malformed_json_guard.sql", "0030_media_library_organization.sql"],
+    "rows_read": 3,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "release": {
+    "push": "NORMAL_FAST_FORWARD_VERIFIED",
+    "github_branch": "v2/foundation",
+    "github_branch_head": "b25a13a0b74342f33109f8ab2205700285bb289b",
+    "deploy_command": "npm run deploy:safe",
+    "migration_safety_gate": "PASS; deploy:safe invokes the repository migration gate and does not apply D1 migrations.",
+    "wrangler_retries": "The first local deploy attempt failed at Worker tag verification with a fetch error; no deployment was reported by that attempt. Retrying with authorized network access succeeded. Two new 100% Worker versions appeared close together; the latest verified version is listed below. This evidence does not attribute the earlier version to a particular trigger.",
+    "deployment_id": "d4554802-7e22-435a-aec3-4b6c1f57e3b0",
+    "worker_version_id": "c5557918-abcb-40a5-aee3-778edba3d646",
+    "worker_version_number": 4208,
+    "traffic_percent": 100,
+    "direct_health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?release=b25a13a0b74342f33109f8ab2205700285bb289b",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_public_asset_hashes": {
+      "public/editor-v2/index.html": {
+        "production_path": "/editor-v2/",
+        "source_sha256": "fa0fb61c14e1a2e7f46066e126ea253c483435695bea8acf1801a1162243c0f6",
+        "production_sha256": "fa0fb61c14e1a2e7f46066e126ea253c483435695bea8acf1801a1162243c0f6",
+        "matches": true
+      },
+      "public/editor-v2/app.js": {
+        "production_path": "/editor-v2/app.js",
+        "source_sha256": "4127919b698cbc267609cdf4c652d6833f27680576be4e31630751b18ad44356",
+        "production_sha256": "4127919b698cbc267609cdf4c652d6833f27680576be4e31630751b18ad44356",
+        "matches": true
+      },
+      "public/editor-v2/core/authored-content.js": {
+        "production_path": "/editor-v2/core/authored-content.js",
+        "source_sha256": "ca12df009c762db230f60db1ae58e814d100f768e021ff56924c15e5f40a2331",
+        "production_sha256": "ca12df009c762db230f60db1ae58e814d100f768e021ff56924c15e5f40a2331",
+        "matches": true
+      },
+      "public/assets/page-renderer.js": {
+        "production_path": "/assets/page-renderer.js",
+        "source_sha256": "4e6bdeadb7fbd557a34b4b5c5af9ff392bb489de201060a79b0b27e676699fb1",
+        "production_sha256": "4e6bdeadb7fbd557a34b4b5c5af9ff392bb489de201060a79b0b27e676699fb1",
+        "matches": true
+      },
+      "public/visual-page.html": {
+        "production_path": "/visual-page.html",
+        "source_sha256": "5846f0c7dd65ab69fc4f27f7a677b68f5d448a81af9ebdad783ca59d25a315e7",
+        "production_sha256": "5846f0c7dd65ab69fc4f27f7a677b68f5d448a81af9ebdad783ca59d25a315e7",
+        "matches": true
+      }
+    },
+    "github_exact_sha_checks": {
+      "canonical_plan": {"run_id": 45813191810, "status": "SUCCESS"},
+      "active_point_audit": {"run_id": 45813191841, "status": "SUCCESS"},
+      "twitch_integration": {"run_id": 45813191723, "status": "SUCCESS"},
+      "f0_baseline": {"run_id": 45813191858, "status": "SUCCESS"},
+      "production_worker_source_smoke": {"run_id": 45813191834, "status": "SUCCESS"},
+      "editor_core": {
+        "run_id": 45813191763,
+        "status_at_capture": "IN_PROGRESS",
+        "completed_steps": "1–14 SUCCESS",
+        "active_step": "Test real Worker media upload with isolated D1 and R2",
+        "steps_16_to_22": "PENDING"
+      }
+    }
+  },
+  "acceptance": {
+    "this_slice": "IMPLEMENTED_AND_PRODUCTION_VERIFIED",
+    "EDT_039": "PARTIAL_SOURCE; one stale timer lifecycle defect fixed, not the full page-actions capability matrix.",
+    "D_06": "OPEN / NOT CERTIFIED",
+    "D_01_to_D_07": "OPEN / NOT CERTIFIED",
+    "visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_and_physical_device_acceptance": "DEFERRED_UNTIL_COMPLETE_VISUAL_EDITOR",
+    "save_and_publish_are_separate": true
+  },
+  "cost_and_data_safety": {
+    "new_paid_service_or_dependency": false,
+    "new_cost": "0 Ft",
+    "production_d1_migration_or_mutation": false,
+    "r2_operation": "NONE"
+  },
+  "next_gate": "Wait for exact-SHA Editor Core run 45813191763 to complete; inspect its final status before claiming the hosted full Editor suite. Continue remaining EDT-039 and D-06 requirements; full D-06 and Editor acceptance remain open.",
+  "plan_status": "77.44.7.D remains OPEN / NOT CERTIFIED; this is a targeted production-verified defect fix, not a full D-block completion."
+}
