@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261126181925-c6844567",
+  "task": "77.44.7.D-06-keyboard-pan",
+  "trigger": "manual",
+  "started_at": "2026-11-26T18:19:25.594Z",
+  "abandoned_at": "2026-11-26T18:48:51.731Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Session continued in new task after repository state review; prior canvas pan block was released to exact SHA and is being reported in its own evidence; do not count idle gap.",
+  "started_revision": "0cfe7f41d1f566c998d57fffdfb4a61a927b1116",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}
