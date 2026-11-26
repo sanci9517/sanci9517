@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "task": "77.44.7.D-06 / EDT-037",
+  "date": "2026-11-26",
+  "status": "PARTIAL_FEATURE_RELEASED; EDITOR_CORE_CI_IN_PROGRESS; D-06_OPEN",
+  "scope": "Accessible nested layer-tree ownership and keyboard navigation",
+  "runtime_commit": "6634800567a3e420a20319bcc460c0c268db4a5c",
+  "branch": "v2/foundation",
+  "branch_parent": "abfb5dca73114528f2971fdd42345a31b353cb90",
+  "intermediate_upload_note": "The first runtime commit abfb5dca73114528f2971fdd42345a31b353cb90 was created from truncated command output for app.js and feature-traceability.json. GitHub active-point audit failed on invalid JSON, and the first Worker smoke observed an asset mismatch. The blobs were immediately re-uploaded from exact byte chunks, the current head 6634800567a3e420a20319bcc460c0c268db4a5c is the corrective fast-forward, its active-point audit passes, and its production smoke passes after rollout. The earlier commit remains in history and is not treated as a release pass.",
+  "implementation": {
+    "layer_tree": "Layer rows use role=treeitem with aria-level, aria-posinset, aria-setsize, aria-selected, aria-expanded, aria-owns, and a DOM-owned role=group for direct children. Collapse hides the owned group without deleting it; Up/Down/Home/End focus navigation omits hidden descendants. aria-keyshortcuts and Hungarian descriptions expose Home/End and hierarchy navigation.",
+    "save_publish": "Save remains draft-only; Publish remains a separate explicit action.",
+    "changed_public_assets_sha256": {
+      "public/editor-v2/app.js": "c090c259546a97fb42902511c8ad4969d550a09d15e5fe194600bf6759232e9d",
+      "public/editor-v2/editor.css": "6dd9c46ffecf5c22e778c1cb6b3a872da9d9f09dc0dc9dad8aa4e6997b8bfb95",
+      "public/editor-v2/index.html": "8547efb9798dfef12e58b41f227c447499944f0e09656bac47a6fdc775021442"
+    },
+    "crosswalk_features": 396
+  },
+  "local_checks": {
+    "targeted_chromium_layer_workflows": "15/15 PASS across editor-element-insertion, editor-layer-rename-draft, editor-canvas-keyboard-move, and editor-node-clipboard",
+    "editor_unit": "25/25 files PASS",
+    "preferences": "12/12 PASS",
+    "linux_subreaper": "4/4 PASS",
+    "typecheck": "PASS",
+    "public_asset_cache_bust": "1/1 PASS",
+    "plan_contract": "16/16 PASS",
+    "canonical_plan": "PASS; 13 master files, 396 mappings; acceptance not certified",
+    "feature_traceability": "396/396 PASS",
+    "active_plan_point": "77.44.4 / WEB-011; next 77.44.7.D; NOT_CERTIFIED",
+    "migration_safety_gate": "PASS",
+    "wrangler_dry_run": "Wrangler 4.130.0; 206 assets; 476.98 KiB (118.26 KiB gzip); PASS",
+    "syntax_and_diff": "node --check and git diff --check PASS"
+  },
+  "production_preflight": {
+    "queries": [
+      "SELECT type,name,tbl_name,sql FROM sqlite_master WHERE type IN ('table','index','trigger') ORDER BY type,name",
+      "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 10"
+    ],
+    "schema_rows": 164,
+    "migration_markers": 38,
+    "latest_migration": "0032_forms_service.sql",
+    "database_size_bytes_before_and_after": 3883008,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "r2_mutations": 0
+  },
+  "github_ci_exact_sha": {
+    "active_point_audit": {"run_id": 45865290593, "status": "success"},
+    "canonical_plan": {"run_id": 45865290628, "status": "success"},
+    "f0_baseline": {"run_id": 45865290620, "status": "success"},
+    "twitch_integration": {"run_id": 45865290627, "status": "success"},
+    "production_source_smoke": {"run_id": 45865290608, "status": "success", "health_http": 200, "changed_asset_sha256": "matched exact candidate source after automatic rollout"},
+    "editor_core": {"run_id": 45865290592, "status": "in_progress_at_recording", "completed_steps": "typecheck, editor core, forms schema/routes, Forms Inspector/public-page Chromium, offline D1, private R2 API, showcase unit/Chromium", "current_step": "isolated test Worker media upload with D1 and R2", "not_claimed_as_pass": true}
+  },
+  "cloudflare_production": {
+    "deployment_id": "91e8453b-09e2-493c-859c-f45e3a0ed261",
+    "version_id": "c56c542f-6ef9-4171-af23-15fca6abe95f",
+    "traffic_percentage": 100,
+    "observed_at": "2026-11-26T17:10:25Z",
+    "rollout": "automatic deployment after branch fast-forward; exact-SHA production smoke passed at 17:10:31Z"
+  },
+  "acceptance": {
+    "edt_037": "OPEN / NOT CERTIFIED",
+    "d06": "OPEN / NOT CERTIFIED",
+    "d_block": "OPEN / NOT CERTIFIED",
+    "full_visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until complete Editor scope",
+    "cost_huf": 0,
+    "production_d1_write_or_migration": false,
+    "r2_operation": false,
+    "new_dependency": false,
+    "save_equals_publish": false
+  }
+}
