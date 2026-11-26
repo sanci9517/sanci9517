@@ -16,9 +16,20 @@ for(const width of [390,1366])test(`layer rename pending draft survives save, pu
  execute(model,{type:'element.update',payload:{nodeId:id,patch:{name:'Mentett elem'}}});
  execute(model,{type:'schedule.config.set',payload:{nodeId:id,patch:{statuses:['completed'],emptyText:'Mentett adásrend'}}});
  execute(model,{type:'element.add',payload:{type:'text',parentId:activePage(model).rootId}});
+ const middleId=model.selection.primaryId;
+ execute(model,{type:'element.update',payload:{nodeId:middleId,patch:{name:'Kijelölhető második réteg'}}});
+ execute(model,{type:'element.add',payload:{type:'text',parentId:activePage(model).rootId}});
+ const thirdId=model.selection.primaryId;
+ execute(model,{type:'element.update',payload:{nodeId:thirdId,patch:{name:'Kijelölhető harmadik réteg'}}});
+ execute(model,{type:'element.add',payload:{type:'text',parentId:activePage(model).rootId}});
  const textId=model.selection.primaryId;
  execute(model,{type:'element.update',payload:{nodeId:textId,patch:{name:'Zárolt második réteg'}}});
  execute(model,{type:'element.lock.set',payload:{nodeId:textId,locked:true}});
+ execute(model,{type:'element.add',payload:{type:'section',parentId:activePage(model).rootId}});
+ const sectionId=model.selection.primaryId;
+ execute(model,{type:'element.add',payload:{type:'text',parentId:sectionId}});
+ const nestedId=model.selection.primaryId;
+ const rootId=activePage(model).rootId;
  execute(model,{type:'selection.set',payload:{ids:[id],primaryId:id}});
  const otherPage=createPage({name:'Másik',slug:'other'}),otherDocument=createDocument(otherPage);
  let draft=structuredClone(model.document),published=structuredClone(draft),version=2,hold=false,releaseResponse=null,onRequest=()=>{};
@@ -61,27 +72,39 @@ for(const width of [390,1366])test(`layer rename pending draft survives save, pu
  // keyboard-only selection/focus within the tree, independent of dock setup.
  await editor.evaluate(()=>window.sanciEditor.showLeftTab('layers',{save:false}));
  const row=editor.locator(`.layer-row[data-node-id="${id}"]`), field=editor.getByRole('textbox',{name:'Réteg neve',exact:true});
+ const middleRow=editor.locator(`.layer-row[data-node-id="${middleId}"]`),thirdRow=editor.locator(`.layer-row[data-node-id="${thirdId}"]`);
  const secondRow=editor.locator(`.layer-row[data-node-id="${textId}"]`);
- await row.waitFor({state:'visible'});await secondRow.waitFor({state:'visible'});
+ await row.waitFor({state:'visible'});await middleRow.waitFor({state:'visible'});await thirdRow.waitFor({state:'visible'});await secondRow.waitFor({state:'visible'});
  const waitForLayerFocus=async nodeId=>{
   try{await editor.waitForFunction(expected=>document.activeElement?.classList.contains('layer-row')&&document.activeElement.dataset.nodeId===expected&&document.querySelector('.layer-row.active')?.dataset.nodeId===expected,nodeId)}
   catch(error){const detail=await editor.evaluate(()=>({active:{className:document.activeElement?.className,nodeId:document.activeElement?.dataset?.nodeId},leftDock:document.querySelector('#leftDock')?.className,layersPanel:document.querySelector('#leftPanelLayers')?.className,rows:[...document.querySelectorAll('.layer-row')].map(item=>({id:item.dataset.nodeId,tabIndex:item.tabIndex,pressed:item.getAttribute('aria-pressed'),active:item.classList.contains('active'),rects:item.getClientRects().length}))}));throw new Error(`Layer keyboard focus failed for ${nodeId}: ${JSON.stringify(detail)}`,{cause:error})}
  };
  assert.equal(await row.getAttribute('tabindex'),'0','the primary selection is the single layer-tree Tab stop');
+ assert.equal(await row.getAttribute('aria-keyshortcuts'),'Shift+ArrowUp Shift+ArrowDown Control+Space Meta+Space','the layer exposes its range-selection and toggle shortcuts to assistive technology');
+ assert.match(await editor.locator('#leftPanelLayers .hierarchy-move-help').first().textContent(),/Shift\+nyíl.*Ctrl\/⌘\+Space/,'the Layers panel explains keyboard multi-selection');
  assert.equal(await secondRow.getAttribute('tabindex'),'-1');
  assert.equal(await secondRow.getAttribute('aria-pressed'),'false');
  await row.focus();assert.equal(await row.evaluate(element=>document.activeElement===element),true,'the selected layer row accepts keyboard focus');await editor.keyboard.press('ArrowDown');
- await waitForLayerFocus(textId);
- assert.equal(await secondRow.getAttribute('tabindex'),'0','arrow selection updates the roving Tab stop');
+ await waitForLayerFocus(middleId);
+ assert.equal(await middleRow.getAttribute('tabindex'),'0','arrow selection updates the roving Tab stop');
+ assert.equal(await middleRow.getAttribute('aria-pressed'),'true','arrow navigation keeps the target selected');
+ await editor.keyboard.press('ArrowDown');await waitForLayerFocus(thirdId);
+ await editor.keyboard.press('ArrowDown');await waitForLayerFocus(textId);
  assert.equal(await secondRow.getAttribute('aria-pressed'),'true','the locked layer remains selectable and exposes its selected state');
  assert.equal(await secondRow.evaluate(element=>element.classList.contains('locked')),true,'keyboard navigation preserves the locked-layer state');
- await editor.keyboard.press('ArrowUp');
- await waitForLayerFocus(id);
+ await editor.keyboard.press('ArrowUp');await waitForLayerFocus(thirdId);
+ await editor.keyboard.press('ArrowUp');await waitForLayerFocus(middleId);
+ await editor.keyboard.press('ArrowUp');await waitForLayerFocus(id);
  await editor.keyboard.press('Home');
- const rootId=model.document.pages[pageId].rootId;
  await waitForLayerFocus(rootId);
+ const rootRow=editor.locator(`.layer-row[data-node-id="${rootId}"]`);
+ assert.equal(await rootRow.getAttribute('aria-pressed'),'true');
+ await editor.keyboard.press('Control+Space');
+ assert.equal(await rootRow.getAttribute('aria-pressed'),'true','Ctrl+Space cannot toggle the non-selectable root layer');
  await editor.keyboard.press('End');
- await waitForLayerFocus(textId);
+ await waitForLayerFocus(nestedId);
+ await editor.keyboard.press('ArrowUp');await waitForLayerFocus(sectionId);
+ await editor.keyboard.press('ArrowUp');await waitForLayerFocus(textId);
  const inspectorToggle=editor.locator('#openInspector');await inspectorToggle.focus();await editor.keyboard.press('Enter');
  await editor.waitForFunction(()=>document.querySelector('#openInspector')?.getAttribute('aria-expanded')==='true');
  assert.equal(await editor.locator('.inspector-selection b').textContent(),'Zárolt második réteg','keyboard-only layer selection updates the Inspector target');
@@ -89,6 +112,35 @@ for(const width of [390,1366])test(`layer rename pending draft survives save, pu
  await inspectorToggle.focus();await editor.keyboard.press('Enter');
  await editor.waitForFunction(()=>document.querySelector('#openInspector')?.getAttribute('aria-expanded')==='false');
  await editor.evaluate(()=>window.sanciEditor.showLeftTab('layers',{save:false}));
+ await middleRow.click();await middleRow.focus();await editor.keyboard.press('Shift+ArrowDown');await waitForLayerFocus(thirdId);
+ await editor.keyboard.press('Shift+ArrowDown');await waitForLayerFocus(textId);
+ assert.equal(await editor.locator('#groupSelection').isEnabled(),false,'a range containing a locked layer cannot be grouped');
+ await editor.keyboard.press('Shift+ArrowUp');await waitForLayerFocus(thirdId);
+ assert.equal(await middleRow.getAttribute('aria-pressed'),'true','Shift+Arrow keeps the first focused layer as the range anchor');
+ assert.equal(await thirdRow.getAttribute('aria-pressed'),'true','Shift+Arrow extends an inclusive sibling range');
+ assert.equal(await secondRow.getAttribute('aria-pressed'),'false','moving back contracts from the original anchor rather than moving the anchor');
+ assert.equal(await editor.locator('#groupSelection').isEnabled(),true,'a same-parent keyboard range enables the existing Group action');
+ await editor.keyboard.press('Control+Space');
+ assert.equal(await middleRow.getAttribute('aria-pressed'),'true');assert.equal(await thirdRow.getAttribute('aria-pressed'),'false','Control+Space toggles the focused layer out of the selection');
+ assert.equal(await thirdRow.evaluate(element=>document.activeElement===element),true,'toggling a focused row preserves keyboard focus after rerender');
+ await editor.keyboard.press('Meta+Space');
+ assert.equal(await thirdRow.getAttribute('aria-pressed'),'true','Meta+Space is the equivalent macOS selection toggle');
+ assert.equal(await editor.locator('#groupSelection').isEnabled(),true);
+ await editor.locator('#groupSelection').click();
+ const groupId=await editor.locator('.layer-row.active').getAttribute('data-node-id');
+ assert.notEqual(groupId,middleId);assert.notEqual(groupId,thirdId,'keyboard-selected siblings group as a single undoable edit');
+ const undo=editor.locator(mobile?'#mobileUndo':'#undo'),redo=editor.locator(mobile?'#mobileRedo':'#redo');
+ await undo.click();await middleRow.waitFor({state:'visible'});await thirdRow.waitFor({state:'visible'});
+ assert.equal(await editor.locator('#groupSelection').isEnabled(),true,'Undo restores the range selection for the existing Group action');
+ await secondRow.focus();await editor.keyboard.press('Shift+ArrowDown');await waitForLayerFocus(sectionId);
+ await editor.keyboard.press('Shift+ArrowDown');await waitForLayerFocus(nestedId);
+ assert.equal(await secondRow.getAttribute('aria-pressed'),'false','Shift cannot span parent boundaries from the previous sibling range');
+ assert.equal(await editor.locator(`.layer-row[data-node-id="${nestedId}"]`).getAttribute('aria-pressed'),'true','cross-parent Shift navigation safely selects only its target');
+ assert.equal(await editor.locator('#groupSelection').isEnabled(),false);
+ await middleRow.click();
+ assert.equal(await editor.locator(`.layer-row[data-node-id="${groupId}"]`).count(),0,'Undo restores the selected siblings and removes their group');
+ await redo.click();await editor.locator(`.layer-row[data-node-id="${groupId}"]`).waitFor();
+ await undo.click();await middleRow.waitFor({state:'visible'});await thirdRow.waitFor({state:'visible'});
  // Focus and F2 stay in one browser action so a render after a save cannot
  // leave a gap between focusing the layer and dispatching its rename shortcut.
  const open=async()=>{
