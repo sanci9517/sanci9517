@@ -9,8 +9,8 @@ import {createDocument,createNode} from '../../public/editor-v2/core/schema.js';
 
 test('server-rejected unsupported Publish selects the node, gives recovery guidance, and keeps the saved draft clean',async t=>{
   const document=createDocument(),pageId=document.activePageId,page=document.pages[pageId];
-  const form=createNode('form',{id:'planned-publish-form',name:'Feliratkozási űrlap',parentId:page.rootId});
-  page.nodes[form.id]=form;page.nodes[page.rootId].children.push(form.id);
+  const input=createNode('input',{id:'planned-publish-input',name:'Tervezett beviteli mező',parentId:page.rootId});
+  page.nodes[input.id]=input;page.nodes[page.rootId].children.push(input.id);
   document.revision=2;page.revision=2;
   const draft=structuredClone(document),published=createDocument();
   let version=2,editorGets=0;const posts=[];let rejectUnsupportedPublish=true,releaseStalePublish,resolveThirdPublish;
@@ -26,7 +26,7 @@ test('server-rejected unsupported Publish selects the node, gives recovery guida
       let body='';for await(const chunk of req)body+=chunk;
       const request=JSON.parse(body);posts.push(request);
       if(posts.length===3)resolveThirdPublish();
-      if(rejectUnsupportedPublish&&request.publish){if(posts.length>=3)await stalePublishResponse;else await new Promise(done=>setTimeout(done,75));res.statusCode=409;return json({ok:false,error:{code:'UNSUPPORTED_EDITOR_NODE_TYPE',message:'A form elem típusa még nem publikálható.'}})}
+      if(rejectUnsupportedPublish&&request.publish){if(posts.length>=3)await stalePublishResponse;else await new Promise(done=>setTimeout(done,75));res.statusCode=409;return json({ok:false,error:{code:'UNSUPPORTED_EDITOR_NODE_TYPE',message:'A beviteli mező elem típusa még nem publikálható.'}})}
       return json({ok:true,data:{pageId,version,revisionId:'revision-'+version}});
     }
     if(url.pathname==='/api/auth/session')return json({ok:true,data:{authenticated:false,user:null}});
@@ -55,8 +55,8 @@ test('server-rejected unsupported Publish selects the node, gives recovery guida
   assert.deepEqual(draft,draftBeforePublish,'the rejected request leaves the saved Page Model unchanged');
   assert.deepEqual(published,publishedBeforePublish,'the rejected request leaves the published snapshot unchanged');
   assert.equal(await editor.locator('#leftTabLayers').getAttribute('aria-selected'),'true','the editor opens the Layers recovery path');
-  const layer=editor.locator(`#layersTree .layer-row[data-node-id="${form.id}"]`);
-  await layer.waitFor();await editor.waitForFunction(id=>document.activeElement?.dataset.nodeId===id,form.id);
+  const layer=editor.locator(`#layersTree .layer-row[data-node-id="${input.id}"]`);
+  await layer.waitFor();await editor.waitForFunction(id=>document.activeElement?.dataset.nodeId===id,input.id,{timeout:1000});
   assert.match(await layer.getAttribute('class'),/active/,'the unsupported node is selected and focused for correction');
   const guidance=editor.locator('#leftPanelLayers [data-recovery-kind="unsupported-node"]');
   assert.equal(await guidance.getAttribute('role'),'alert');
@@ -93,12 +93,12 @@ test('server-rejected unsupported Publish selects the node, gives recovery guida
   await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálás…');
   await thirdPublishReceived;
   await editor.locator('#leftTabLayers').click();
-  await editor.locator(`#layersTree .layer-row[data-node-id="${form.id}"]`).click();
+  await editor.locator(`#layersTree .layer-row[data-node-id="${input.id}"]`).click();
   await editor.evaluate(()=>window.sanciEditor.openPanel('right'));
   const deleteAction=editor.locator('#inspectorBody .danger-action');
   await deleteAction.waitFor();
   await deleteAction.click();
-  await editor.waitForFunction(id=>!document.querySelector(`#layersTree .layer-row[data-node-id="${CSS.escape(id)}"]`),form.id);
+  await editor.waitForFunction(id=>!document.querySelector(`#layersTree .layer-row[data-node-id="${CSS.escape(id)}"]`),input.id);
   releaseStalePublish();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent.includes('piszkozat a publikálási kérés óta módosult'));
   assert.equal(await editor.locator('#leftPanelLayers [data-recovery-kind="unsupported-node"]').count(),0,

@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "date": "2026-11-26",
+  "plan_point": "77.44.7.D / D-06",
+  "status": "OPEN / NOT_CERTIFIED",
+  "scope": "Fix the Editor Core browser regression fixture after the Forms service made form nodes PARTIAL; no runtime behavior changed.",
+  "source_state": {
+    "branch": "v2/foundation",
+    "base_sha": "7bbc48c7d6a227eccc4088d17f1a1f40211dd6df",
+    "production_runtime_sha": "8ee7a093baf57eea99d7e81c414e4dbd736994b2",
+    "production_deployment_id": "a23afc72-a38b-4f95-aa40-fcbfea709e41",
+    "worker_version_id": "243b2295-07b5-409d-893d-f29fdbad5053",
+    "traffic_percent": 100
+  },
+  "failure": {
+    "workflow": "Editor Core Test",
+    "run_id": 45725217234,
+    "run_url": "https://github.com/sanci9517/sanci9517/actions/runs/45725217234",
+    "source_sha": "ec52b7b2f87f0f7e8af9623843b008207eead385",
+    "conclusion": "failure",
+    "job_id": 139593240567,
+    "test": "tests/browser/editor-publish-unsupported-recovery.test.js",
+    "failure": "page.waitForFunction timed out after 30000 ms at line 59 while waiting for the rejected node to be focused",
+    "root_cause": "The fixture used a form node, but Forms now marks form as PARTIAL and the production recovery correctly selects only node types without a public renderer contract. The mock endpoint incorrectly rejected a supported form, so no node was eligible for recovery focus."
+  },
+  "change": {
+    "file": "tests/browser/editor-publish-unsupported-recovery.test.js",
+    "runtime_changed": false,
+    "fixture": "Use a genuinely planned input node and matching unsupported-type response text; bound the focus wait to 1000 ms so a broken recovery cannot stall the entire browser suite for 30 seconds.",
+    "save_publish_contract": "Unchanged and still explicitly asserted by the lifecycle regression."
+  },
+  "local_verification": {
+    "command": "node --test tests/browser/editor-publish-unsupported-recovery.test.js",
+    "result": "PASS",
+    "passed": 1,
+    "failed": 0,
+    "browser": "Chromium via Playwright with local loopback permission"
+  },
+  "remote_verification": {
+    "new_exact_sha_ci": "PENDING",
+    "previous_failure_remains_historical_failure": true
+  },
+  "release": {
+    "worker_deployment": "NOT DONE; test-only change is excluded from Worker builds",
+    "production_d1": "NOT TOUCHED",
+    "r2": "NOT TOUCHED",
+    "new_cost_huf": 0
+  },
+  "next_gate": "Push the validated test/evidence follow-up by normal fast-forward, then verify the resulting exact-SHA Editor Core workflow. Do not claim the aggregate Editor Core gate or D-06 as complete until its exact-SHA run succeeds and the remaining acceptance criteria are met."
+}

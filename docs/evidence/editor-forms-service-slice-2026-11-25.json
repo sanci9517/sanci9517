@@ -170,8 +170,11 @@
       "git_diff_check": "PASS",
       "exact_sha_editor_core_ci": {
         "run_id": 45725217234,
-        "status": "IN_PROGRESS",
-        "active_step": "Run Editor browser layout regression (16/24)"
+        "status": "FAILURE",
+        "failed_step": "Run Editor browser layout regression (16/24)",
+        "failed_test": "tests/browser/editor-publish-unsupported-recovery.test.js",
+        "cause": "The test used form, which is now a supported PARTIAL node; the mocked endpoint incorrectly rejected it, so no unsupported node was eligible for recovery focus. The UI was correct; the stale fixture timed out at line 59.",
+        "follow_up_evidence": "docs/evidence/editor-unsupported-publish-recovery-fixture-2026-11-26.json"
       },
       "exact_sha_f0_baseline": {
         "run_id": 45725217173,
@@ -180,7 +183,8 @@
       "exact_sha_twitch_integration": {
         "run_id": 45725217229,
         "status": "SUCCESS"
-      }
+      },
+      "next_gate": "Verify the corrected unsupported-node test fixture and evidence commit, then check the exact-SHA Editor Core result. The prior run remains a historical failure."
     }
   },
   "production_d1": {
