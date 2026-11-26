@@ -58,6 +58,33 @@ test('Rich Text selection survives consecutive formatting, link edits and draft 
     await page.locator('.inspector-tabs button').nth(1).evaluate(button=>button.click());
     const surface=page.locator('.richtext-editor-surface');
     await surface.waitFor();
+    const toolTabs=page.getByRole('tablist',{name:'Szövegformázási eszközök'});
+    const characterTab=toolTabs.getByRole('tab',{name:'Karakter'});
+    const tabPanelWiring=await toolTabs.evaluate(tablist=>[...tablist.querySelectorAll('[role="tab"]')].map(tab=>{
+      const panel=document.getElementById(tab.getAttribute('aria-controls'));
+      return {tabId:tab.id,panelId:panel?.id,selected:tab.getAttribute('aria-selected'),labelledBy:panel?.getAttribute('aria-labelledby'),role:panel?.getAttribute('role')};
+    }));
+    assert.equal(tabPanelWiring.length,3,`all Rich Text tool tabs must be present at ${width}px`);
+    for(const item of tabPanelWiring){
+      assert.ok(item.tabId&&item.panelId,`each tab must reference a stable panel at ${width}px`);
+      assert.equal(item.labelledBy,item.tabId,`panel must be named by its tab at ${width}px`);
+      assert.equal(item.role,'tabpanel',`referenced group must be exposed as a tabpanel at ${width}px`);
+    }
+    assert.equal(tabPanelWiring.filter(item=>item.selected==='true').length,1,'exactly one tool tab is selected');
+    assert.equal(await page.getByRole('tabpanel',{name:'Karakter'}).isVisible(),true,'selected tool panel is exposed');
+    await characterTab.focus();
+    await characterTab.press('ArrowRight');
+    const paragraphTab=toolTabs.getByRole('tab',{name:'Bekezdés'});
+    assert.equal(await paragraphTab.getAttribute('aria-selected'),'true','ArrowRight selects the next tool tab');
+    assert.equal(await page.getByRole('tabpanel',{name:'Bekezdés'}).isVisible(),true,'ArrowRight exposes the associated panel');
+    await paragraphTab.press('Home');
+    assert.equal(await characterTab.getAttribute('aria-selected'),'true','Home returns to the first tool tab');
+    await page.locator('.inspector-tabs button').nth(0).click();
+    await page.locator('.inspector-tabs button').nth(1).click();
+    assert.deepEqual(await toolTabs.evaluate(tablist=>[...tablist.querySelectorAll('[role="tab"]')].map(tab=>{
+      const panel=document.getElementById(tab.getAttribute('aria-controls'));
+      return {tabId:tab.id,panelId:panel?.id,labelledBy:panel?.getAttribute('aria-labelledby'),role:panel?.getAttribute('role')};
+    })),tabPanelWiring.map(({tabId,panelId,labelledBy,role})=>({tabId,panelId,labelledBy,role})),`tab/panel IDs remain stable after keyboard navigation and Inspector tab changes at ${width}px`);
     const selection=await surface.evaluate(editor=>{
       const block=editor.querySelector('[data-rich-block]');
       const walker=document.createTreeWalker(block,NodeFilter.SHOW_TEXT);
