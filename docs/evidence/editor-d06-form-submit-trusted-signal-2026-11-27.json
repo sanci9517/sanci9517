@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "evidence_id": "editor-d06-form-submit-trusted-signal-2026-11-27",
+  "plan_point": "77.44.7.D / D-06 — trusted form-submit action signal",
+  "scope_status": "PARTIAL FEATURE SLICE; D-06, D-01–D-07, 77.44.7.D and complete Visual Editor remain OPEN / NOT CERTIFIED.",
+  "branch": "v2/foundation",
+  "base_sha": "bcc24b9d5cd09f2f070f0ab99e39981a09a5a50a",
+  "runtime_commit": "9512808d2b1e9cf8345310380ed34ff2e22f9795",
+  "commit_url": "https://github.com/sanci9517/sanci9517/commit/9512808d2b1e9cf8345310380ed34ff2e22f9795",
+  "change": {
+    "problem": "A public form's custom success event could be forged by unrelated page JavaScript, causing the configured submit action to run without an accepted backend submission.",
+    "implementation": "The authored-content module keeps accepted form elements in a private WeakSet. The public renderer calls the notifier only after the form service returns an accepted successful payload. The event listener requires and consumes the private token and restricts handling to the same runtime form within the page root. A counterfeit event alone therefore cannot execute a submit action.",
+    "files": [
+      "public/assets/page-renderer.js",
+      "public/editor-v2/core/authored-content.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html",
+      "public/visual-page.html",
+      "tests/browser/editor-form-public-page.test.js",
+      "tests/editor-public-asset-cache-bust.test.js"
+    ],
+    "save_publish_separation": "unchanged; the action runs only after the existing accepted submission response, not on draft save or preview"
+  },
+  "public_asset_sha256": {
+    "public/assets/page-renderer.js": "817394be5c839e5a8ccf79f3ceb643eb42b987b38649247d025b738b295c0f10",
+    "public/editor-v2/core/authored-content.js": "ece1785ca9ecf29bc00712dc97c35be3c9585f88031649c3eae0f4575bddfbcf",
+    "public/editor-v2/app.js": "e9f3612cbb7106913248c592c7e32ed8b2677eef4a7da1092b2a6346c608b475",
+    "public/editor-v2/index.html": "d3dc5f3ecbecac9afef63d84e684ed5952a29a641df1cb6ab198239196913b0a",
+    "public/visual-page.html": "3e5065355d40e8df1e138ca014cbbb34b9f5a27d40b76310d5a10aa8d5bb8c02"
+  },
+  "checks": [
+    { "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-form-public-page.test.js", "result": "PASS", "summary": "4/4 cases, including counterfeit event rejection and accepted-submit action behavior." },
+    { "command": "node --test tests/editor-public-asset-cache-bust.test.js", "result": "PASS", "summary": "1/1 cache-bust contract file." },
+    { "command": "npm run test:forms", "result": "PASS", "summary": "5/5 Forms test files." },
+    { "command": "npm run test:forms:browser", "result": "PASS", "summary": "Forms public page, Inspector and inbox Chromium regressions passed." },
+    { "command": "npm run test:editor", "result": "PASS", "summary": "25/25 Editor unit files; preference and Linux subreaper checks passed." },
+    { "command": "npm run typecheck", "result": "PASS" },
+    { "command": "python3 tests/plan-contract.test.py", "result": "PASS", "summary": "17/17." },
+    { "command": "python3 scripts/build-feature-traceability.py --check", "result": "PASS", "summary": "396 source mappings." },
+    { "command": "python3 scripts/check-canonical-plan.py", "result": "PASS", "summary": "One complete 13-file canonical master; acceptance remains uncertified." },
+    { "command": "python3 scripts/audit-active-plan-point.py", "result": "PASS", "summary": "Cursor 77.44 / WEB-011 → 77.44.7.D; 396 mapped features; acceptance NOT_CERTIFIED." },
+    { "command": "npm run test:web013:migration-gate", "result": "PASS" },
+    { "command": "npx wrangler deploy --dry-run", "result": "PASS", "summary": "Wrangler 4.130.0 packaged 206 assets (482.03 KiB / 119.21 KiB gzip); dry-run only." },
+    { "command": "git diff --check", "result": "PASS" }
+  ],
+  "production_preflight": {
+    "method": "Cloudflare D1 Query API; SELECT-only",
+    "queries": [
+      "SELECT type, COUNT(*) AS count FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' GROUP BY type ORDER BY type",
+      "SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 5"
+    ],
+    "schema_objects": { "indexes": 45, "tables": 37, "triggers": 29 },
+    "latest_migrations": ["0032_forms_service.sql", "0031_media_archive_malformed_json_guard.sql", "0030_media_library_organization.sql", "0029_media_archive_unicode_additive.sql", "0028_media_archive.sql"],
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "release": {
+    "cloudflare_build_uuid": "365a355b-5116-4aae-98f9-d891274b29dc",
+    "cloudflare_build_outcome": "SUCCESS",
+    "cloudflare_source_sha": "9512808d2b1e9cf8345310380ed34ff2e22f9795",
+    "deployment_id": "8e19cb3c-d8d9-4aff-8d3f-fe5ef75f2f55",
+    "worker_version_id": "0f95223d-35c6-42bc-a7c5-624ff246561f",
+    "worker_version_number": 4227,
+    "traffic_percent": 100,
+    "production_source_smoke": {
+      "run_id": 46048114129,
+      "status": "SUCCESS",
+      "health_http": 200,
+      "changed_public_asset_hashes": "exact-source production smoke passed"
+    },
+    "github_exact_sha_runs": [
+      { "name": "Production Worker source smoke", "run_id": 46048114129, "status": "SUCCESS" },
+      { "name": "Twitch Integration Check", "run_id": 46048114131, "status": "SUCCESS" },
+      { "name": "F0 baseline checks", "run_id": 46048114151, "status": "SUCCESS" },
+      { "name": "Editor Core Test", "run_id": 46048114248, "status": "IN_PROGRESS", "last_observed_step": "Run Editor browser layout regression" }
+    ]
+  },
+  "mutations_and_cost": {
+    "production_d1_migration_or_write": false,
+    "r2_operation": false,
+    "new_dependency": false,
+    "new_cost_huf": 0
+  },
+  "acceptance": {
+    "d06": "OPEN / NOT CERTIFIED",
+    "d01_d07": "OPEN / NOT CERTIFIED",
+    "complete_visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until all planned Editor functionality is implemented",
+    "save_publish": "separate and unchanged"
+  }
+}
