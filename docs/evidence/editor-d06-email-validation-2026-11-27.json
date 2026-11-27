@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task": "77.44.7.D / D-06 — Forms e-mail address contract",
   "date_utc": "2026-11-27",
-  "status": "RELEASED_AND_EXACT_SOURCE_VERIFIED; EDITOR_CORE_CI_IN_PROGRESS; D06_OPEN_NOT_CERTIFIED",
+  "status": "RELEASED_AND_EXACT_SOURCE_VERIFIED; EXACT_SHA_CI_PASS; D06_OPEN_NOT_CERTIFIED",
   "baseline": {
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
@@ -85,14 +85,42 @@
   "release": {
     "runtime_commit": "8bf6883fb36166a454b86d46b0de7422e6e9527c",
     "github_ci": {
-      "completed_workflows": "5/6 successful on exact runtime SHA (canonical plan, active-point audit, Twitch integration, F0 baseline, production smoke)",
-      "editor_core": {
-        "run_id": 46069444163,
-        "status": "in_progress",
-        "completed_steps": 15,
-        "current_step": "Run Editor browser layout regression",
-        "failed_steps": 0
-      },
+      "status": "PASS — all 6 exact-source workflow checks completed successfully",
+      "workflows": [
+        {
+          "name": "Canonical Creator Platform Plan",
+          "run_id": 46069444137,
+          "conclusion": "success"
+        },
+        {
+          "name": "Canonical Plan Active Point Audit",
+          "run_id": 46069444093,
+          "conclusion": "success"
+        },
+        {
+          "name": "Twitch Integration Check",
+          "run_id": 46069444058,
+          "conclusion": "success"
+        },
+        {
+          "name": "F0 baseline checks",
+          "run_id": 46069444072,
+          "conclusion": "success"
+        },
+        {
+          "name": "Production Worker source smoke",
+          "run_id": 46069444127,
+          "conclusion": "success"
+        },
+        {
+          "name": "Editor Core Test",
+          "run_id": 46069444163,
+          "conclusion": "success",
+          "job_id": 140742591806,
+          "completed_steps": 25,
+          "failed_steps": 0
+        }
+      ],
       "cloudflare_build_check": "SUCCESS — exact source SHA, build b9f7180a-c2a4-43d8-af3f-598f104066ca"
     },
     "cloudflare_deployment": {
