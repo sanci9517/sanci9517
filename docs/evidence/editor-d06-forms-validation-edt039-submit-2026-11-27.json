@@ -1,0 +1,208 @@
+{
+  "schema_version": 1,
+  "evidence_id": "editor-d06-forms-validation-edt039-submit-2026-11-27",
+  "plan_point": "77.44.7.D / D-06 — Forms accessibility and EDT-039 safe submit result action",
+  "status": "RUNTIME DEPLOYED AND EXACT-SHA PRODUCTION SMOKE PASSED; exact-SHA Editor Core CI remains IN_PROGRESS.",
+  "scope": "Adds accessible public form validation feedback and a constrained same-page action that runs only after successful public submission. This is a D-06/EDT-039 partial feature slice and does not close D-06, the D-block, the complete Visual Editor, or final acceptance.",
+  "branch": "v2/foundation",
+  "base_sha": "9b072ed76ef14ba7513b7fbcfcd601b12f74323a",
+  "runtime_commit": "2c530668c78df688ad40dc28bc23373db9b7758b",
+  "github_ref_readback": "refs/heads/v2/foundation resolved to runtime_commit by GitHub API after normal expected-head fast-forward update.",
+  "features": [
+    {
+      "id": "77.44.7.D / D-06",
+      "summary": "Public forms now keep native constraint validation and add a linked, assertive error summary; each invalid field gets an inline error, aria-invalid and aria-describedby; summary links focus the field; correcting input clears stale error state. No request occurs while invalid."
+    },
+    {
+      "id": "EDT-039 partial",
+      "summary": "Bound v1 forms can select only existing safe same-page scroll-to/select-tab actions on submit. Buttons cannot use submit; unbound forms have no eligible submit action. The public renderer emits the event only after an accepted service response, so invalid or failed submissions do not run the action. No JavaScript injection, external navigation, extra service, or schema change."
+    }
+  ],
+  "files": {
+    "runtime": [
+      "public/assets/page-renderer.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/core/authored-content.js",
+      "public/editor-v2/core/page-interactions.js",
+      "public/editor-v2/index.html",
+      "public/editor-v2/ui/page-interaction-controls.js",
+      "public/visual-page.html"
+    ],
+    "tests": [
+      "public/editor-v2/tests/page-interactions.test.js",
+      "tests/browser/editor-form-public-page.test.js",
+      "tests/editor-public-asset-cache-bust.test.js"
+    ],
+    "documentation_follow_up": [
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+      "docs/evidence/feature-traceability.json",
+      "docs/evidence/editor-d06-forms-validation-edt039-submit-2026-11-27.json"
+    ]
+  },
+  "public_asset_sha256": {
+    "public/assets/page-renderer.js": "e74b7ea9bbfe353270938b5533324079d17788305d0b9f1738961b43cc423e43",
+    "public/editor-v2/app.js": "0a7f28717ed4c9afb21af2668ae3793ea1eeec4f51432cd3eeccea2f9d2c5a16",
+    "public/editor-v2/core/authored-content.js": "81b23b36d3f5f0dc506854e835dc3bd6e74e38d5cbb9bc4c6733d33472603bde",
+    "public/editor-v2/core/page-interactions.js": "578d7ea44c7df52ed080386529602063c4bd257e456ffbb16011846ad5a31000",
+    "public/editor-v2/index.html": "470564e219a2b0fecabd1e095e19bb3c85ac94e11f772870473e9b43cae65947",
+    "public/editor-v2/ui/page-interaction-controls.js": "d84690072acc5ddc60ae328ef7e3fe2c1ed843763ff36e9311427791928c1c7f",
+    "public/visual-page.html": "486d02469acfe9d01b899a2b4acdab801669fa42ac7e32dfa615feaf640254e2"
+  },
+  "checks": [
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-form-public-page.test.js tests/editor-public-asset-cache-bust.test.js",
+      "result": "PASS",
+      "summary": "The public Forms and asset cache-bust regression files passed (4 public Forms cases and 3 cache cases in the observed run)."
+    },
+    {
+      "command": "npm run test:forms:browser",
+      "result": "PASS",
+      "summary": "Public form, Forms Inspector and inbox browser regressions passed."
+    },
+    {
+      "command": "npm run test:forms",
+      "result": "PASS",
+      "summary": "5/5 Forms unit test files."
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "summary": "25/25 Editor unit test files, including safe Form submit action contracts."
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "summary": "17/17 tests."
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "summary": "396 source mappings."
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "summary": "13-file canonical master contract; acceptance remains not certified."
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "summary": "Current plan cursor and 396-record crosswalk verified; functional acceptance NOT CERTIFIED."
+    },
+    {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS"
+    },
+    {
+      "command": "npx wrangler deploy --dry-run",
+      "result": "PASS",
+      "summary": "Wrangler 4.130.0 packaged 206 assets (479.70 KiB / 118.93 KiB gzip) and exited in dry-run mode. It logged an EROFS warning while trying to persist CLI logs under the read-only /home/agent path; the packaging and dry run still completed successfully (exit 0)."
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run test:editor:layout",
+      "result": "PARTIAL",
+      "summary": "Locally stopped intentionally after 24 of 62 serial browser files passed without failures; the complete 62-file matrix is running on the exact runtime SHA in hosted Editor Core CI, so no local full-suite PASS is claimed."
+    }
+  ],
+  "production_preflight": {
+    "method": "Cloudflare D1 Query API; all statements SELECT-only",
+    "schema_query": "SELECT type, COUNT(*) AS count FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' GROUP BY type ORDER BY type",
+    "latest_migrations_query": "SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 5",
+    "schema_objects": {
+      "indexes": 45,
+      "tables": 37,
+      "triggers": 29
+    },
+    "latest_migrations": [
+      "0032_forms_service.sql",
+      "0031_media_archive_malformed_json_guard.sql",
+      "0030_media_library_organization.sql",
+      "0029_media_archive_unicode_additive.sql",
+      "0028_media_archive.sql"
+    ],
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "production_mutation": {
+    "d1_migration_or_write": false,
+    "r2_operation": false,
+    "new_dependency": false,
+    "save_publish_separation_changed": false,
+    "cost_huf": 0
+  },
+  "release": {
+    "github_branch_readback": {
+      "ref": "refs/heads/v2/foundation",
+      "sha": "2c530668c78df688ad40dc28bc23373db9b7758b"
+    },
+    "github_exact_sha_workflows": [
+      {
+        "name": "F0 baseline checks",
+        "run_id": 46038154712,
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/46038154712"
+      },
+      {
+        "name": "Twitch Integration Check",
+        "run_id": 46038154806,
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/46038154806"
+      },
+      {
+        "name": "Editor Core Test",
+        "run_id": 46038154728,
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/46038154728"
+      },
+      {
+        "name": "Production Worker source smoke",
+        "run_id": 46038154749,
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/46038154749"
+      }
+    ],
+    "cloudflare_build": {
+      "build_uuid": "d69c6b29-8b8a-449c-858e-ede005be75d6",
+      "build_outcome": "success",
+      "source_sha": "2c530668c78df688ad40dc28bc23373db9b7758b",
+      "branch": "v2/foundation",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "deployment": {
+      "deployment_id": "e4f2d087-92a3-473a-9abf-fdf0ba363065",
+      "worker_version": "98e90433-0eb6-4e87-a6bb-d5ef21ba6a73",
+      "worker_version_number": 4225,
+      "traffic_percent": 100,
+      "created_on": "2026-11-27T17:00:46.399978Z"
+    },
+    "production_source_smoke": {
+      "status": "success",
+      "http_health": 200,
+      "exact_source_sha": "2c530668c78df688ad40dc28bc23373db9b7758b",
+      "changed_public_assets_sha256_match": true,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/46038154749"
+    }
+  },
+  "acceptance": {
+    "d06": "OPEN / NOT CERTIFIED",
+    "d01_d07": "OPEN / NOT CERTIFIED",
+    "complete_visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until all planned Editor functionality is implemented",
+    "save_publish": "separate and unchanged",
+    "exact_sha_editor_core_ci": "IN_PROGRESS / NOT CERTIFIED; 24/62 local layout files completed with zero observed failures, full hosted matrix still running."
+  }
+}

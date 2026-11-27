@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "evidence_id": "editor-d06-inert-forms-draft-preview-2026-11-27",
+  "plan_point": "77.44.7.D / D-06 — Forms inspector draft preview",
+  "status": "PARTIAL — runtime deployed to 100% and exact-source production smoke passed; Editor Core exact-SHA CI was still in progress at evidence capture.",
+  "scope": "Adds a read-only, disabled, non-submitting visual preview of a draft Form definition in the Visual Editor Forms inspector. Does not close D-06, the D-block, the Visual Editor, or final functional acceptance.",
+  "branch": "v2/foundation",
+  "base_sha": "20415af0459c8f10cbd1ba119e029ed4de3ca3ba",
+  "runtime_commit": "9b072ed76ef14ba7513b7fbcfcd601b12f74323a",
+  "github_ref_readback": "refs/heads/v2/foundation resolved to runtime_commit",
+  "change": {
+    "summary": "Displays up to 24 fields from the currently selected draft form definition, including field labels, types, help text, required state, options and consent text. Every preview control and the preview-only submit button are disabled. The preview uses textContent, creates no form element, calls no public submission endpoint, and does not save or publish.",
+    "files": [
+      "public/editor-v2/ui/forms-inspector.js",
+      "public/editor-v2/editor-refresh.css",
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html",
+      "tests/browser/editor-forms-inspector.test.js",
+      "tests/editor-public-asset-cache-bust.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "public_asset_sha256": {
+      "public/editor-v2/ui/forms-inspector.js": "7f908360edd8e6681a1aaec3c8ae9e3dc6af14cd68a8cf2c776b29d2bfe9916f",
+      "public/editor-v2/editor-refresh.css": "6e89c53a124503a1d7f02a0e57a1517b55d7691701813ce78dade0782e4c1b9f",
+      "public/editor-v2/app.js": "10ab7f7e1ef43f89f3cc0c36760f921da07103f921e789b29542c51afa166eea",
+      "public/editor-v2/index.html": "87678767c3e9101b8803b9d1f83691acfa08348562fb87de63bcb9d60c6cc578"
+    },
+    "new_dependency": false,
+    "production_d1_mutation": false,
+    "r2_operation": false,
+    "save_publish_separation": "unchanged; preview has no submit/save/publish action"
+  },
+  "checks": [
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-forms-inspector.test.js tests/editor-public-asset-cache-bust.test.js",
+      "result": "PASS",
+      "summary": "1 Chromium inspector regression and 3 cache-bust checks."
+    },
+    {
+      "command": "npm run test:forms:browser",
+      "result": "PASS",
+      "summary": "All public form, Forms inspector and inbox browser test files passed."
+    },
+    {
+      "command": "npm run test:forms",
+      "result": "PASS",
+      "summary": "5/5 Forms test files."
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "summary": "25/25 Editor unit test files."
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "summary": "17/17 after regenerating the feature traceability fingerprint."
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "summary": "396 mappings."
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "summary": "13 master sections/files per existing contract; active point unchanged."
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "summary": "Cursor 77.44 / WEB-011 → 77.44.7.D; 396 feature records; acceptance remains NOT_CERTIFIED."
+    },
+    {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS"
+    },
+    {
+      "command": "npx wrangler deploy --dry-run",
+      "result": "PASS",
+      "summary": "206 assets; 478.88 KiB / 118.66 KiB gzip; dry-run only."
+    },
+    {
+      "command": "git diff --check && node --check public/editor-v2/ui/forms-inspector.js",
+      "result": "PASS"
+    }
+  ],
+  "production_preflight": {
+    "method": "Cloudflare D1 Query API, SELECT-only",
+    "schema_query": "SELECT type, COUNT(*) AS count FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' GROUP BY type ORDER BY type",
+    "latest_migrations_query": "SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 5",
+    "schema_objects": {
+      "indexes": 45,
+      "tables": 37,
+      "triggers": 29
+    },
+    "latest_migrations": [
+      "0032_forms_service.sql",
+      "0031_media_archive_malformed_json_guard.sql",
+      "0030_media_library_organization.sql",
+      "0029_media_archive_unicode_additive.sql",
+      "0028_media_archive.sql"
+    ],
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "release": {
+    "cloudflare_build_uuid": "65f8bdc1-6261-4737-bd07-f252c3797d32",
+    "cloudflare_build_outcome": "success",
+    "cloudflare_build_source_sha": "9b072ed76ef14ba7513b7fbcfcd601b12f74323a",
+    "cloudflare_branch": "v2/foundation",
+    "cloudflare_build_command": "npm run typecheck",
+    "cloudflare_deploy_command": "npm run deploy:safe",
+    "deployment_id": "548598c5-2476-43fc-896d-39a7cca1c5eb",
+    "traffic_version_id": "cad72c8b-6101-4404-a125-0d713ba4b36f",
+    "traffic_version_number": 4224,
+    "traffic_percentage": 100,
+    "production_source_smoke": {
+      "status": "PASS",
+      "run_id": 46033656782,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/46033656782",
+      "health_status": 200,
+      "changed_asset_hashes": "Exact-source workflow reported all checked public asset SHA-256 values match; all four changed public files match source."
+    },
+    "github_exact_sha_checks": {
+      "source_sha": "9b072ed76ef14ba7513b7fbcfcd601b12f74323a",
+      "passed": [
+        {
+          "name": "Canonical Plan Active Point Audit",
+          "run_id": 46033656735
+        },
+        {
+          "name": "Canonical Creator Platform Plan",
+          "run_id": 46033656780
+        },
+        {
+          "name": "Twitch Integration Check",
+          "run_id": 46033656814
+        },
+        {
+          "name": "F0 baseline checks",
+          "run_id": 46033656750
+        },
+        {
+          "name": "Production Worker source smoke",
+          "run_id": 46033656782
+        }
+      ],
+      "editor_core": {
+        "run_id": 46033657013,
+        "status": "IN_PROGRESS at exact-SHA capture; all completed steps through public Forms Chromium regressions were successful; isolated media integration and downstream Editor layout/admin contract steps remained."
+      }
+    }
+  },
+  "acceptance": {
+    "d06": "OPEN / NOT CERTIFIED",
+    "d01_d07": "OPEN / NOT CERTIFIED",
+    "complete_visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until full planned Editor scope is complete",
+    "save_publish_separation": "UNCHANGED"
+  },
+  "cost_huf": 0
+}
