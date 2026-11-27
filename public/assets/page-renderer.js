@@ -331,14 +331,14 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
     }else if(field.type==='select'){
      control=document.createElement('select');const empty=document.createElement('option');empty.value='';empty.textContent='Válassz…';control.append(empty);
      for(const value of field.options||[]){const option=document.createElement('option');option.value=value;option.textContent=value;control.append(option)}
-    }else{control=document.createElement('input');control.type=field.type==='email'?'email':field.type==='date'?'date':field.type==='checkbox'?'checkbox':'text'}
+    }else{control=document.createElement('input');control.type=field.type==='email'?'email':field.type==='url'?'url':field.type==='date'?'date':field.type==='checkbox'?'checkbox':'text'}
     control.name=field.id;control.required=field.required===true;control.setAttribute('aria-label',field.label);
-    if(field.type==='email')control.autocomplete='email';
+    if(field.type==='email')control.autocomplete='email';else if(field.type==='url')control.autocomplete='url';
     if(field.type==='checkbox'){
      const checkboxLabel=document.createElement('label');checkboxLabel.className='creator-form-checkbox';
      checkboxLabel.append(control,document.createTextNode(' '+field.label));label.replaceChildren(checkboxLabel);
     }else if(field.type!=='radio'){
-     if(['text','email','textarea'].includes(field.type)&&Number.isInteger(field.maxLength))control.maxLength=field.maxLength;
+     if(['text','email','url','textarea'].includes(field.type)&&Number.isInteger(field.maxLength))control.maxLength=field.maxLength;
      if(field.helpText){const help=document.createElement('small');help.textContent=field.helpText;label.append(control,help)}else label.append(control);
     }
     fieldControls.set(field.id,control);form.append(label);

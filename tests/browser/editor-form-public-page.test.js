@@ -18,7 +18,8 @@ const formDefinition = {
     { id: 'topic', type: 'select', label: 'Téma', required: true, options: ['Együttműködés', 'Egyéb'] },
     { id: 'updates', type: 'checkbox', label: 'Kérek híreket', required: false },
     { id: 'contact', type: 'radio', label: 'Kapcsolat módja', required: true, options: ['E-mail', 'Telefon'] },
-    { id: 'event-date', type: 'date', label: 'Időpont', required: true }
+    { id: 'event-date', type: 'date', label: 'Időpont', required: true },
+    { id: 'website', type: 'url', label: 'Weboldal', required: false, maxLength: 2048 }
   ],
   consent: { text: 'Elfogadom az adatkezelési <szabályokat>.', version: 'privacy-v1', privacyUrl: 'https://creator.test/privacy' },
   successMessage: 'Köszönöm a megkeresést.', retentionDays: 30
@@ -88,6 +89,10 @@ test('public form renders only data, enforces browser consent and submits first-
   const eventDate = region.getByLabel('Időpont', { exact: true });
   assert.equal(await eventDate.getAttribute('type'), 'date', 'date fields use the native date input');
   await eventDate.fill('2024-02-29');
+  const website = region.getByLabel('Weboldal', { exact: true });
+  assert.equal(await website.getAttribute('type'), 'url', 'URL fields use native browser URL validation');
+  assert.equal(await website.getAttribute('maxlength'), '2048');
+  await website.fill('https://creator.test/portfolio');
   assert.equal(await region.locator('img,script,b').count(), 0, 'form copy is rendered as text, not interpreted markup');
   assert.equal(await region.locator('.creator-form-consent a').count(), 0, 'privacy link is not nested in the checkbox label');
   assert.equal(await region.getByRole('link', { name: 'Adatkezelési tájékoztató' }).getAttribute('href'), 'https://creator.test/privacy');
@@ -98,7 +103,7 @@ test('public form renders only data, enforces browser consent and submits first-
   await region.getByRole('status').filter({ hasText: 'Köszönöm a megkeresést.' }).waitFor();
   assert.equal(f.submissions.length, 1);
   assert.deepEqual(f.submissions[0], {
-    values: { email: 'creator@example.test', message: 'Szia, együttműködnék.', topic: 'Együttműködés', updates: true, contact: 'Telefon', 'event-date': '2024-02-29' },
+    values: { email: 'creator@example.test', message: 'Szia, együttműködnék.', topic: 'Együttműködés', updates: true, contact: 'Telefon', 'event-date': '2024-02-29', website: 'https://creator.test/portfolio' },
     consentAccepted: true,
     website: ''
   });

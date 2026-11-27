@@ -149,6 +149,37 @@ test("radio submissions stay within options and date fields require a real ISO c
   }
 });
 
+
+test("URL fields accept safe absolute HTTP(S) values and reject non-web or credentialed URLs", () => {
+  const input = validDefinition();
+  input.fields.push({ id: "website", type: "url", label: "Weboldal", required: false, maxLength: 2_048 });
+  const normalized = normalizeFormDefinition(input);
+  assert.equal(normalized.ok, true);
+  const tooLongDefinition = validDefinition();
+  tooLongDefinition.fields.push({ id: "website", type: "url", label: "Weboldal", required: false, maxLength: 2_049 });
+  assert.equal(normalizeFormDefinition(tooLongDefinition).code, "INVALID_FORM_FIELD_LENGTH",
+    "URL length limits cannot exceed the platform's 2048-character URL contract");
+  const accepted = normalizeFormSubmission(normalized.value, {
+    values: { email: "creator@example.com", message: "Szia", website: "https://creator.test/portfolio?clip=1" },
+    consentAccepted: true
+  });
+  assert.equal(accepted.ok, true);
+  assert.equal(accepted.value.values.website, "https://creator.test/portfolio?clip=1");
+  const oversized = normalizeFormSubmission(normalized.value, {
+    values: { email: "creator@example.com", message: "Szia", website: `https://creator.test/${"a".repeat(2_048)}` }, consentAccepted: true
+  });
+  assert.equal(oversized.ok, false);
+  assert.equal(oversized.code, "FORM_FIELD_TOO_LONG");
+  for (const website of ["javascript:alert(1)", "data:text/html,hi", "ftp://creator.test/file", "//creator.test/path", "https://user:pass@creator.test", "https://"]) {
+    const rejected = normalizeFormSubmission(normalized.value, {
+      values: { email: "creator@example.com", message: "Szia", website }, consentAccepted: true
+    });
+    assert.equal(rejected.ok, false, website);
+    assert.equal(rejected.code, "INVALID_FORM_URL", website);
+    assert.equal(rejected.fieldId, "website");
+  }
+});
+
 test("radio and date definitions reject irrelevant limits and option metadata", () => {
   for (const mutate of [
     value => { value.fields.push({ id: "contact", type: "radio", label: "Kapcsolat", required: false, options: ["A"], maxLength: 12 }); },

@@ -11,7 +11,7 @@ export const MAX_FORM_OPTIONS = 20;
 export const MAX_FORM_DEFINITION_BYTES = 16_384;
 export const MAX_FORM_SUBMISSION_BYTES = 12_288;
 
-export type FormFieldType = "text" | "email" | "textarea" | "select" | "radio" | "date" | "checkbox";
+export type FormFieldType = "text" | "email" | "url" | "textarea" | "select" | "radio" | "date" | "checkbox";
 
 export type FormFieldDefinition = {
   id: string;
@@ -71,6 +71,15 @@ const validPrivacyUrl = (value: unknown): value is string => {
   }
 };
 
+const validHttpUrlFieldValue = (value: string): boolean => {
+  try {
+    const url = new URL(value);
+    return (url.protocol === "http:" || url.protocol === "https:") && Boolean(url.hostname) && !url.username && !url.password;
+  } catch {
+    return false;
+  }
+};
+
 export function normalizeFormDefinition(input: unknown): FormValidationResult<FormDefinition> {
   if (!isRecord(input) || !hasOnlyKeys(input, ["schemaVersion", "name", "fields", "consent", "successMessage", "retentionDays"]) || input.schemaVersion !== FORM_SCHEMA_VERSION) {
     return { ok: false, code: "UNSUPPORTED_FORM_SCHEMA_VERSION" };
@@ -87,7 +96,7 @@ export function normalizeFormDefinition(input: unknown): FormValidationResult<Fo
       return { ok: false, code: "INVALID_FORM_FIELD_ID" };
     }
     ids.add(raw.id);
-    if (!(["text", "email", "textarea", "select", "radio", "date", "checkbox"] as unknown[]).includes(raw.type)) {
+    if (!(["text", "email", "url", "textarea", "select", "radio", "date", "checkbox"] as unknown[]).includes(raw.type)) {
       return { ok: false, code: "UNSUPPORTED_FORM_FIELD_TYPE", fieldId: raw.id };
     }
     if (!boundedText(raw.label, 120) || typeof raw.required !== "boolean") {
@@ -104,7 +113,7 @@ export function normalizeFormDefinition(input: unknown): FormValidationResult<Fo
     };
     if (raw.helpText !== undefined && raw.helpText.trim()) field.helpText = raw.helpText.trim();
     if (raw.maxLength !== undefined) {
-      if (!Number.isInteger(raw.maxLength) || (raw.maxLength as number) < 1 || (raw.maxLength as number) > 4_000 || raw.type === "checkbox" || raw.type === "select" || raw.type === "radio" || raw.type === "date") {
+      if (!Number.isInteger(raw.maxLength) || (raw.maxLength as number) < 1 || (raw.maxLength as number) > (raw.type === "url" ? 2_048 : 4_000) || raw.type === "checkbox" || raw.type === "select" || raw.type === "radio" || raw.type === "date") {
         return { ok: false, code: "INVALID_FORM_FIELD_LENGTH", fieldId: raw.id };
       }
       field.maxLength = raw.maxLength as number;
@@ -183,6 +192,9 @@ export function normalizeFormSubmission(
     }
     if (field.type === "date" && !isValidIsoDate(normalized)) {
       return { ok: false, code: "INVALID_FORM_DATE", fieldId: field.id };
+    }
+    if (field.type === "url" && !validHttpUrlFieldValue(normalized)) {
+      return { ok: false, code: "INVALID_FORM_URL", fieldId: field.id };
     }
     if (field.type === "email" && !/^[^\s@<>]{1,128}@[A-Za-z0-9.-]{1,190}\.[A-Za-z]{2,63}$/.test(normalized)) {
       return { ok: false, code: "INVALID_FORM_EMAIL", fieldId: field.id };

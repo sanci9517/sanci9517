@@ -129,6 +129,13 @@ test("Forms Inspector preserves field focus and keeps form Save/Publish independ
   assert.equal(await radioOptions.count(), 1, "radio fields share the bounded option editor");
   await radioOptions.fill("E-mail\nDiscord");
   assert.equal(await cards.nth(1).getByLabel("Maximális karakterszám").count(), 0, "radio options do not expose text length");
+  await cards.nth(2).getByLabel("Mezőtípus").selectOption("url");
+  assert.equal(await cards.nth(2).getByLabel("Mezőtípus").evaluate(element => element === document.activeElement), true,
+    "changing to a URL field preserves focus on its type control");
+  assert.equal(await cards.nth(2).getByLabel("Maximális karakterszám").count(), 1,
+    "URL fields expose the bounded length control");
+  assert.equal(await cards.nth(2).getByLabel("Maximális karakterszám").getAttribute("max"), "2048",
+    "the Inspector caps URLs at the same limit as the server contract");
   await cards.nth(2).getByLabel("Mezőtípus").selectOption("date");
   assert.equal(await cards.nth(2).getByLabel("Maximális karakterszám").count(), 0, "date fields do not expose text length");
   assert.equal(await cards.nth(2).getByLabel("Választások (soronként egy)").count(), 0, "date fields clear irrelevant choices");

@@ -1,5 +1,5 @@
 const FIELD_TYPES = Object.freeze([
-  ["text", "Rövid szöveg"], ["email", "E-mail"], ["textarea", "Hosszú szöveg"],
+  ["text", "Rövid szöveg"], ["email", "E-mail"], ["url", "Webcím"], ["textarea", "Hosszú szöveg"],
   ["select", "Legördülő választás"], ["radio", "Választógombok"], ["date", "Dátum"], ["checkbox", "Jelölőnégyzet"]
 ]);
 const clone = value => structuredClone(value);
@@ -103,7 +103,7 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
         field.type = type.value;
         if ((field.type === "select" || field.type === "radio") && !field.options?.length) field.options = ["Első választás"];
         if (field.type !== "select" && field.type !== "radio") delete field.options;
-        if (!["text", "email", "textarea"].includes(field.type)) delete field.maxLength;
+        if (!["text", "email", "url", "textarea"].includes(field.type)) delete field.maxLength;
         renderEditor(); markDirty(); focusFieldControl(focusFieldId, "Mezőtípus");
       };
       typeLabel.append(typeCaption, type);
@@ -113,11 +113,11 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
       requiredLabel.append(required, document.createTextNode("Kötelező"));
       const helpInput = control("input", "Súgó a mezőhöz", field.helpText || "", { maxLength: 240 });
       helpInput.input.oninput = () => { field.helpText = helpInput.input.value; markDirty(); };
-      const lengthInput = control("input", "Maximális karakterszám", field.maxLength ?? (field.type === "textarea" ? 2_000 : 500), { type: "number", maxLength: 4 });
-      lengthInput.input.min = "1"; lengthInput.input.max = "4000";
-      lengthInput.input.onchange = () => { field.maxLength = Math.max(1, Math.min(4_000, Number(lengthInput.input.value) || 500)); markDirty(); };
+      const lengthInput = control("input", "Maximális karakterszám", field.maxLength ?? (field.type === "textarea" ? 2_000 : field.type === "url" ? 2_048 : 500), { type: "number", maxLength: 4 });
+      lengthInput.input.min = "1"; lengthInput.input.max = field.type === "url" ? "2048" : "4000";
+      lengthInput.input.onchange = () => { field.maxLength = Math.max(1, Math.min(field.type === "url" ? 2_048 : 4_000, Number(lengthInput.input.value) || 500)); markDirty(); };
       card.append(idInput.wrapper, labelInput.wrapper, typeLabel, requiredLabel, helpInput.wrapper);
-      if (["text", "email", "textarea"].includes(field.type)) card.append(lengthInput.wrapper);
+      if (["text", "email", "url", "textarea"].includes(field.type)) card.append(lengthInput.wrapper);
       if (field.type === "select" || field.type === "radio") {
         const optionsInput = control("textarea", "Választások (soronként egy)", (field.options || []).join("\n"), { maxLength: 2_400 });
         optionsInput.input.rows = 4;
