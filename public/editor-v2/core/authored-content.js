@@ -441,6 +441,12 @@ export function initContentInteractions(root){
     cancelTimerForEvent(event);const actionSource=event.target?.closest?.('[data-page-action]');
     if(actionSource&&root.contains(actionSource)&&actionSource.dataset.pageActionEvent==='focus')runPageAction(actionSource);
   });
+  root.addEventListener('creator:form-submission-succeeded',event=>{
+    const form=event.target?.closest?.('.creator-public-form form[data-public-form-runtime="1"]');
+    if(!form||!root.contains(form))return;
+    const actionSource=form.closest('[data-page-node-id][data-page-action]');
+    if(actionSource&&root.contains(actionSource)&&actionSource.dataset.pageActionEvent==='submit')runPageAction(actionSource);
+  });
   root.addEventListener('focusout',event=>scheduleTooltipPosition(event.target?.closest?.('.creator-tooltip')));
   root.addEventListener('pointerdown',cancelTimerForEvent);
   root.addEventListener('pointerover',event=>{

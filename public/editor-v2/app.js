@@ -55,10 +55,10 @@ import {createCompositionInputs} from './ui/composition-inputs.js';
 import {opaqueContrast} from './core/accessibility.js';
 import {STATE_PROPERTY_IDS,applyStateStyles} from './core/state-styles.js';
 import {defaultTokens,applyTokenVariables} from './core/design-tokens.js';
-import {CONTENT_TYPES,STRUCTURAL_TYPES,validatePageForPublication,isAuthoredContent,authoredNodeHtml,contentAttributes,initContentInteractions,contentTag} from './core/authored-content.js?v=20261126-edt039-detached-action-timer-v1';
+import {CONTENT_TYPES,STRUCTURAL_TYPES,validatePageForPublication,isAuthoredContent,authoredNodeHtml,contentAttributes,initContentInteractions,contentTag} from './core/authored-content.js?v=20261127-edt039-form-submit-success-v1';
 import {captureCanvasInteractionState,restoreCanvasInteractionState} from './core/canvas-interaction-state.js';
 import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js?v=20261120-d06-authored-playable-asset-picker-v1';
-import {renderPageInteractionControls} from './ui/page-interaction-controls.js?v=20261119-edt039-page-action-safe-labels-v1';
+import {renderPageInteractionControls} from './ui/page-interaction-controls.js?v=20261127-edt039-form-submit-controls-v1';
 
 const reducedMotionQuery=typeof window.matchMedia==='function'?window.matchMedia('(prefers-reduced-motion: reduce)'):null;
 const prefersReducedMotion=()=>reducedMotionQuery?.matches===true;
@@ -1840,7 +1840,7 @@ function renderInspector(){
       }));
       else if(STRUCTURAL_TYPES.includes(node.type))inspector.append(Object.assign(document.createElement('p'),{className:'content-field-help',textContent:'Ez a tároló a gyermekeit jeleníti meg. Tartalomhoz adj hozzá szöveget, képet vagy más elemet.'}));
       else if(!textTypes.has(node.type))inspector.append(Object.assign(document.createElement('p'),{className:'content-field-help',textContent:'Ehhez az elemhez a közös szolgáltatás és a részletes szerkesztő még hiányzik. A meglévő adatok megmaradnak.'}));
-      if(isAuthoredContent(node)&&node.type==='button')inspector.append(renderPageInteractionControls(node,page(),interactions=>command('element.update',{nodeId:node.id,patch:{interactions}}),effectivelyLocked));
+      if(isAuthoredContent(node)&&['button','form'].includes(node.type))inspector.append(renderPageInteractionControls(node,page(),interactions=>command('element.update',{nodeId:node.id,patch:{interactions}}),effectivelyLocked));
     }
   }else{
     inspector.append(renderRegistryInspector(node,'advanced'));

@@ -3,8 +3,25 @@ import assert from 'node:assert/strict';
 import { createDocument, validateDocument } from '../core/schema.js';
 import { createEditorState } from '../core/state.js';
 import { execute } from '../core/commands.js';
-import { normalizePageInteractions, pageInteractionAttributes, safePageInteraction } from '../core/page-interactions.js';
+import { normalizePageInteractions, pageActionEventsForSource, pageInteractionAttributes, safePageInteraction } from '../core/page-interactions.js';
 import { contentAttributes, getPublicationContentGuidance, validatePageForPublication } from '../core/authored-content.js';
+import { renderPageInteractionControls } from '../ui/page-interaction-controls.js';
+
+class ElementStub {
+  constructor(tagName) { this.tagName = tagName.toUpperCase(); this.dataset = {}; this.children = []; this.attributes = {}; this.disabled = false; this.value = ''; }
+  append(...children) { for (const child of children) { if (!child || typeof child !== 'object') continue; child.parentElement = this; this.children.push(child); } }
+  replaceChildren(...children) { for (const child of this.children) child.parentElement = null; this.children = []; this.append(...children); }
+  setAttribute(name, value) { this.attributes[name] = String(value); }
+  getAttribute(name) { return this.attributes[name] ?? null; }
+  remove() { if (!this.parentElement) return; this.parentElement.children = this.parentElement.children.filter(child => child !== this); this.parentElement = null; }
+  querySelectorAll(selector) {
+    const matches = element => selector === '[data-page-interaction-dynamic]' ? element.dataset?.pageInteractionDynamic != null :
+      selector === '[data-page-interaction-field]' ? element.dataset?.pageInteractionField != null : false;
+    const result = [];
+    const visit = parent => { for (const child of parent.children || []) { if (matches(child)) result.push(child); visit(child); } };
+    visit(this); return result;
+  }
+}
 
 function fixture() {
   const document = createDocument();
@@ -13,9 +30,10 @@ function fixture() {
   const source = { id: 'button_one', type: 'button', parentId: root.id, children: [], props: {}, metadata: { contentVersion: 1 }, interactions: [] };
   const target = { id: 'tabs_one', type: 'tabs', parentId: root.id, children: [], props: { items: [{ title: 'Első' }, { title: 'Második' }] }, metadata: { contentVersion: 1 }, interactions: [] };
   const disclosure = { id: 'details_one', type: 'accordion', parentId: root.id, children: [], props: { items: [{ title: 'Első' }] }, metadata: { contentVersion: 1 }, interactions: [] };
-  page.nodes[source.id] = source; page.nodes[target.id] = target; page.nodes[disclosure.id] = disclosure;
-  root.children.push(source.id, target.id, disclosure.id);
-  return { document, page, source, target, disclosure };
+  const form = { id: 'form_one', type: 'form', parentId: root.id, children: [], props: { formId: '00000000-0000-4000-8000-000000000123', formBindingVersion: 1 }, metadata: { contentVersion: 1 }, interactions: [] };
+  page.nodes[source.id] = source; page.nodes[target.id] = target; page.nodes[disclosure.id] = disclosure; page.nodes[form.id] = form;
+  root.children.push(source.id, target.id, disclosure.id, form.id);
+  return { document, page, source, target, disclosure, form };
 }
 
 test('Page Action registry normalizes only the supported same-page typed action schemas', () => {
@@ -79,6 +97,57 @@ test('Page Action registry rejects scripts, selectors, foreign/missing nodes, ty
   assert.throws(() => normalizePageInteractions([action(), action()], source, page.nodes));
   source.props.href = '/p/home';
   assert.throws(() => normalizePageInteractions([action()], source, page.nodes));
+});
+
+test('EDT-039 permits submit only on a bound Form for safe same-page result actions', () => {
+  const { page, source, target, form } = fixture();
+  const submitToTabs = { schemaVersion: 1, event: 'submit', action: 'select-tab', targetId: target.id, itemIndex: 1 };
+  assert.deepEqual(pageActionEventsForSource(form, 'select-tab'), ['submit']);
+  assert.deepEqual(pageActionEventsForSource(form, 'scroll-to'), ['submit']);
+  assert.deepEqual(pageActionEventsForSource(form, 'toggle-disclosure'), [], 'submit cannot close or toggle a result disclosure');
+  assert.deepEqual(normalizePageInteractions([submitToTabs], form, page.nodes), [submitToTabs]);
+  assert.deepEqual(pageInteractionAttributes({ ...form, interactions: [submitToTabs] }, page.nodes), {
+    'data-page-action': 'select-tab', 'data-page-action-event': 'submit', 'data-page-action-target': target.id, 'data-page-action-index': '1'
+  });
+
+  const unboundForm = { ...form, props: { formBindingVersion: 1 } };
+  const unsupportedFormVersion = { ...form, props: { ...form.props, formBindingVersion: 2 } };
+  assert.throws(() => normalizePageInteractions([{ ...submitToTabs, event: 'click' }], form, page.nodes), /nem támogatott/,
+    'a Form source accepts submit only, never button events');
+  assert.throws(() => normalizePageInteractions([submitToTabs], source, page.nodes), /nem támogatott/,
+    'a Button source cannot opt into the submit trigger');
+  assert.throws(() => normalizePageInteractions([{ ...submitToTabs, action: 'open-disclosure', targetId: 'details_one', itemIndex: 0 }], form, page.nodes), /nem támogatott/,
+    'Form submit is restricted to the compatible, safe result action allowlist');
+  assert.throws(() => normalizePageInteractions([submitToTabs], unboundForm, page.nodes), /nem támogatott/,
+    'an unbound Form cannot claim a submit trigger');
+  assert.throws(() => normalizePageInteractions([submitToTabs], unsupportedFormVersion, page.nodes), /nem támogatott/,
+    'only the versioned Form binding supports the submit trigger');
+});
+
+test('EDT-039 Form interaction controls expose only submit-compatible allowlisted actions', () => {
+  const { page, form, target } = fixture();
+  const previous = globalThis.document;
+  globalThis.document = { createElement: tagName => new ElementStub(tagName) };
+  try {
+    let applied;
+    const panel = renderPageInteractionControls(form, page, value => { applied = value; });
+    const actionField = panel.children.find(child => child.dataset?.pageInteractionField === 'action');
+    const eventField = panel.children.find(child => child.dataset?.pageInteractionField === 'event');
+    const actionSelect = actionField.children.find(child => child.tagName === 'SELECT');
+    const eventSelect = eventField.children.find(child => child.tagName === 'SELECT');
+    assert.deepEqual(actionSelect.children.map(option => option.value), ['', 'scroll-to', 'select-tab'],
+      'Form controls offer only existing actions that can present a same-page result');
+    assert.deepEqual(eventSelect.children.map(option => option.value), ['submit']);
+    assert.equal(eventSelect.value, 'submit');
+
+    actionSelect.value = 'select-tab';
+    actionSelect.onchange();
+    assert.deepEqual(applied, [{ schemaVersion: 1, event: 'submit', action: 'select-tab', targetId: target.id, itemIndex: 0 }],
+      'choosing a Form action records the typed submit trigger and an existing same-page target');
+    assert.deepEqual(eventField.children.find(child => child.tagName === 'SELECT').children.map(option => option.value), ['submit']);
+  } finally {
+    if (previous === undefined) delete globalThis.document; else globalThis.document = previous;
+  }
 });
 
 test('a target cannot receive competing automatic load/timer defaults from multiple buttons', () => {

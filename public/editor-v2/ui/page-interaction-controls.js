@@ -1,4 +1,4 @@
-import { PAGE_ACTIONS, PAGE_ACTION_TIMER_DELAYS_MS, normalizePageInteractions } from '../core/page-interactions.js?v=20261121-edt039-single-auto-action-v1';
+import { PAGE_ACTIONS, PAGE_ACTION_EVENTS, PAGE_ACTION_TIMER_DELAYS_MS, normalizePageInteractions, pageActionEventsForSource } from '../core/page-interactions.js?v=20261127-edt039-form-submit-registry-v1';
 
 const ACTION_OPTIONS = Object.freeze([
   ['scroll-to', 'Ugrás egy elemhez'],
@@ -12,7 +12,8 @@ const EVENT_OPTIONS = Object.freeze([
   ['focus', 'Fókuszba kerülés'],
   ['hover', 'Egér/toll fölé lépés (billentyűzettel is aktiválható)'],
   ['load', 'Oldal betöltése'],
-  ['timer', 'Időzítve']
+  ['timer', 'Időzítve'],
+  ['submit', 'Űrlap beküldése']
 ]);
 const DELAY_OPTIONS = Object.freeze(PAGE_ACTION_TIMER_DELAYS_MS.map(value => [String(value), `${value / 1000} másodperc`]));
 const plainLabel = value => typeof value === 'string' ? value.trim() : typeof value === 'number' && Number.isFinite(value) ? String(value) : '';
@@ -53,9 +54,9 @@ export function renderPageInteractionControls(node, page, apply, disabled = fals
   heading.textContent = 'Oldalinterakció';
   const help = document.createElement('p');
   help.className = 'content-field-help';
-  help.textContent = 'Biztonságos, beállított eseményre működő művelet. A fül oldalbetöltéskor váltható; a megosztott URL-ben kért fül ezt felülírja. Az időzített fülváltás csak 3, 5 vagy 10 másodperc lehet, és a célfül használata megszakítja. A lenyitható rész külön megnyitható, bezárható vagy váltható. A hover egér/toll fölé lépésre vált, és billentyűzettel vagy érintéssel is aktiválható. Nem futtat JavaScriptet, és nem navigál másik webhelyre.';
+  help.textContent = 'Biztonságos, beállított eseményre működő művelet. Űrlapnál csak a beküldéshez illeszkedő, azonos oldalon maradó művelet választható. A fül oldalbetöltéskor váltható; a megosztott URL-ben kért fül ezt felülírja. Az időzített fülváltás csak 3, 5 vagy 10 másodperc lehet, és a célfül használata megszakítja. A lenyitható rész külön megnyitható, bezárható vagy váltható. A hover egér/toll fölé lépésre vált, és billentyűzettel vagy érintéssel is aktiválható. Nem futtat JavaScriptet, és nem navigál másik webhelyre.';
   section.append(heading, help);
-  if (typeof node.props?.href === 'string' && node.props.href.trim()) {
+  if (node.type === 'button' && typeof node.props?.href === 'string' && node.props.href.trim()) {
     const note = document.createElement('p');
     note.className = 'content-field-help';
     note.textContent = 'A gomb jelenleg hivatkozás. Töröld a Hivatkozás mezőt, ha helyette oldalinterakciót szeretnél.';
@@ -72,12 +73,20 @@ export function renderPageInteractionControls(node, page, apply, disabled = fals
   let invalidPersistedInteraction = false;
   try { currentValid = normalizePageInteractions(persisted, node, nodes)[0] ?? null; }
   catch { invalidPersistedInteraction = true; /* Preserve old/invalid data until the user explicitly replaces or clears it. */ }
-  const actionSelect = select('Művelet', [['', 'Nincs beállítva'], ...ACTION_OPTIONS], currentValid?.action || '');
+  const eventsForAction = action => pageActionEventsForSource(node, action);
+  const actionOptions = ACTION_OPTIONS.filter(([action]) => eventsForAction(action).length > 0);
+  const availableEvents = action => {
+    if (action) return eventsForAction(action);
+    const supported = new Set(actionOptions.flatMap(([id]) => eventsForAction(id)));
+    return PAGE_ACTION_EVENTS.filter(event => supported.has(event));
+  };
+  const actionSelect = select('Művelet', [['', 'Nincs beállítva'], ...actionOptions], currentValid?.action || '');
   actionSelect.wrap.dataset.pageInteractionField = 'action';
-  const eventSelect = select('Kiváltó esemény', EVENT_OPTIONS, currentValid?.event || 'click');
+  const initialEvents = availableEvents(currentValid?.action || '');
+  const eventSelect = select('Kiváltó esemény', EVENT_OPTIONS.filter(([event]) => initialEvents.includes(event)), currentValid?.event || initialEvents[0] || '');
   eventSelect.wrap.dataset.pageInteractionField = 'event';
   const syncEventsForAction = action => {
-    const allowed = PAGE_ACTIONS[action]?.events || ['click', 'focus'];
+    const allowed = availableEvents(action);
     const previous = eventSelect.input.value;
     eventSelect.input.replaceChildren(...allowed.map(value => {
       const option = document.createElement('option');
@@ -85,7 +94,7 @@ export function renderPageInteractionControls(node, page, apply, disabled = fals
       option.textContent = EVENT_OPTIONS.find(([candidate]) => candidate === value)?.[1] || value;
       return option;
     }));
-    eventSelect.input.value = allowed.includes(previous) ? previous : 'click';
+    eventSelect.input.value = allowed.includes(previous) ? previous : allowed[0] || '';
   };
   syncEventsForAction(currentValid?.action || '');
   section.append(eventSelect.wrap, actionSelect.wrap);

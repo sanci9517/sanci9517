@@ -2,37 +2,47 @@
 // saved with the Page Model; they are not JavaScript and cannot invoke the
 // separate server-side automation/workflow engine.
 export const PAGE_ACTIONS = Object.freeze({
-  'scroll-to': Object.freeze({ label: 'Ugrás egy elemhez', events: Object.freeze(['click', 'focus']), targetTypes: null, indexKey: null }),
-  'select-tab': Object.freeze({ label: 'Fül kiválasztása', events: Object.freeze(['click', 'focus', 'hover', 'load', 'timer']), targetTypes: Object.freeze(['tabs']), indexKey: 'itemIndex' }),
+  // A successful Form submission may continue with a safe same-page result
+  // action. These are editor/schema capabilities; execution still belongs to
+  // the public form lifecycle and must not run for invalid or failed posts.
+  'scroll-to': Object.freeze({ label: 'Ugrás egy elemhez', events: Object.freeze(['click', 'focus']), formEvents: Object.freeze(['submit']), targetTypes: null, indexKey: null }),
+  'select-tab': Object.freeze({ label: 'Fül kiválasztása', events: Object.freeze(['click', 'focus', 'hover', 'load', 'timer']), formEvents: Object.freeze(['submit']), targetTypes: Object.freeze(['tabs']), indexKey: 'itemIndex' }),
   'open-disclosure': Object.freeze({ label: 'Lenyitható rész megnyitása', events: Object.freeze(['click', 'focus']), targetTypes: Object.freeze(['accordion', 'dropdown']), indexKey: 'itemIndex' }),
   'close-disclosure': Object.freeze({ label: 'Lenyitható rész bezárása', events: Object.freeze(['click', 'focus']), targetTypes: Object.freeze(['accordion', 'dropdown']), indexKey: 'itemIndex' }),
   'toggle-disclosure': Object.freeze({ label: 'Lenyitható rész váltása', events: Object.freeze(['click', 'focus']), targetTypes: Object.freeze(['accordion', 'dropdown']), indexKey: 'itemIndex' })
 });
-export const PAGE_ACTION_EVENTS = Object.freeze(['click', 'focus', 'hover', 'load', 'timer']);
+export const PAGE_ACTION_EVENTS = Object.freeze(['click', 'focus', 'hover', 'load', 'timer', 'submit']);
 export const PAGE_ACTION_MAX_PER_NODE = 1;
 export const PAGE_ACTION_TIMER_DELAYS_MS = Object.freeze([3000, 5000, 10000]);
 const ID = /^[A-Za-z0-9_-]{1,120}$/;
 const isRecord = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const itemCount = node => Array.isArray(node?.props?.items) ? Math.min(node.props.items.length, 40) : 0;
+const isBoundForm = node => node?.type === 'form' && node.metadata?.contentVersion === 1 &&
+  /^[0-9a-f-]{36}$/i.test(String(node.props?.formId || '')) && node.props?.formBindingVersion === 1;
+
+export function pageActionEventsForSource(sourceNode, action) {
+  const definition = PAGE_ACTIONS[action];
+  if (!definition || sourceNode?.metadata?.contentVersion !== 1) return [];
+  if (sourceNode.type === 'form') return isBoundForm(sourceNode) ? definition.formEvents ?? [] : [];
+  if (sourceNode.type === 'button') return definition.events;
+  return [];
+}
 
 function invalid(message) { throw new TypeError(message); }
 
 export function normalizePageInteractions(value, sourceNode, nodes) {
   const interactions = value == null ? [] : value;
   if (!Array.isArray(interactions)) invalid('Az oldalinterakciók listája érvénytelen.');
-  if (interactions.length > PAGE_ACTION_MAX_PER_NODE) invalid('Gombonként jelenleg egy oldalinterakció állítható be.');
+  if (interactions.length > PAGE_ACTION_MAX_PER_NODE) invalid('Elemenként jelenleg egy oldalinterakció állítható be.');
   if (interactions.length === 0) return [];
-  if (!isRecord(sourceNode) || sourceNode.type !== 'button' || sourceNode.metadata?.contentVersion !== 1) {
-    invalid('Oldalinterakció csak szerkeszthető gombhoz adható.');
-  }
-  if (typeof sourceNode.props?.href === 'string' && sourceNode.props.href.trim()) {
-    invalid('A navigációs hivatkozást töröld, mielőtt oldalinterakciót állítasz be.');
-  }
   const record = interactions[0];
   if (!isRecord(record)) invalid('Az oldalinterakció formátuma érvénytelen.');
   const definition = PAGE_ACTIONS[record.action];
-  if (record.schemaVersion !== 1 || !definition || !PAGE_ACTION_EVENTS.includes(record.event) || !definition.events.includes(record.event)) {
+  if (record.schemaVersion !== 1 || !definition || !PAGE_ACTION_EVENTS.includes(record.event) || !pageActionEventsForSource(sourceNode, record.action).includes(record.event)) {
     invalid('Az oldalinterakció nem támogatott.');
+  }
+  if (sourceNode.type === 'button' && typeof sourceNode.props?.href === 'string' && sourceNode.props.href.trim()) {
+    invalid('A navigációs hivatkozást töröld, mielőtt oldalinterakciót állítasz be.');
   }
   const targetId = record.targetId;
   if (typeof targetId !== 'string' || !ID.test(targetId) || targetId === sourceNode.id) {
