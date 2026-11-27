@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "evidence_id": "editor-d06-validated-telephone-field-2026-11-27",
+  "plan_point": "77.44.7.D / D-06 — validated telephone field for Forms",
+  "status": "PARTIAL — runtime released and exact-source production smoke passed; hosted Editor Core run still in progress at capture",
+  "scope": "Adds a telephone field to the existing versioned Forms service. Does not close D-06, the D-block, the complete Visual Editor, or the final acceptance gate.",
+  "branch": "v2/foundation",
+  "base_sha": "1973ad40da16bd44978a3e241b247a556cc5cc33",
+  "runtime_commit": "ac6cbc02f7974110d9475bd04fe010d9287eb15c",
+  "github_ref_readback": "refs/heads/v2/foundation resolved to runtime_commit",
+  "change": {
+    "summary": "Added a telephone field with bounded international-style formatting validation, native public input/autofill, and an Editor control that clamps maxLength to the server contract when changing field type.",
+    "files": [
+      "src/core/forms-contract.ts",
+      "public/editor-v2/ui/forms-inspector.js",
+      "public/assets/page-renderer.js",
+      "tests/forms-contract.test.js",
+      "tests/browser/editor-forms-inspector.test.js",
+      "tests/browser/editor-form-public-page.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "public_asset_sha256": {
+      "public/assets/page-renderer.js": "5ce99a935761ddcca32283e145f21d5c005e46fb974792e240fdd7a9a8183f8d",
+      "public/editor-v2/ui/forms-inspector.js": "6a935b3506a69ce102b118a4bb50cf55eaded08d41c2061fe1562fc7477ae13f"
+    },
+    "new_dependency": false,
+    "production_d1_mutation": false,
+    "r2_operation": false,
+    "save_publish_separation": "unchanged"
+  },
+  "checks": [
+    {
+      "command": "npm run test:forms",
+      "result": "PASS",
+      "summary": "5/5 test files."
+    },
+    {
+      "command": "npm run test:forms:browser",
+      "result": "PASS",
+      "summary": "All three browser test files passed, including Inspector type switching and public telephone submission."
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "summary": "25/25 Editor unit test files."
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "summary": "17/17."
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "summary": "Active cursor 77.44.7.D; traceability records 148 partial / 248 unverified; functional acceptance remains NOT_CERTIFIED."
+    },
+    {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS"
+    },
+    {
+      "command": "npx wrangler deploy --dry-run",
+      "result": "PASS",
+      "summary": "Wrangler 4.130.0, 206 assets; no deployment was initiated by the dry-run."
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "production_preflight": {
+    "method": "Cloudflare D1 Query API, SELECT-only",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "queries": [
+      "SELECT COUNT(*) AS schema_objects FROM sqlite_master",
+      "SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 3"
+    ],
+    "schema_objects": 164,
+    "latest_migrations": [
+      "0032_forms_service.sql",
+      "0031_archive_guard.sql",
+      "0030_media_library_organization.sql"
+    ],
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "wrangler_cli_preflight": "The repository Wrangler preflight was attempted but blocked in this runner by proxy fetch failure and a read-only log-path EROFS; equivalent direct Cloudflare Query API SELECT checks above succeeded."
+  },
+  "release": {
+    "cloudflare_build_uuid": "a24ff879-2548-4017-88ce-4255e9273627",
+    "cloudflare_build_outcome": "success",
+    "cloudflare_build_source_sha": "ac6cbc02f7974110d9475bd04fe010d9287eb15c",
+    "cloudflare_branch": "v2/foundation",
+    "cloudflare_build_command": "npm run typecheck",
+    "cloudflare_deploy_command": "npm run deploy:safe",
+    "deployment_id": "fa19b653-afcd-4ac6-9cb1-f0e466ac0177",
+    "traffic_version_id": "8d69d774-300e-4c2d-87bd-4ffaff4a74b9",
+    "traffic_version_number": 4223,
+    "traffic_percentage": 100,
+    "production_source_smoke": {
+      "status": "PASS",
+      "run_id": 46011093609,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/46011093609",
+      "health_status": 200,
+      "changed_asset_hashes": "Exact commit source SHA-256 matched for all workflow-checked public assets; changed page-renderer.js and forms-inspector.js hashes match this evidence.",
+      "rollout_note": "First five checks saw previous bytes during edge propagation; bounded retry then verified all hashes and HTTP 200."
+    },
+    "github_exact_sha_checks": {
+      "source_sha": "ac6cbc02f7974110d9475bd04fe010d9287eb15c",
+      "passed": [
+        {
+          "name": "Twitch Integration Check",
+          "run_id": 46011093575
+        },
+        {
+          "name": "F0 baseline checks",
+          "run_id": 46011093679
+        },
+        {
+          "name": "Canonical Plan Active Point Audit",
+          "run_id": 46011093433
+        },
+        {
+          "name": "Canonical Creator Platform Plan",
+          "run_id": 46011093588
+        },
+        {
+          "name": "Production Worker source smoke",
+          "run_id": 46011093609
+        }
+      ],
+      "editor_core": {
+        "run_id": 46011093475,
+        "status": "IN_PROGRESS at editor browser layout step 16/22 at capture; final result must be checked before calling the hosted Editor gate passed"
+      }
+    }
+  },
+  "acceptance": {
+    "d06": "OPEN / NOT CERTIFIED",
+    "d01_d07": "OPEN / NOT CERTIFIED",
+    "complete_visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until full planned Editor scope is complete",
+    "save_publish_separation": "UNCHANGED"
+  },
+  "cost_huf": 0
+}

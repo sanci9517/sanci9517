@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261127134357-3c271d8b",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-27T13:43:57.633Z",
+  "finished_at": "2026-11-27T14:03:45.924Z",
+  "wall_seconds": 1188,
+  "paused_seconds": 0,
+  "measured_seconds": 1188,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Validated telephone-field feature released to 100% production traffic; exact-source smoke passed, exact-SHA Editor Core browser-layout gate remained in progress at evidence capture.",
+  "evidence": [
+    "ac6cbc02f7974110d9475bd04fe010d9287eb15c",
+    "docs/evidence/editor-d06-validated-telephone-field-2026-11-27.json"
+  ],
+  "checks": "forms 5/5; forms browser tests 3 files; editor unit 25/25; typecheck, plan contract 17/17, plan/traceability/active cursor audits, web013 migration gate, Wrangler dry-run, production exact-source health/asset smoke PASS; hosted Editor Core IN_PROGRESS",
+  "started_revision": "1973ad40da16bd44978a3e241b247a556cc5cc33",
+  "finished_revision": "ac6cbc02f7974110d9475bd04fe010d9287eb15c",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
