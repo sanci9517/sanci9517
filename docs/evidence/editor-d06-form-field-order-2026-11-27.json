@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "title": "D-06 Form Inspector field ordering slice",
+  "recorded_at": "2026-11-27",
+  "canonical_plan": {
+    "path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "sha256": "16e08c027bc315d335ac327c1908094fcff8f287",
+    "bytes": 1927041,
+    "active_cursor": "77.44 / WEB-011 -> 77.44.7.D"
+  },
+  "status": "Implementation and focused verification complete locally; remote release pending",
+  "plan_status": {
+    "D_06": "OPEN; this implementation adds one form-builder capability only",
+    "D_01_through_D_07": "OPEN / NOT CERTIFIED",
+    "visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until complete Visual Editor",
+    "save_publish_separation": "preserved"
+  },
+  "change": {
+    "feature": "Reorder authored form fields within the draft schema in Form Inspector",
+    "details": [
+      "Added accessible move-up and move-down buttons on each form field card.",
+      "Buttons disable at the first and last field boundaries.",
+      "Moves update only definition.fields draft order, mark the draft dirty, rerender, and retain focus including at list boundaries.",
+      "Focus lookup compares exact aria-label attributes rather than interpolating a potentially quoted label into a selector.",
+      "The UI keeps form Save explicit and does not call Save or Publish as a side effect of reordering.",
+      "44px minimum target size and touch-action manipulation were added for the ordering controls."
+    ],
+    "third_party_dependency": "NONE"
+  },
+  "regression": {
+    "test": "tests/browser/editor-forms-inspector.test.js",
+    "cases": [
+      "Field-order boundaries disable correctly.",
+      "Move up/down, return to initial order, move to final/top positions preserve exact order.",
+      "Keyboard focus is retained after rerender, including a field label containing a double quote.",
+      "Reorder does not save or publish implicitly; explicit draft Save preserves the resulting ordered field IDs."
+    ]
+  },
+  "source_files": {
+    "public/editor-v2/ui/forms-inspector.js": {
+      "sha256": "3e389f7ceb21f2a3da06d18be34c82cce9ce747faa9dc4f1657527b5ad6ceb73",
+      "bytes": 23630
+    },
+    "public/editor-v2/editor-refresh.css": {
+      "sha256": "f3b0cac5e4714306bf575c6ab3e61d5a6a7c0763eda3bbe5bbf76b4a8fc4eb39",
+      "bytes": 79872
+    },
+    "public/editor-v2/app.js": {
+      "sha256": "3d75701fbd05273c70a27c54afdf205f627491778eba934d30cddd83eacf194c",
+      "bytes": 247750
+    },
+    "public/editor-v2/index.html": {
+      "sha256": "8a0ec340d11fb8077612de79a6d03e9c209c95d2ce9a8a47bb97e68a9c5a5116",
+      "bytes": 29091
+    },
+    "tests/browser/editor-forms-inspector.test.js": {
+      "sha256": "a9ae2541141c5417ba84873596c8e1fa232496de143e66c8d71e18fe29ef217f",
+      "bytes": 11893
+    },
+    "tests/editor-public-asset-cache-bust.test.js": {
+      "sha256": "0be5d541554ab95c5f6319ca721b04c781a3006195ce17a3be99d7a8bf66e8da",
+      "bytes": 9399
+    },
+    "scripts/build-feature-traceability.py": {
+      "sha256": "4c5e65ef45d54b0a51504ee58e9cab9da05b026f7b057012a42f6b220a2c0406",
+      "bytes": 13583
+    },
+    "docs/evidence/feature-traceability.json": {
+      "sha256": "aff9d1e82f0314ca6c9ad20345baea081c7a24ddc7e01ad8e740fe3b0b0ee03a",
+      "bytes": 837844
+    }
+  },
+  "checks": {
+    "targeted_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-forms-inspector.test.js",
+      "result": "PASS 1/1"
+    },
+    "forms_unit": {
+      "command": "npm run test:forms",
+      "result": "PASS 5/5 files"
+    },
+    "forms_browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:forms:browser",
+      "result": "PASS; 4 assertions across editor public form, Inspector, and admin inbox browser suites"
+    },
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "result": "PASS 25/25 files; Linux subreaper 4/4"
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    "plan_contract": {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS 17/17"
+    },
+    "traceability_generation": {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS 396 mappings"
+    },
+    "canonical_plan": {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS; 13 part structure, one master/one cursor/396 mappings; acceptance NOT CERTIFIED"
+    },
+    "active_point_audit": {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS; cursor 77.44.7.D; plan coverage remains partial/unverified and acceptance NOT CERTIFIED"
+    },
+    "migration_gate": {
+      "command": "node scripts/web013-migration-safety-gate.mjs",
+      "result": "PASS; safe deploy path applies no migrations"
+    },
+    "public_cache_bust": {
+      "command": "node --test tests/editor-public-asset-cache-bust.test.js",
+      "result": "PASS 1/1"
+    },
+    "syntax_and_diff": {
+      "result": "PASS; node --check on changed JS and test files; git diff --check"
+    },
+    "wrangler_dry_run": {
+      "command": "npx wrangler deploy --dry-run",
+      "result": "PASS; exit 0; Wrangler 4.130.0; 206 assets; 477.74 KiB / 118.41 KiB gzip. Wrangler emitted a read-only debug-log EROFS warning, then reported dry-run complete; no deployment occurred."
+    }
+  },
+  "production_d1_preflight": {
+    "method": "Cloudflare D1 Query API; SELECT-only requests; no migration or business-data writes",
+    "queries": [
+      "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 5",
+      "SELECT COUNT(*) AS migration_count FROM d1_migrations",
+      "SELECT type,name FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name LIMIT 200"
+    ],
+    "migration_count": 38,
+    "latest_migration": "0032_forms_service.sql",
+    "schema_objects_reported": 111,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "r2_operations": "NONE"
+  },
+  "release": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_sha": "96d1736b118ba047bf84071ba6b905f01385b178",
+    "push": "PENDING",
+    "runtime_commit": "PENDING",
+    "exact_sha_ci": "PENDING; will use workflows triggered by normal push, no manual dispatch",
+    "cloudflare_deploy": "PENDING",
+    "production_health_and_asset_hashes": "PENDING",
+    "baseline_before_push": {
+      "deployment_id": "5020659c-6aef-41ad-a80a-b340f9998546",
+      "version_id": "4fdd8174-e358-4318-b38d-e540d27a1a14",
+      "traffic_percent": 100,
+      "observed_at": "2026-11-27"
+    },
+    "post_release_evidence_update": "Planned docs-only [skip ci] follow-up after exact-SHA CI, deployment, health and public asset hashes are verified."
+  },
+  "cost_and_data_safety": {
+    "new_cost": "0 Ft",
+    "paid_service_or_dependency": false,
+    "production_d1_migration_or_write": false,
+    "r2_delete_or_mutation": false
+  }
+}

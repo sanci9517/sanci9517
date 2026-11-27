@@ -81,7 +81,9 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
     const focusFieldControl = (fieldId, controlName) => {
       const card = Array.from(editor.querySelectorAll("fieldset[data-form-field-id]"))
         .find(candidate => candidate.dataset.formFieldId === fieldId);
-      card?.querySelector(`[aria-label="${controlName}"]`)?.focus();
+      const target = Array.from(card?.querySelectorAll("[aria-label]") || [])
+        .find(control => control.getAttribute("aria-label") === controlName);
+      target?.focus();
     };
     definition.fields.forEach((field, index) => {
       const card = document.createElement("fieldset"); card.className = "form-inspector-field-card";
@@ -124,12 +126,30 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
       }
       const remove = document.createElement("button"); remove.type = "button"; remove.textContent = "Mező törlése"; remove.setAttribute("aria-label", `Mező törlése: ${field.label}`);
       remove.disabled = definition.fields.length <= 1;
+      const orderActions = document.createElement("div"); orderActions.className = "form-inspector-field-order-actions";
+      const moveUp = document.createElement("button"); moveUp.type = "button"; moveUp.textContent = "↑";
+      moveUp.setAttribute("aria-label", `Mező feljebb: ${field.label}`); moveUp.title = "Mező feljebb"; moveUp.disabled = index === 0;
+      moveUp.onclick = () => {
+        const from = definition.fields.indexOf(field);
+        if (from <= 0) return;
+        definition.fields.splice(from - 1, 0, definition.fields.splice(from, 1)[0]);
+        markDirty(); renderEditor(); focusFieldControl(field.id, from === 1 ? `Mező lejjebb: ${field.label}` : `Mező feljebb: ${field.label}`);
+      };
+      const moveDown = document.createElement("button"); moveDown.type = "button"; moveDown.textContent = "↓";
+      moveDown.setAttribute("aria-label", `Mező lejjebb: ${field.label}`); moveDown.title = "Mező lejjebb"; moveDown.disabled = index === definition.fields.length - 1;
+      moveDown.onclick = () => {
+        const from = definition.fields.indexOf(field);
+        if (from < 0 || from >= definition.fields.length - 1) return;
+        definition.fields.splice(from + 1, 0, definition.fields.splice(from, 1)[0]);
+        markDirty(); renderEditor(); focusFieldControl(field.id, from === definition.fields.length - 2 ? `Mező feljebb: ${field.label}` : `Mező lejjebb: ${field.label}`);
+      };
+      orderActions.append(moveUp, moveDown);
       remove.onclick = () => {
         definition.fields.splice(index, 1); markDirty(); renderEditor();
         const focusTarget = definition.fields[Math.min(index, definition.fields.length - 1)];
         if (focusTarget) focusFieldControl(focusTarget.id, "Mezőcímke");
       };
-      card.append(remove); editor.append(card);
+      card.append(orderActions, remove); editor.append(card);
     });
     const addField = document.createElement("button"); addField.type = "button"; addField.textContent = "Mező hozzáadása";
     addField.disabled = definition.fields.length >= 24;

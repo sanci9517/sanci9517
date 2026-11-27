@@ -10,7 +10,7 @@ const definition = {
   schemaVersion: 1,
   name: "Kapcsolat",
   fields: [
-    { id: "email", type: "email", label: "E-mail", required: true, maxLength: 254 },
+    { id: "email", type: "email", label: 'E-mail "creator"', required: true, maxLength: 254 },
     { id: "field-2", type: "text", label: "Név", required: true, maxLength: 120 },
     { id: "field-3", type: "textarea", label: "Üzenet", required: false, maxLength: 500 }
   ],
@@ -93,6 +93,30 @@ test("Forms Inspector preserves field focus and keeps form Save/Publish independ
   assert.deepEqual(selected.published.props, {});
 
   const cards = page.locator(".form-inspector-field-card");
+  const fieldIds = () => cards.evaluateAll(elements => elements.map(element => element.dataset.formFieldId));
+  assert.equal(await cards.nth(0).getByRole("button", { name: 'Mező feljebb: E-mail "creator"' }).isDisabled(), true,
+    "the first field cannot move above the start of the ordered schema");
+  assert.equal(await cards.nth(2).getByRole("button", { name: "Mező lejjebb: Üzenet" }).isDisabled(), true,
+    "the last field cannot move beyond the schema boundary");
+  await cards.nth(0).getByRole("button", { name: 'Mező lejjebb: E-mail "creator"' }).click();
+  assert.deepEqual(await fieldIds(), ["field-2", "email", "field-3"], "moving down changes only the draft field order");
+  assert.equal(await cards.nth(1).getByRole("button", { name: 'Mező lejjebb: E-mail "creator"' }).evaluate(element => element === document.activeElement), true,
+    "re-rendering after move preserves focus on the moved field action");
+  await cards.nth(1).getByRole("button", { name: 'Mező feljebb: E-mail "creator"' }).click();
+  assert.deepEqual(await fieldIds(), ["email", "field-2", "field-3"], "the up action reverses the ordered move");
+  assert.equal(await cards.nth(0).getByRole("button", { name: 'Mező lejjebb: E-mail "creator"' }).evaluate(element => element === document.activeElement), true,
+    "a move to the first row focuses its enabled opposite-direction action");
+  await cards.nth(0).getByRole("button", { name: 'Mező lejjebb: E-mail "creator"' }).click();
+  await cards.nth(1).getByRole("button", { name: 'Mező lejjebb: E-mail "creator"' }).click();
+  assert.deepEqual(await fieldIds(), ["field-2", "field-3", "email"], "moving to the final row preserves the order");
+  assert.equal(await cards.nth(2).getByRole("button", { name: 'Mező feljebb: E-mail "creator"' }).evaluate(element => element === document.activeElement), true,
+    "a move to the final row focuses its enabled opposite-direction action");
+  await cards.nth(2).getByRole("button", { name: 'Mező feljebb: E-mail "creator"' }).click();
+  await cards.nth(1).getByRole("button", { name: 'Mező feljebb: E-mail "creator"' }).click();
+  assert.deepEqual(await fieldIds(), ["email", "field-2", "field-3"]);
+  assert.deepEqual(formActions, [], "reordering never saves or publishes implicitly");
+  assert.equal(publishedVersion, null);
+
   const firstFieldType = cards.nth(0).getByLabel("Mezőtípus");
   await firstFieldType.selectOption("select");
   assert.equal(await cards.nth(0).getByLabel("Mezőtípus").evaluate(element => element === document.activeElement), true,
@@ -132,6 +156,8 @@ test("Forms Inspector preserves field focus and keeps form Save/Publish independ
   await page.getByRole("button", { name: "Űrlap piszkozat mentése" }).click();
   await page.getByRole("status").filter({ hasText: "Űrlap piszkozat mentve: v2" }).waitFor();
   assert.deepEqual(storedDefinition.fields.map(field => field.type), ["select", "date"]);
+  assert.deepEqual(storedDefinition.fields.map(field => field.id), ["email", "field-3"],
+    "the saved field order persists through explicit save after reordering");
   assert.deepEqual(formActions, ["save"]);
   assert.equal(publishedVersion, null, "Save updates only the form draft");
   assert.deepEqual(pageDraft.props, { formId, formBindingVersion: 1 });

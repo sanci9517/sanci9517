@@ -24,13 +24,13 @@ test('the Editor and public renderer release tokens bust the structured accessib
     readFile(resolve(import.meta.dirname,'../public/visual-page.html'),'utf8'),
     readFile(resolve(import.meta.dirname,'../public/assets/page-renderer.js'),'utf8')
   ]);
-  assert.match(html,/href="\/editor-v2\/editor-refresh\.css\?v=20261126-canvas-keyboard-resize-v1"/,
+  assert.match(html,/href="\/editor-v2\/editor-refresh\.css\?v=20261127-form-field-order-v1"/,
     'the deployed HTML must request the stylesheet containing the selected Canvas keyboard controls');
   assert.match(css,/\.element-favorite-toggle\s*\{/,
     'the stylesheet referenced by the versioned link must include the palette-favorites UI');
   const recoveryVersion='20261124-edt042-publish-recovery-safe-label-v1';
   const editorEntryVersion='20261125-edt016-child-reference-limit-v1';
-  const editorScriptVersion='20261127-forms-radio-date-v1';
+  const editorScriptVersion='20261127-form-field-order-v1';
   const editorTreeVersion='20261126-edt007-canvas-pan-v1';
   const pageActionTimerVersion='20261126-edt039-detached-action-timer-v1';
   const mediaPlaybackVersion='20261125-forms-service-v1';
@@ -64,7 +64,7 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'the versioned entry script must request the responsive resolver cache key');
   assert.match(app,/ui\/structured-inspector\.js\?v=20261125-d06-structured-accordion-behavior-v1/,
     'the versioned entry script must request the structured Inspector accessible-name controls, including Accordion');
-  assert.match(app,/ui\/forms-inspector\.js\?v=20261127-forms-radio-date-v1/,
+  assert.match(app,/ui\/forms-inspector\.js\?v=20261127-form-field-order-v1/,
     'the versioned entry script must request the first-party form editor and inbox');
   assert.match(publicRenderer,/creator-form-radio-group/);
   assert.match(publicRenderer,/field\.type==='date'\?'date'/);
@@ -102,7 +102,7 @@ test('the EDT-040 in-view trigger refreshes both renderers and the shared motion
   const motionVersion='20261123-edt040-in-view-motion-v1';
   const domIdVersion='20261125-d06-authored-carousel-slide-semantics-v1';
   const editorEntryVersion='20261125-edt016-child-reference-limit-v1';
-  const editorScriptVersion='20261127-forms-radio-date-v1';
+  const editorScriptVersion='20261127-form-field-order-v1';
   const mediaPlaybackVersion='20261125-forms-service-v1';
   const publicRendererVersion='20261127-forms-radio-date-v1';
   assert.match(editorHtml,new RegExp(`editor-motion\\.css\\?v=${motionVersion}`));
