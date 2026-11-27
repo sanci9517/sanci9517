@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-27",
+  "title": "Forms bounded slider field — exact-source release evidence",
+  "canonical_plan": {
+    "item": "77.44.7.D / D-06",
+    "editor_scope": "OPEN / NOT CERTIFIED",
+    "d06": "OPEN / NOT CERTIFIED",
+    "d01_d07": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until the complete Visual Editor scope is implemented",
+    "save_publish_invariant": "Save persists draft only; Publish remains a separate explicit action."
+  },
+  "change": {
+    "commit": "3520bd48eef3531ffb31ac31e46153f84ea31b80",
+    "parent": "af2483c4e8a3787359bba251861eaba5d250373b",
+    "branch": "v2/foundation",
+    "title": "feat(forms): add bounded slider field",
+    "summary": [
+      "Adds a typed slider field to the versioned Forms contract with bounded min, max, and step configuration.",
+      "Uses native range controls and an accessible value readout in the public form renderer.",
+      "Adds Inspector controls and an inert draft preview while preserving Save != Publish."
+    ]
+  },
+  "checks": {
+    "local": [
+      {
+        "command": "npm run test:forms",
+        "result": "PASS — 5/5 files"
+      },
+      {
+        "command": "npm run test:forms:browser",
+        "result": "PASS — 7/7 browser tests"
+      },
+      {
+        "command": "npm run test:editor",
+        "result": "PASS — 25/25 files"
+      },
+      {
+        "command": "npm run typecheck",
+        "result": "PASS"
+      },
+      {
+        "command": "node --test tests/editor-public-asset-cache-bust.test.js",
+        "result": "PASS"
+      },
+      {
+        "command": "npm run test:web013:migration-gate",
+        "result": "PASS"
+      },
+      {
+        "command": "python3 scripts/check-canonical-plan.py; python3 scripts/plan_contract.py; active-point audit; feature traceability check",
+        "result": "PASS; 396/396 traceability entries"
+      },
+      {
+        "command": "npx wrangler deploy --dry-run",
+        "result": "PASS — Wrangler 4.130.0, 206 assets, 485.44 KiB (119.90 KiB gzip)"
+      },
+      {
+        "command": "git diff --check and relevant JS syntax checks",
+        "result": "PASS"
+      }
+    ],
+    "production_d1_preflight": {
+      "method": "Cloudflare D1 Query API, SELECT-only",
+      "observations": "97 indexes, 38 tables, 29 triggers; latest migration ledger entry 0032_forms_service.sql; database size 3,883,008 bytes",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "production_mutations": {
+      "d1_migration_or_write": false,
+      "r2_operation": false,
+      "new_dependency": false,
+      "new_cost": "0 Ft"
+    }
+  },
+  "github_actions": {
+    "source_smoke": {
+      "run_id": 46060103350,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/46060103350",
+      "conclusion": "SUCCESS",
+      "findings": "GET /api/health returned HTTP 200; all exact-source public SHA-256 checks matched after bounded edge-propagation retries."
+    },
+    "editor_core": {
+      "run_id": 46060102614,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/46060102614",
+      "status_at_recording": "IN_PROGRESS",
+      "conclusion": null,
+      "note": "Do not infer full Editor CI success from completed early steps."
+    },
+    "other_exact_sha_checks": [
+      {
+        "run_id": 46060102685,
+        "workflow": "F0 baseline checks",
+        "conclusion": "SUCCESS"
+      },
+      {
+        "run_id": 46060102669,
+        "workflow": "Twitch Integration Check",
+        "conclusion": "SUCCESS"
+      },
+      {
+        "run_id": 46060102598,
+        "workflow": "Canonical Plan Active Point Audit",
+        "conclusion": "SUCCESS"
+      },
+      {
+        "run_id": 46060102626,
+        "workflow": "Canonical Creator Platform Plan",
+        "conclusion": "SUCCESS"
+      }
+    ]
+  },
+  "cloudflare": {
+    "worker": "sanci9517-streamer-brand",
+    "build_id": "7f95409f-bc82-4b88-9899-a344f6d29451",
+    "build_outcome": "SUCCESS",
+    "source_sha": "3520bd48eef3531ffb31ac31e46153f84ea31b80",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deployment_id": "0b6a1080-0114-45a6-950c-41a5032e0c7b",
+    "version_id": "e31b87fa-d51e-4c87-9d5e-5531242d3c8d",
+    "traffic_percent": 100
+  }
+}
