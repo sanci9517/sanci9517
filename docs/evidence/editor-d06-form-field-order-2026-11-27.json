@@ -8,7 +8,7 @@
     "bytes": 1927041,
     "active_cursor": "77.44 / WEB-011 -> 77.44.7.D"
   },
-  "status": "Implementation and focused verification complete locally; remote release pending",
+  "status": "Deployed to production and exact-source smoke verified; one broader Editor Core workflow remains in progress.",
   "plan_status": {
     "D_06": "OPEN; this implementation adds one form-builder capability only",
     "D_01_through_D_07": "OPEN / NOT CERTIFIED",
@@ -143,10 +143,46 @@
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "base_sha": "96d1736b118ba047bf84071ba6b905f01385b178",
-    "push": "PENDING",
-    "runtime_commit": "PENDING",
-    "exact_sha_ci": "PENDING; will use workflows triggered by normal push, no manual dispatch",
-    "cloudflare_deploy": "PENDING",
+    "push": "NORMAL_FAST_FORWARD_VERIFIED",
+    "runtime_commit": "620bcf1c861a96e9df7abbb16e5bc022141839e0",
+    "exact_sha_ci": {
+      "canonical_plan": {
+        "run_id": 45996524805,
+        "status": "success"
+      },
+      "active_plan_audit": {
+        "run_id": 45996524832,
+        "status": "success"
+      },
+      "f0_baseline": {
+        "run_id": 45996524914,
+        "status": "success"
+      },
+      "twitch_integration": {
+        "run_id": 45996524881,
+        "status": "success"
+      },
+      "production_worker_source_smoke": {
+        "run_id": 45996524880,
+        "status": "success",
+        "head_sha": "620bcf1c861a96e9df7abbb16e5bc022141839e0"
+      },
+      "editor_core": {
+        "run_id": 45996524850,
+        "status": "in_progress",
+        "conclusion": null,
+        "completed_steps": "typecheck, editor core tests, Forms contract/routes, Forms Inspector/public-page Chromium, D1 ledger/bootstrap, private R2 API isolation, public showcase tests and isolated media upload tests all passed; layout regression still running at follow-up capture; subsequent WEB-013 and additional contracts pending."
+      }
+    },
+    "cloudflare_deploy": {
+      "method": "npm run deploy:safe",
+      "safety_gate": "PASS; no D1 migrations applied",
+      "deployment_id": "ed3b385d-df5f-46d3-aa1c-91632ac79b90",
+      "version_id": "0cdd4dbb-5a89-416f-b88b-fbc827b36cc9",
+      "traffic_percent": 100,
+      "created_on": "2026-11-27T12:13:20.298629Z",
+      "wrangler": "4.130.0"
+    },
     "production_health_and_asset_hashes": "PENDING",
     "baseline_before_push": {
       "deployment_id": "5020659c-6aef-41ad-a80a-b340f9998546",
@@ -154,12 +190,44 @@
       "traffic_percent": 100,
       "observed_at": "2026-11-27"
     },
-    "post_release_evidence_update": "Planned docs-only [skip ci] follow-up after exact-SHA CI, deployment, health and public asset hashes are verified."
+    "post_release_evidence_update": "This evidence file was updated after exact-source smoke and four changed asset hashes were verified. The follow-up commit is documentation-only and uses [skip ci].",
+    "branch_head_after_push": "620bcf1c861a96e9df7abbb16e5bc022141839e0",
+    "production_health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?release=620bcf1c861a96e9df7abbb16e5bc022141839e0",
+      "http_status": 200,
+      "body": "{\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}"
+    },
+    "production_changed_asset_hashes": {
+      "public/editor-v2/app.js": {
+        "path": "/editor-v2/app.js",
+        "sha256": "3d75701fbd05273c70a27c54afdf205f627491778eba934d30cddd83eacf194c",
+        "matches": true
+      },
+      "public/editor-v2/editor-refresh.css": {
+        "path": "/editor-v2/editor-refresh.css",
+        "sha256": "f3b0cac5e4714306bf575c6ab3e61d5a6a7c0763eda3bbe5bbf76b4a8fc4eb39",
+        "matches": true
+      },
+      "public/editor-v2/index.html": {
+        "path": "/editor-v2/",
+        "sha256": "8a0ec340d11fb8077612de79a6d03e9c209c95d2ce9a8a47bb97e68a9c5a5116",
+        "matches": true
+      },
+      "public/editor-v2/ui/forms-inspector.js": {
+        "path": "/editor-v2/ui/forms-inspector.js",
+        "sha256": "3e389f7ceb21f2a3da06d18be34c82cce9ce747faa9dc4f1657527b5ad6ceb73",
+        "matches": true
+      }
+    },
+    "production_source_smoke": "PASS: exact source SHA workflow verified /api/health HTTP 200 and all its public source hashes after deployment.",
+    "docs_followup": "Plan: add this completed evidence and metrics log in a [skip ci] docs-only commit; no Worker redeploy.",
+    "developer_metrics_session": "20261127113209-1dbaa03b"
   },
   "cost_and_data_safety": {
     "new_cost": "0 Ft",
     "paid_service_or_dependency": false,
     "production_d1_migration_or_write": false,
     "r2_delete_or_mutation": false
-  }
+  },
+  "remaining": "This is one implemented D-06 capability slice only. D-06, D-07, all D-01..D-07 acceptance, and final Visual Editor acceptance remain OPEN/NOT CERTIFIED; manual and physical acceptance is deferred. Exact-SHA Editor Core CI run 45996524850 is still in progress."
 }

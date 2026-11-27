@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261127113209-1dbaa03b",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-27T11:32:09.128Z",
+  "finished_at": "2026-11-27T12:14:48.598Z",
+  "wall_seconds": 2559,
+  "paused_seconds": 0,
+  "measured_seconds": 2559,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Implemented and released accessible form field reordering; complete D-06 and Visual Editor remain open. Local regressions, safety gates and exact-SHA production smoke passed; broader Editor Core CI is still running.",
+  "evidence": [
+    "620bcf1c861a96e9df7abbb16e5bc022141839e0",
+    "45996524880",
+    "0cdd4dbb-5a89-416f-b88b-fbc827b36cc9"
+  ],
+  "checks": "targeted forms/unit/browser tests, typecheck, plan contract/audits, D1 SELECT-only preflight, Wrangler dry-run, deploy:safe, HTTP 200 and four changed asset hashes match",
+  "started_revision": "96d1736b118ba047bf84071ba6b905f01385b178",
+  "finished_revision": "96d1736b118ba047bf84071ba6b905f01385b178",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
