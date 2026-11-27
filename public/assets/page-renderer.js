@@ -13,7 +13,7 @@ import {renderCountdownContent,activateCountdowns} from "../editor-v2/core/count
 import {renderSocialLinksHtml} from "../editor-v2/core/social-links.js";
 import {renderEmbedHtml,activateEmbeds} from "../editor-v2/core/creator-embed.js";
 import {renderCodeSnippet,activateCodeBlocks} from "../editor-v2/core/code-snippet.js";
-import {isAuthoredContent,CONTENT_TYPES,contentTag,contentAttributes,authoredNodeHtml,initContentInteractions} from "../editor-v2/core/authored-content.js?v=20261127-edt039-form-submit-success-v1";
+import {isAuthoredContent,CONTENT_TYPES,contentTag,contentAttributes,authoredNodeHtml,initContentInteractions,emitAcceptedPublicFormSubmission} from "../editor-v2/core/authored-content.js?v=20261127-edt039-form-submit-trusted-v2";
 import {defaultTokens,applyTokenVariables} from "../editor-v2/core/design-tokens.js";
 import {isVisibleOnDevice,collectVisibleDescendants,safeNodeChildIds} from "../editor-v2/core/visibility.js?v=20261112-safe-node-children";
 import {applyStateStyles,hasStateStyles} from "../editor-v2/core/state-styles.js";
@@ -406,7 +406,7 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
      const resultPayload=await result.json().catch(()=>null);
      if(!result.ok||resultPayload?.ok!==true)throw new Error(result.status===429?'Túl sok beküldés érkezett. Próbáld újra később.':'A beküldést most nem tudtuk fogadni. Ellenőrizd az adatokat, majd próbáld újra.');
      form.reset();status.textContent=typeof resultPayload.data?.message==='string'?resultPayload.data.message:'Köszönöm, a beküldés megérkezett.';
-     form.dispatchEvent(new CustomEvent('creator:form-submission-succeeded',{bubbles:true}));
+     emitAcceptedPublicFormSubmission(form);
     }catch(error){status.textContent=error?.message||'A beküldés most nem sikerült. Próbáld újra később.'}
     finally{submit.disabled=false}
    });

@@ -1,8 +1,15 @@
 import { validatedLinkHref } from './richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
-import { PAGE_ACTION_TIMER_DELAYS_MS, pageInteractionAttributes, safePageInteraction } from './page-interactions.js?v=20261121-edt039-single-auto-action-v1';
+import { PAGE_ACTION_TIMER_DELAYS_MS, pageInteractionAttributes, safePageInteraction } from './page-interactions.js?v=20261127-edt039-form-submit-registry-v1';
 import { safeContentDomId } from './element-content.js?v=20261125-forms-service-v1';
 
 export const CONTENT_VERSION=1;
+const acceptedPublicFormSubmissions=new WeakSet();
+export function emitAcceptedPublicFormSubmission(form){
+  if(!form?.matches?.('.creator-public-form form[data-public-form-runtime="1"]'))return false;
+  acceptedPublicFormSubmissions.add(form);
+  form.dispatchEvent(new CustomEvent('creator:form-submission-succeeded',{bubbles:true}));
+  return true;
+}
 // Shared by the editor picker and the server-side media upload/list contract.
 export const IMAGE_MIMES=Object.freeze(['image/png','image/jpeg','image/gif','image/webp']);
 export const PLAYABLE_MEDIA_MIMES=Object.freeze({audio:Object.freeze(['audio/mpeg','audio/ogg','audio/wav']),video:Object.freeze(['video/webm'])});
@@ -443,7 +450,8 @@ export function initContentInteractions(root){
   });
   root.addEventListener('creator:form-submission-succeeded',event=>{
     const form=event.target?.closest?.('.creator-public-form form[data-public-form-runtime="1"]');
-    if(!form||!root.contains(form))return;
+    if(!form||!root.contains(form)||!acceptedPublicFormSubmissions.has(form))return;
+    acceptedPublicFormSubmissions.delete(form);
     const actionSource=form.closest('[data-page-node-id][data-page-action]');
     if(actionSource&&root.contains(actionSource)&&actionSource.dataset.pageActionEvent==='submit')runPageAction(actionSource);
   });

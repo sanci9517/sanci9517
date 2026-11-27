@@ -172,6 +172,10 @@ test('EDT-039 Form actions run only after an accepted public submission', async 
   const tab = index => tabs.getByRole('tab').nth(index);
   await region.waitFor();
   assert.equal(await tab(0).getAttribute('aria-selected'), 'true');
+  await region.locator('form').evaluate(form => {
+    form.dispatchEvent(new CustomEvent('creator:form-submission-succeeded', { bubbles: true }));
+  });
+  assert.equal(await tab(0).getAttribute('aria-selected'), 'true', 'an untrusted public custom event cannot impersonate an accepted service response');
   await region.getByRole('button', { name: 'Küldés' }).click();
   assert.equal(f.submissions.length, 0, 'invalid native values never reach the service or action runner');
   assert.equal(await tab(0).getAttribute('aria-selected'), 'true');

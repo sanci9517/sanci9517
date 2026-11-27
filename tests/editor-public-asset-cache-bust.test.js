@@ -30,12 +30,12 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'the stylesheet referenced by the versioned link must include the palette-favorites UI');
   const recoveryVersion='20261124-edt042-publish-recovery-safe-label-v1';
   const editorEntryVersion='20261125-edt016-child-reference-limit-v1';
-  const editorScriptVersion='20261127-d06-number-field-v1';
+  const editorScriptVersion='20261127-d06-form-submit-trusted-v2';
   const pageInteractionControlsVersion='20261127-edt039-form-submit-controls-v1';
   const editorTreeVersion='20261126-edt007-canvas-pan-v1';
-  const pageActionTimerVersion='20261127-edt039-form-submit-success-v1';
+  const trustedFormSubmitVersion='20261127-edt039-form-submit-trusted-v2';
   const mediaPlaybackVersion='20261125-forms-service-v1';
-  const publicRendererVersion='20261127-d06-number-field-v1';
+  const publicRendererVersion='20261127-d06-form-submit-trusted-v2';
   assert.match(html,new RegExp(`src="/editor-v2/app\\.js\\?v=${editorScriptVersion}"`),
     'the deployed entry page must request the accessible tree-item ownership implementation');
   assert.match(html,new RegExp(`href="/editor-v2/editor\\.css\\?v=${editorTreeVersion}"`),
@@ -75,17 +75,20 @@ test('the Editor and public renderer release tokens bust the structured accessib
   assert.match(app,/if\(isAuthoredContent\(node\)&&\['button','form'\]\.includes\(node\.type\)\)/,
     'the selected bound Form exposes safe interaction controls');
   assert.match(publicRenderer,/creator-form-radio-group/);
-  assert.match(publicRenderer,/creator:form-submission-succeeded/,
-    'the public renderer notifies existing Page Action dispatch only after a successful submit');
-  assert.match(publicRenderer,/authored-content\.js\?v=20261127-edt039-form-submit-success-v1/);
+  assert.match(publicRenderer,/emitAcceptedPublicFormSubmission\(form\)/,
+    'the public renderer can notify Page Action dispatch only through the trusted success notifier');
+  const authoredContent=await readFile(resolve(root,'core/authored-content.js'),'utf8');
+  assert.match(authoredContent,/acceptedPublicFormSubmissions\.has\(form\)/,
+    'the Page Action listener rejects spoofed custom events without a private accepted-response token');
+  assert.match(publicRenderer,new RegExp(`authored-content\\.js\\?v=${trustedFormSubmitVersion}`));
   assert.match(publicRenderer,/field\.type==='date'\?'date'/);
   assert.match(publicRenderer,/field\.type==='url'\?'url'/);
   assert.match(publicRenderer,/field\.type==='radio'/);
-  assert.match(app,new RegExp(`core/authored-content\\.js\\?v=${pageActionTimerVersion}`),
+  assert.match(app,new RegExp(`core/authored-content\\.js\\?v=${trustedFormSubmitVersion}`),
     'the Editor must load the page-action timer lifecycle guard');
   assert.match(publicHtml,new RegExp(`page-renderer\\.js\\?v=${publicRendererVersion}`),
     'published pages must request the renderer version containing reduced-motion playback behavior');
-  assert.match(publicRenderer,new RegExp(`authored-content\\.js\\?v=${pageActionTimerVersion}`),
+  assert.match(publicRenderer,new RegExp(`authored-content\\.js\\?v=${trustedFormSubmitVersion}`),
     'the public renderer must request the cache-busted authored content timer and playback behavior');
   assert.match(publicRenderer,new RegExp(`legacy-media-source\\.js\\?v=${mediaPlaybackVersion}`),
     'the public renderer must request the cache-busted legacy media playback behavior');
@@ -114,9 +117,9 @@ test('the EDT-040 in-view trigger refreshes both renderers and the shared motion
   const motionVersion='20261123-edt040-in-view-motion-v1';
   const domIdVersion='20261125-d06-authored-carousel-slide-semantics-v1';
   const editorEntryVersion='20261125-edt016-child-reference-limit-v1';
-  const editorScriptVersion='20261127-d06-number-field-v1';
+  const editorScriptVersion='20261127-d06-form-submit-trusted-v2';
   const mediaPlaybackVersion='20261125-forms-service-v1';
-  const publicRendererVersion='20261127-d06-number-field-v1';
+  const publicRendererVersion='20261127-d06-form-submit-trusted-v2';
   assert.match(editorHtml,new RegExp(`editor-motion\\.css\\?v=${motionVersion}`));
   assert.match(editorHtml,new RegExp(`app\\.js\\?v=${editorScriptVersion}`));
   assert.match(editor,new RegExp(`core/property-registry\\.js\\?v=${motionVersion}`));
