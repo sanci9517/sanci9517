@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "title": "D-06 public forms radio and date field slice",
+  "recorded_at": "2026-11-27",
+  "plan_cursor": "77.44.7.D",
+  "status": "slice shipped; D point and Visual Editor remain open",
+  "source": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "implementation_commit": "84803635308ce8195f9547c5295c4d47b887d33d",
+    "traceability_commit": "5486f144947d870d3cbd871f291e5639f6070a2b",
+    "final_branch_head_at_record": "5486f144947d870d3cbd871f291e5639f6070a2b",
+    "base_commit": "e5424cc1ef3b5f75b583250bbabf30d87c921fb6"
+  },
+  "changes": [
+    "Added radio/date to the versioned first-party form schema.",
+    "Radio options use the existing bounded option list and submissions reject values outside the allowlist.",
+    "Date submissions require YYYY-MM-DD and a real calendar date; leap day is validated and year 0000 rejected.",
+    "The Inspector edits both types, shows options only for select/radio, and hides irrelevant max-length controls.",
+    "The public renderer provides a labelled radio fieldset, native date input and scalar form values.",
+    "Bumped only the affected editor/public cache keys; form Save remains separate from form Publish and page Save/Publish."
+  ],
+  "files": [
+    "src/core/forms-contract.ts",
+    "public/editor-v2/ui/forms-inspector.js",
+    "public/assets/page-renderer.js",
+    "public/editor-v2/app.js",
+    "public/editor-v2/index.html",
+    "public/visual-page.html",
+    "tests/forms-contract.test.js",
+    "tests/browser/editor-form-public-page.test.js",
+    "tests/browser/editor-forms-inspector.test.js",
+    "tests/editor-public-asset-cache-bust.test.js",
+    "docs/evidence/feature-traceability.json"
+  ],
+  "checks": {
+    "targeted_remote_base_overlay": "PASS: form contract, cache-bust, public form Chromium and Inspector Chromium regression files; corrected ambiguous E-mail locator and reran successfully.",
+    "typecheck": "PASS in exact-head Editor Core workflow.",
+    "editor_form_ci": "PASS within exact-head Editor Core workflow: editor unit tests, Forms schema/routes, Forms Inspector/public-page browser regressions, isolated media storage and earlier checks.",
+    "canonical_plan_ci": {
+      "run_id": 45982859480,
+      "status": "success"
+    },
+    "plan_source_audit_ci": {
+      "run_id": 45982859512,
+      "status": "success"
+    },
+    "f0_baseline_ci": {
+      "run_id": 45982859823,
+      "status": "success"
+    },
+    "twitch_ci": {
+      "run_id": 45982859460,
+      "status": "success"
+    },
+    "editor_core_ci": {
+      "run_id": 45982860196,
+      "status": "in_progress",
+      "last_observed_step": "Run Editor browser layout regression"
+    },
+    "first_ci_attempt": "The initial audit caught the changed cache-bust test fingerprint; the traceability map was fixed in 5486f144 and the new canonical-plan/source-audit workflows passed."
+  },
+  "release": {
+    "automatic_worker_deploy": {
+      "deployment_id": "5020659c-6aef-41ad-a80a-b340f9998546",
+      "version_id": "4fdd8174-e358-4318-b38d-e540d27a1a14",
+      "traffic_percent": 100,
+      "deployed_at": "2026-11-27T10:31:12Z"
+    },
+    "exact_source_smoke": {
+      "workflow_run_id": 45982490908,
+      "source_commit": "84803635308ce8195f9547c5295c4d47b887d33d",
+      "result": "PASS: health HTTP 200 and all listed public asset SHA-256 values matched after rollout."
+    },
+    "wrangler_dry_run": "PASS: Wrangler 4.130.0; 206 public assets; 477.74 KiB upload, 118.45 KiB gzip.",
+    "production_d1_preflight": {
+      "mode": "SELECT-only",
+      "migration_rows": 38,
+      "latest_migration": "0032_forms_service.sql",
+      "tables": 38,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "cost": {
+      "paid_services": "none",
+      "production_d1_writes": 0,
+      "migrations": 0,
+      "r2_deletions": 0
+    }
+  },
+  "remaining": "This is one D-06 capability slice only. D-06, D-07, the full D block and final Visual Editor acceptance remain OPEN; broader Editor Core CI was still running at evidence capture."
+}

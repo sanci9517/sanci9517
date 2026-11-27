@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261127071743-3bbe9a81",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-27T07:17:43.133Z",
+  "finished_at": "2026-11-27T10:36:07.515Z",
+  "wall_seconds": 11904,
+  "paused_seconds": 0,
+  "measured_seconds": 11904,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06 radio/date form slice shipped from exact remote base: bounded radio values, native calendar dates, accessible public renderer, Inspector options and cache keys. Focused unit/Chromium tests, typecheck, D1 read-only preflight, Wrangler dry-run and required plan/source CI passed; broader Editor Core CI remains in progress.",
+  "evidence": [
+    "Radio/date targeted suite PASS; exact-source smoke PASS",
+    "HTTP 200; Worker 4fdd8174 at 100%"
+  ],
+  "checks": "Plan crosswalk PASS; canonical plan PASS; F0 baseline PASS; Twitch check PASS; Editor Core specific form tests/typecheck PASS, full workflow pending.",
+  "started_revision": "0cfe7f41d1f566c998d57fffdfb4a61a927b1116",
+  "finished_revision": "0cfe7f41d1f566c998d57fffdfb4a61a927b1116",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
