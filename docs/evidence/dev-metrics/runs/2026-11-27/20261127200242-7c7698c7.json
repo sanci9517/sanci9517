@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261127200242-7c7698c7",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-27T20:02:42.970Z",
+  "finished_at": "2026-11-27T20:04:25.115Z",
+  "wall_seconds": 102,
+  "paused_seconds": 0,
+  "measured_seconds": 102,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "Recorded and independently verified the bounded Forms slider release evidence on v2/foundation; exact-SHA Editor Core CI remains in progress.",
+  "evidence": [
+    "docs/evidence/editor-d06-form-slider-field-2026-11-27.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "20415af0459c8f10cbd1ba119e029ed4de3ca3ba",
+  "finished_revision": "20415af0459c8f10cbd1ba119e029ed4de3ca3ba",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
