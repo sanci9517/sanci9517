@@ -44,7 +44,8 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
   selectorLabel.append(selectorCaption, selector);
   const create = document.createElement("button"); create.type = "button"; create.textContent = "Új űrlap létrehozása";
   const editor = document.createElement("div"); editor.className = "form-inspector-editor";
-  root.append(heading, explanation, selectorLabel, create, status, editor);
+  const preview = document.createElement("section"); preview.className = "form-inspector-preview"; preview.hidden = true;
+  root.append(heading, explanation, selectorLabel, create, status, editor, preview);
 
   let items = [];
   let selected = null;
@@ -56,13 +57,14 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ action, formId: selected.id, expectedVersion, definition })
   });
-  const markDirty = () => { dirty = true; saveButton.disabled = !selected || selected.status === "archived"; publishButton.disabled = true; };
+  const markDirty = () => { dirty = true; saveButton.disabled = !selected || selected.status === "archived"; publishButton.disabled = true; renderPreview(); };
   const saveButton = document.createElement("button"); saveButton.type = "button"; saveButton.textContent = "Űrlap piszkozat mentése"; saveButton.disabled = true;
   const publishButton = document.createElement("button"); publishButton.type = "button"; publishButton.textContent = "Űrlap publikálása"; publishButton.disabled = true;
   const archiveButton = document.createElement("button"); archiveButton.type = "button"; archiveButton.textContent = "Űrlap archiválása"; archiveButton.disabled = true;
 
   function renderEditor() {
     editor.replaceChildren();
+    renderPreview();
     saveButton.disabled = !selected || selected.status === "archived" || !dirty;
     publishButton.disabled = !selected || selected.status === "archived" || dirty || selected.publishedVersion === expectedVersion || !selected.definition.consent.privacyUrl;
     archiveButton.disabled = !selected || selected.status === "archived";
@@ -165,6 +167,7 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
       definition.fields.push(field); markDirty(); renderEditor(); focusFieldControl(field.id, "Mezőcímke");
     };
     editor.append(addField);
+    renderPreview();
     const consent = control("textarea", "Adatkezelési hozzájárulás szövege", definition.consent.text, { maxLength: 2_000 });
     consent.input.rows = 4; consent.input.oninput = () => { definition.consent.text = consent.input.value; markDirty(); };
     const consentVersion = control("input", "Adatkezelési tájékoztató verziója", definition.consent.version, { maxLength: 64 });
@@ -250,6 +253,71 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
     inboxMore.onclick = () => loadInbox(false);
     inbox.append(inboxSummary, inboxHelp, inboxSearch, inboxSearchButton, inboxStatus, inboxItems, inboxMore);
     editor.append(consent.wrapper, consentVersion.wrapper, privacyUrl.wrapper, success.wrapper, retention.wrapper, saveButton, publishButton, archiveButton, inbox);
+  }
+
+  function renderPreview() {
+    preview.replaceChildren();
+    preview.hidden = !selected;
+    if (!selected) return;
+
+    const title = document.createElement("h4"); title.textContent = "Űrlap előnézete";
+    const notice = document.createElement("p");
+    notice.className = "form-inspector-preview-notice";
+    notice.textContent = "Csak megjelenítés. Az előnézet nem küld adatot és nem publikál.";
+    const name = document.createElement("p");
+    name.className = "form-inspector-preview-name";
+    name.textContent = String(selected.definition?.name || "Űrlap");
+    const fields = document.createElement("fieldset");
+    fields.className = "form-inspector-preview-fields";
+    fields.disabled = true;
+    const legend = document.createElement("legend"); legend.textContent = "Mezők"; fields.append(legend);
+
+    const previewFields = Array.isArray(selected.definition?.fields) ? selected.definition.fields.slice(0, 24) : [];
+    for (const [index, field] of previewFields.entries()) {
+      if (!field || typeof field !== "object" || Array.isArray(field)) continue;
+      const label = String(field.label || "Mező");
+      const wrapper = document.createElement("div"); wrapper.className = "form-inspector-preview-field";
+      const caption = document.createElement("span"); caption.textContent = `${label}${field.required === true ? " · Kötelező" : ""}`;
+      wrapper.append(caption);
+      const type = String(field.type || "text");
+      const maxLength = Number.isInteger(field.maxLength) ? Math.max(1, Math.min(4000, field.maxLength)) : 500;
+      if (type === "textarea") {
+        const control = document.createElement("textarea"); control.rows = 3; control.maxLength = maxLength;
+        control.setAttribute("aria-label", label); control.placeholder = label; wrapper.append(control);
+      } else if (type === "select") {
+        const control = document.createElement("select"); control.setAttribute("aria-label", label);
+        const placeholder = document.createElement("option"); placeholder.value = ""; placeholder.textContent = "Válassz…"; control.append(placeholder);
+        for (const [optionIndex, value] of (Array.isArray(field.options) ? field.options : []).slice(0, 20).entries()) {
+          const option = document.createElement("option"); option.value = String(optionIndex); option.textContent = String(value); control.append(option);
+        }
+        wrapper.append(control);
+      } else if (type === "radio") {
+        const choices = document.createElement("fieldset"); choices.className = "form-inspector-preview-choices";
+        const choiceLegend = document.createElement("legend"); choiceLegend.textContent = label; choices.append(choiceLegend);
+        for (const [optionIndex, value] of (Array.isArray(field.options) ? field.options : []).slice(0, 20).entries()) {
+          const choiceLabel = document.createElement("label");
+          const control = document.createElement("input"); control.type = "radio"; control.name = `form-preview-${index}`; control.value = String(optionIndex);
+          control.setAttribute("aria-label", `${label}: ${String(value)}`);
+          choiceLabel.append(control, document.createTextNode(String(value))); choices.append(choiceLabel);
+        }
+        wrapper.append(choices);
+      } else {
+        const control = document.createElement("input");
+        control.type = ({ email: "email", tel: "tel", url: "url", date: "date", checkbox: "checkbox" })[type] || "text";
+        control.setAttribute("aria-label", label);
+        if (control.type !== "checkbox") { control.maxLength = maxLength; control.placeholder = label; }
+        wrapper.append(control);
+      }
+      if (field.helpText) { const help = document.createElement("small"); help.textContent = String(field.helpText); wrapper.append(help); }
+      fields.append(wrapper);
+    }
+
+    const consent = document.createElement("p"); consent.className = "form-inspector-preview-consent";
+    consent.textContent = String(selected.definition?.consent?.text || "");
+    const submit = document.createElement("button"); submit.type = "button"; submit.disabled = true; submit.textContent = "Beküldés (inaktív előnézet)";
+    preview.append(title, notice, name, fields);
+    if (consent.textContent) preview.append(consent);
+    preview.append(submit);
   }
 
   async function loadList(selectId = node.props?.formId || "") {

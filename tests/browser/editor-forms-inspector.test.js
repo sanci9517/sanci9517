@@ -92,6 +92,17 @@ test("Forms Inspector preserves field focus and keeps form Save/Publish independ
   assert.deepEqual(selected.draft.props, { formId, formBindingVersion: 1 });
   assert.deepEqual(selected.published.props, {});
 
+  const preview = page.locator(".form-inspector-preview");
+  await preview.waitFor({ state: "visible" });
+  assert.equal(await preview.getByRole("heading", { name: "Űrlap előnézete" }).count(), 1);
+  assert.match(await preview.locator(".form-inspector-preview-notice").textContent(), /nem küld adatot és nem publikál/);
+  assert.equal(await preview.locator("form").count(), 0, "the preview has no form or submit lifecycle");
+  assert.deepEqual(await preview.locator("input, select, textarea, button").evaluateAll(elements => elements.map(element => element.matches(":disabled"))),
+    [true, true, true, true], "every preview control is inert");
+  assert.equal(await preview.getByLabel('E-mail "creator"').getAttribute("type"), "email");
+  assert.equal(await preview.getByLabel("Üzenet").evaluate(element => element.tagName), "TEXTAREA");
+  assert.match(await preview.locator(".form-inspector-preview-consent").textContent(), /Elfogadom/);
+
   const cards = page.locator(".form-inspector-field-card");
   const fieldIds = () => cards.evaluateAll(elements => elements.map(element => element.dataset.formFieldId));
   assert.equal(await cards.nth(0).getByRole("button", { name: 'Mező feljebb: E-mail "creator"' }).isDisabled(), true,
@@ -123,12 +134,20 @@ test("Forms Inspector preserves field focus and keeps form Save/Publish independ
     "changing a field type should return focus to its replacement type selector");
   assert.equal(await cards.nth(0).getByLabel("Választások (soronként egy)").count(), 1,
     "select fields should retain their type-specific option editor after rerender");
+  assert.equal(await preview.getByLabel('E-mail "creator"').evaluate(element => element.tagName), "SELECT",
+    "the preview updates from unsaved draft field types");
+  assert.equal(await preview.getByLabel('E-mail "creator"').isDisabled(), true);
+  assert.equal(await preview.getByLabel('E-mail "creator"').locator("option").nth(1).textContent(), "Első választás");
 
   await cards.nth(1).getByLabel("Mezőtípus").selectOption("radio");
   const radioOptions = cards.nth(1).getByLabel("Választások (soronként egy)");
   assert.equal(await radioOptions.count(), 1, "radio fields share the bounded option editor");
-  await radioOptions.fill("E-mail\nDiscord");
+  await radioOptions.fill("<img src=x onerror=alert(1)>\nDiscord");
   assert.equal(await cards.nth(1).getByLabel("Maximális karakterszám").count(), 0, "radio options do not expose text length");
+  assert.deepEqual(await preview.getByRole("group", { name: "Név" }).getByRole("radio").evaluateAll(elements => elements.map(element => element.matches(":disabled"))),
+    [true, true], "radio options are visible but cannot be selected or submitted");
+  assert.equal(await preview.locator("img").count(), 0, "untrusted form option text is rendered as text, never as HTML");
+  assert.equal(await preview.locator(".form-inspector-preview-choices").textContent().then(text => text.includes("<img src=x onerror=alert(1)>")), true);
   await cards.nth(2).getByLabel("Mezőtípus").selectOption("url");
   assert.equal(await cards.nth(2).getByLabel("Mezőtípus").evaluate(element => element === document.activeElement), true,
     "changing to a URL field preserves focus on its type control");
@@ -143,9 +162,14 @@ test("Forms Inspector preserves field focus and keeps form Save/Publish independ
     "the Inspector caps telephone values to the same limit as the server contract");
   assert.equal(await cards.nth(2).getByLabel("Maximális karakterszám").inputValue(), "40",
     "switching from the longer URL limit clamps the stored field length instead of creating a save-invalid definition");
+  assert.equal(await preview.getByLabel("Üzenet").getAttribute("type"), "tel");
   await cards.nth(2).getByLabel("Mezőtípus").selectOption("date");
   assert.equal(await cards.nth(2).getByLabel("Maximális karakterszám").count(), 0, "date fields do not expose text length");
   assert.equal(await cards.nth(2).getByLabel("Választások (soronként egy)").count(), 0, "date fields clear irrelevant choices");
+  assert.equal(await preview.getByLabel("Üzenet").getAttribute("type"), "date");
+  await cards.nth(2).getByLabel("Mezőtípus").selectOption("checkbox");
+  assert.equal(await preview.getByLabel("Üzenet").getAttribute("type"), "checkbox");
+  assert.equal(await preview.getByLabel("Üzenet").isDisabled(), true);
   await cards.nth(1).getByRole("button", { name: "Mező törlése: Név" }).click();
   assert.equal(await cards.nth(1).getByLabel("Mezőcímke").evaluate(element => element === document.activeElement), true,
     "removing a row should focus the next field at the same position");
@@ -169,7 +193,7 @@ test("Forms Inspector preserves field focus and keeps form Save/Publish independ
   assert.equal(await publish.isDisabled(), true, "editing the definition must be saved before it can be published");
   await page.getByRole("button", { name: "Űrlap piszkozat mentése" }).click();
   await page.getByRole("status").filter({ hasText: "Űrlap piszkozat mentve: v2" }).waitFor();
-  assert.deepEqual(storedDefinition.fields.map(field => field.type), ["select", "date"]);
+  assert.deepEqual(storedDefinition.fields.map(field => field.type), ["select", "checkbox"]);
   assert.deepEqual(storedDefinition.fields.map(field => field.id), ["email", "field-3"],
     "the saved field order persists through explicit save after reordering");
   assert.deepEqual(formActions, ["save"]);
