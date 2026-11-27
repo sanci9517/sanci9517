@@ -30,7 +30,7 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'the stylesheet referenced by the versioned link must include the palette-favorites UI');
   const recoveryVersion='20261124-edt042-publish-recovery-safe-label-v1';
   const editorEntryVersion='20261125-edt016-child-reference-limit-v1';
-  const editorScriptVersion='20261127-d06-slider-fields-v1';
+  const editorScriptVersion='20261127-edt042-page-load-recovery-v1';
   const pageInteractionControlsVersion='20261127-edt039-form-submit-controls-v1';
   const editorTreeVersion='20261126-edt007-canvas-pan-v1';
   const trustedFormSubmitVersion='20261127-edt039-form-submit-trusted-v2';
@@ -109,6 +109,18 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'the public renderer must request the shared collision-resistant content DOM ID helper');
 });
 
+test('the canvas pan controller is cache-busted with its interactive-target guard',async()=>{
+  const [html,pan]=await Promise.all([
+    readFile(resolve(root,'index.html'),'utf8'),
+    readFile(resolve(root,'ui/canvas-pan.js'),'utf8')
+  ]);
+  const version='20261127-edt007-interactive-pan-target-v1';
+  assert.match(html,new RegExp(`canvas-pan\\.js\\?v=${version}`),
+    'the Editor must request the fixed controller rather than a stale cached pan handler');
+  assert.match(pan,/interactiveCanvasTarget\(event\.target\)\)return/,
+    'pointer panning must leave interactive descendants available to their own pointer lifecycle');
+});
+
 test('the EDT-040 in-view trigger refreshes both renderers and the shared motion registry',async()=>{
   const [editorHtml,editor,canvasEngine,motionStyle,publicHtml,publicRenderer,css]=await Promise.all([
     readFile(resolve(root,'index.html'),'utf8'),
@@ -122,7 +134,7 @@ test('the EDT-040 in-view trigger refreshes both renderers and the shared motion
   const motionVersion='20261123-edt040-in-view-motion-v1';
   const domIdVersion='20261125-d06-authored-carousel-slide-semantics-v1';
   const editorEntryVersion='20261125-edt016-child-reference-limit-v1';
-  const editorScriptVersion='20261127-d06-slider-fields-v1';
+  const editorScriptVersion='20261127-edt042-page-load-recovery-v1';
   const mediaPlaybackVersion='20261125-forms-service-v1';
   const publicRendererVersion='20261127-d06-slider-fields-v1';
   assert.match(editorHtml,new RegExp(`editor-motion\\.css\\?v=${motionVersion}`));

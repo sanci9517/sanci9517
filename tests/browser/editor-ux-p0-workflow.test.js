@@ -65,6 +65,11 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   const panMode=await canvas.evaluate(el=>({active:el.classList.contains('pan-tool-active'),touchAction:getComputedStyle(el).touchAction}));
   assert.equal(panMode.active,true,'Pan mode applies the viewport-only gesture state');
   assert.equal(panMode.touchAction,'none','touch pan disables browser page-gesture takeover on the canvas');
+  const interactiveCanvasControl=await canvas.evaluate(el=>{const button=document.createElement('button');button.id='canvasPanInteractiveProbe';button.type='button';button.textContent='Vászon vezérlő';button.style.cssText='position:absolute;left:12px;top:12px;z-index:10';button.dataset.activations='0';button.addEventListener('click',()=>button.dataset.activations=String(Number(button.dataset.activations)+1));el.append(button);el.scrollTo({left:0,top:0,behavior:'instant'});return {left:el.scrollLeft,top:el.scrollTop}});
+  const interactiveButton=tab.locator('#canvasPanInteractiveProbe'),interactiveBox=await interactiveButton.boundingBox();assert.ok(interactiveBox,'an interactive canvas child is available as a no-pan target');
+  await tab.mouse.move(interactiveBox.x+interactiveBox.width/2,interactiveBox.y+interactiveBox.height/2);await tab.mouse.down();await tab.mouse.move(interactiveBox.x+interactiveBox.width/2-36,interactiveBox.y+interactiveBox.height/2-24,{steps:4});await tab.mouse.up();
+  assert.deepEqual(await canvas.evaluate(el=>({left:el.scrollLeft,top:el.scrollTop,panning:el.classList.contains('is-panning')})),{...interactiveCanvasControl,panning:false},'dragging an interactive canvas control never starts viewport panning or steals its pointer');
+  await interactiveButton.click();assert.equal(await interactiveButton.getAttribute('data-activations'),'1','interactive controls remain clickable while Pan mode is selected');
   const panBox=await panNode.boundingBox();assert.ok(panBox,'a real canvas node is available as a drag surface');
   await tab.mouse.move(panBox.x+panBox.width/2,panBox.y+panBox.height/2);
   await tab.mouse.down();

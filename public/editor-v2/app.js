@@ -2314,7 +2314,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  $('#elementSearch').oninput=e=>renderPalette(e.target.value);
  $('#scheduleSelectNode').onclick=()=>focusScheduleNode();
  initializePageStartDialog();$('#newPage').onclick=()=>createNew().catch(showError);$('#newPagePanel').onclick=()=>createNew().catch(showError);
- $('#pageSelect').onchange=e=>loadPage(e.target.value).catch(showError);
+ $('#pageSelect').onchange=e=>loadPage(e.target.value).catch(error=>{renderPageList();render();showError(error)});
  $('#exportConflictDraft').onclick=()=>exportConflictDraft();$('#reloadConflictPage').onclick=()=>reloadLatestAfterConflict();
  $('#save').onclick=()=>save(false);$('#publish').onclick=()=>save(true);$('#unpublish').onclick=()=>unpublishPage().catch(showError);$('#mobilePublish').onclick=()=>save(true);$('#mobileUnpublish').onclick=()=>unpublishPage().catch(showError);
  $('#preview').onclick=()=>{const p=page();if(p)window.open(`/p/${encodeURIComponent(p.slug)}?preview=1`,'_blank','noopener,noreferrer')};

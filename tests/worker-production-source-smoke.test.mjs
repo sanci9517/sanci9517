@@ -30,6 +30,7 @@ test('production source smoke hashes changed public Editor runtime modules befor
     'public/editor-v2/tests/inspector-richtext.test.js',
     'public/editor-v2/ui/geometry-presets.js',
     'public/editor-v2/ui/forms-inspector.js',
+    'public/editor-v2/ui/canvas-pan.js',
     'public/editor-v2/index.html',
     'public/editor-v2/app.js',
     'public/assets/page-renderer.js',
