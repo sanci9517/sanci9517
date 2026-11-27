@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261127122730-e7a744b0",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-27T12:27:30.812Z",
+  "finished_at": "2026-11-27T13:03:28.795Z",
+  "wall_seconds": 2158,
+  "paused_seconds": 280,
+  "measured_seconds": 1878,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "URL form field released and exact-source production checks verified; hosted Editor Core browser-layout gate remains in progress, full D/Editor open.",
+  "evidence": [
+    "2c9a8c802220e7ddae09fbe4f4e2bb385efb94fc; GitHub run 46002405402 PASS; Cloudflare build 768b6284-d0c3-4325-b328-d322ed785a43 PASS; production asset SHA-256 matches"
+  ],
+  "checks": "test:forms 5/5; test:editor 25/25; focused Chromium 3/3; typecheck, migration gate, traceability, plan contracts, dry-run PASS",
+  "started_revision": "96d1736b118ba047bf84071ba6b905f01385b178",
+  "finished_revision": "96d1736b118ba047bf84071ba6b905f01385b178",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

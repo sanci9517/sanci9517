@@ -1,0 +1,195 @@
+{
+  "schema_version": 1,
+  "title": "D-06 URL form field and production release verification",
+  "recorded_at": "2026-11-27T13:03:30Z",
+  "canonical_plan": {
+    "path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "blob_sha": "16e08c027bc315d335ac327c1908094fcff8f287",
+    "bytes": 1927041,
+    "active_cursor": "77.44 / WEB-011 -> 77.44.7.D"
+  },
+  "status": "URL field capability shipped; exact-source smoke and production checks passed; exact-SHA Editor Core CI remains in progress",
+  "plan_status": {
+    "D_06": "OPEN; this is a form-field capability slice, not D-06 closure",
+    "D_01_through_D_07": "OPEN / NOT CERTIFIED",
+    "visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until complete Visual Editor",
+    "save_publish_separation": "preserved"
+  },
+  "change": {
+    "feature": "Validated absolute HTTP/HTTPS URL form field",
+    "runtime_commit": "2c9a8c802220e7ddae09fbe4f4e2bb385efb94fc",
+    "commit_url": "https://github.com/sanci9517/sanci9517/commit/2c9a8c802220e7ddae09fbe4f4e2bb385efb94fc",
+    "details": [
+      "Adds a URL field option to the Forms Inspector with an explicit bounded maximum length of 2048 characters.",
+      "Validates URL submissions as absolute HTTP/HTTPS URLs; rejects unsafe schemes, credentials, protocol-relative values and over-limit values.",
+      "Renders a native URL input on published pages; inert preview remains non-submitting.",
+      "Keeps Save and Publish separate; introduces no migration or new storage dependency."
+    ],
+    "third_party_dependency": "NONE"
+  },
+  "local_checks": {
+    "forms": {
+      "command": "npm run test:forms",
+      "result": "PASS 5/5 test files"
+    },
+    "editor": {
+      "command": "npm run test:editor",
+      "result": "PASS 25/25 test files"
+    },
+    "browser": {
+      "commands": [
+        "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-form-public-page.test.js tests/browser/editor-forms-inspector.test.js"
+      ],
+      "result": "PASS; 3 focused browser tests across public form lifecycle and Inspector"
+    },
+    "cache_bust": {
+      "command": "node tests/editor-public-asset-cache-bust.test.js",
+      "result": "PASS 3/3"
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    "migration_safety": {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS; no migration applied"
+    },
+    "traceability": {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS"
+    },
+    "plan_contract": {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS 17/17"
+    },
+    "canonical_plan": {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS; acceptance remains NOT CERTIFIED"
+    },
+    "active_point_audit": {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS; feature mapping audit, not functional acceptance"
+    },
+    "diff_check": {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    "wrangler": {
+      "command": "WRANGLER_LOG_PATH=/tmp/sanci-wrangler-dry-run.log ./node_modules/.bin/wrangler deploy --dry-run",
+      "version": "4.130.0",
+      "result": "PASS; 206 assets, 478.21 KiB / 118.51 KiB gzip"
+    }
+  },
+  "production_d1_preflight": {
+    "method": "Cloudflare D1 Query API; SELECT and read-only PRAGMA only",
+    "summary": "164 schema objects; 38 migration markers, latest 0032_forms_service.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "migration_applied": false,
+    "r2_operations": "NONE"
+  },
+  "github_exact_sha_ci": {
+    "canonical_plan": {
+      "run_id": 46002405709,
+      "status": "success"
+    },
+    "active_point_audit": {
+      "run_id": 46002405294,
+      "status": "success"
+    },
+    "twitch_integration": {
+      "run_id": 46002405252,
+      "status": "success"
+    },
+    "f0_baseline": {
+      "run_id": 46002405396,
+      "status": "success"
+    },
+    "production_worker_source_smoke": {
+      "run_id": 46002405402,
+      "status": "success",
+      "source_sha": "2c9a8c802220e7ddae09fbe4f4e2bb385efb94fc",
+      "result": "HTTP 200 health and all listed changed public source SHA-256 checks matched after edge propagation retries"
+    },
+    "editor_core": {
+      "run_id": 46002405274,
+      "status_at": "2026-11-27T13:03:30Z",
+      "status": "in_progress",
+      "successful_steps": 15,
+      "active_step": "Run Editor browser layout regression",
+      "pending_steps": [
+        "Run WEB-013 Admin mobile browser regression",
+        "Run canonical schedule tests",
+        "Run domain contract tests",
+        "Run Brand Kit storage and access regression",
+        "Run Admin home contract tests",
+        "Upload Editor layout screenshots"
+      ],
+      "full_workflow_pass": false
+    }
+  },
+  "cloudflare_deploy": {
+    "worker": "sanci9517-streamer-brand",
+    "source_sha": "2c9a8c802220e7ddae09fbe4f4e2bb385efb94fc",
+    "build_id": "768b6284-d0c3-4325-b328-d322ed785a43",
+    "build_outcome": "success",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deployment_id": "5d601cc8-372a-4d7f-be22-c3a885966f4c",
+    "version_id": "022d3d6e-c2f0-4b4d-ac2a-9e995f037559",
+    "traffic_percent": 100
+  },
+  "production_health": {
+    "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+    "http_status": 200,
+    "body": {
+      "ok": true,
+      "service": "sanci9517-streamer-brand",
+      "version": "2.0.0",
+      "server": "cloudflare-worker"
+    }
+  },
+  "production_changed_asset_hashes": {
+    "public/editor-v2/index.html": {
+      "path": "/editor-v2/",
+      "sha256": "780d270f6bfe38aa809c597fe81ab3b910af9287f042cda5fd6e0282383b823d",
+      "matches": true
+    },
+    "public/editor-v2/app.js": {
+      "path": "/editor-v2/app.js?v=20261127-form-url-field-v1",
+      "sha256": "3dcda96c21d92842e79483152a9a993a1cfbe850d8f9c697822f9f6eff51af29",
+      "matches": true
+    },
+    "public/editor-v2/ui/forms-inspector.js": {
+      "path": "/editor-v2/ui/forms-inspector.js?v=20261127-form-url-field-v1",
+      "sha256": "ac58be4bdcd43514f247336beb65e5e9c3478871744306aefe93797ee6b65493",
+      "matches": true
+    },
+    "public/assets/page-renderer.js": {
+      "path": "/assets/page-renderer.js?v=20261127-forms-url-v1",
+      "sha256": "c297bcc6989c9d608e7da4ca45d6cc20bf7de91bf90bd207b299ebf63dfba588",
+      "matches": true
+    },
+    "public/visual-page.html": {
+      "path": "/visual-page.html?release=2c9a8c802220e7ddae09fbe4f4e2bb385efb94fc (follows canonical redirect)",
+      "sha256": "7f8cbe340abd272872c9d6f65cf34bd57f2f5767a0d608ccaea5f79d068357b3",
+      "matches": true
+    }
+  },
+  "development_metrics": {
+    "id": "20261127122730-e7a744b0",
+    "measured_seconds": 1878,
+    "status": "partial",
+    "evidence_file": "docs/evidence/dev-metrics/runs/2026-11-27/20261127122730-e7a744b0.json",
+    "note": "Wall time excludes 280 explicitly paused seconds; metric is not CPU or strictly active model time."
+  },
+  "cost_and_data_safety": {
+    "new_cost": "0 Ft",
+    "new_dependency": false,
+    "production_d1_write_or_migration": false,
+    "r2_mutation": false
+  },
+  "remaining": "Exact-SHA Editor Core run 46002405274 is still in progress. D-06, D-01 through D-07, the complete Visual Editor and manual/physical acceptance remain OPEN / NOT CERTIFIED."
+}
