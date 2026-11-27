@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-27",
+  "title": "Editor capability registry: unavailable versus planned — exact-source release evidence",
+  "canonical_plan": {
+    "item": "77.44.1 — element lifecycle and capability matrix",
+    "slice_status": "PASS for explicit unknown/unavailable fallback semantics",
+    "plan_item_status": "OPEN — full per-element lifecycle matrix and acceptance remain incomplete",
+    "d06": "OPEN / NOT CERTIFIED",
+    "d01_d07": "OPEN / NOT CERTIFIED",
+    "editor_scope": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until the complete Visual Editor scope is implemented",
+    "save_publish_invariant": "Save persists draft only; Publish remains a separate explicit action."
+  },
+  "change": {
+    "commit": "9fd4fa007d73ce8b7b9c0310c6abf8783d0e68dc",
+    "parent": "eb5d4b9417c84691445ba39485d4d95a5d5ee464",
+    "branch": "v2/foundation",
+    "title": "fix(editor): distinguish unavailable capabilities",
+    "summary": [
+      "Unknown and prototype-like element identifiers now return UNAVAILABLE rather than PLANNED.",
+      "Known but unfinished types such as input remain PLANNED; planned and unavailable Inspector contracts expose no controls.",
+      "Type declarations and regression coverage now include the UNAVAILABLE status."
+    ],
+    "files": [
+      "public/editor-v2/core/capability-matrix.js",
+      "public/editor-v2/core/capability-matrix.d.ts",
+      "public/editor-v2/tests/capability-contract.test.js"
+    ]
+  },
+  "checks": {
+    "local": [
+      {
+        "command": "npm run typecheck",
+        "result": "PASS"
+      },
+      {
+        "command": "node public/editor-v2/tests/capability-contract.test.js",
+        "result": "PASS — 12/12"
+      },
+      {
+        "command": "node --test public/editor-v2/tests/capability-contract.test.js tests/editor-palette-capability.test.js",
+        "result": "PASS — 2/2 test files"
+      },
+      {
+        "command": "npm run test:editor",
+        "result": "PASS — 25/25 Editor unit files; preferences 12/12; subreaper 4/4"
+      },
+      {
+        "command": "npm run test:web013:migration-gate",
+        "result": "PASS"
+      },
+      {
+        "command": "git diff --check",
+        "result": "PASS"
+      },
+      {
+        "command": "npx wrangler deploy --dry-run",
+        "result": "PASS — Wrangler 4.130.0; 206 assets; 485.64 KiB (119.93 KiB gzip)"
+      }
+    ],
+    "production_d1_preflight": {
+      "method": "Cloudflare D1 Query API; SELECT-only SQL",
+      "observations": "97 indexes, 38 tables, 29 triggers; latest migration 0032_forms_service.sql; DB size 3,883,008 bytes",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "production_mutations": {
+      "d1_migration_or_write": false,
+      "r2_operation": false,
+      "new_dependency": false,
+      "new_cost": "0 Ft"
+    }
+  },
+  "github_actions": {
+    "source_smoke": {
+      "run_id": 46063137494,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/46063137494",
+      "source_sha": "9fd4fa007d73ce8b7b9c0310c6abf8783d0e68dc",
+      "conclusion": "SUCCESS",
+      "findings": "GET /api/health returned HTTP 200 and exact-source public SHA-256 checks matched."
+    },
+    "editor_core": {
+      "run_id": 46063137469,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/46063137469",
+      "source_sha": "9fd4fa007d73ce8b7b9c0310c6abf8783d0e68dc",
+      "status_at_recording": "IN_PROGRESS",
+      "conclusion": null,
+      "latest_step_at_recording": "Test real Worker media upload with isolated D1 and R2",
+      "note": "Full Editor CI is not claimed PASS while this run is still in progress."
+    },
+    "previous_exact_source_editor_run": {
+      "run_id": 46060102614,
+      "source_sha": "3520bd48eef3531ffb31ac31e46153f84ea31b80",
+      "status_at_recording": "IN_PROGRESS",
+      "latest_step_at_recording": "Run Editor browser layout regression",
+      "note": "Separate prior run remains unverified; the current exact-source run covers the new commit."
+    },
+    "other_exact_sha_checks": [
+      {
+        "run_id": 46063137505,
+        "workflow": "F0 baseline checks",
+        "conclusion": "SUCCESS"
+      },
+      {
+        "run_id": 46063137445,
+        "workflow": "Twitch Integration Check",
+        "conclusion": "SUCCESS"
+      }
+    ]
+  },
+  "cloudflare": {
+    "worker": "sanci9517-streamer-brand",
+    "build_id": "0f6bbb0d-eb9a-447c-a792-afb927ca1463",
+    "build_outcome": "SUCCESS",
+    "source_sha": "9fd4fa007d73ce8b7b9c0310c6abf8783d0e68dc",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deployment_id": "fdda2953-70b6-4ddc-b84d-b7a3a3a33e75",
+    "version_id": "ad89e92d-672c-4e83-946b-99d7d49497b0",
+    "traffic_percent": 100,
+    "direct_health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "status": 200,
+      "body": "{\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}"
+    },
+    "exact_public_sha256": {
+      "public/editor-v2/core/capability-matrix.js": "6a0844a2daab2284f99eef2d47f0cd01ba3a6bdc720c5f4d8401fd511b45cb3a",
+      "public/editor-v2/core/capability-matrix.d.ts": "ea7ab007d4e99a834f2a84e38dd46b2febefeb7f1411ad1d295d670ff885695f",
+      "public/editor-v2/tests/capability-contract.test.js": "e94d73e3c77f7227b413db6671b367ed118162c7421c7931c9395fb009e1f141"
+    },
+    "notes": "Cloudflare build log reported four high-severity npm audit advisories during dependency install; this slice adds no dependency and did not alter the lockfile. A separate dependency review remains appropriate."
+  }
+}

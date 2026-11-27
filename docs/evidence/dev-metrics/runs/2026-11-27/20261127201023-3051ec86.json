@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261127201023-3051ec86",
+  "task": "77.44.1",
+  "trigger": "manual",
+  "started_at": "2026-11-27T20:10:23.813Z",
+  "finished_at": "2026-11-27T20:25:51.045Z",
+  "wall_seconds": 927,
+  "paused_seconds": 0,
+  "measured_seconds": 927,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "77.44.1: unknown element codes now report UNAVAILABLE; known unfinished input remains PLANNED. Targeted/full Editor checks, SELECT-only D1 preflight, Wrangler dry-run, exact-SHA safe build, 100% rollout, health and asset hashes passed.",
+  "evidence": [
+    "docs/evidence/editor-d06-capability-unavailable-2026-11-27.json",
+    "https://github.com/sanci9517/sanci9517/commit/9fd4fa007d73ce8b7b9c0310c6abf8783d0e68dc",
+    "https://github.com/sanci9517/sanci9517/actions/runs/46063137494"
+  ],
+  "checks": "npm run typecheck; npm run test:editor; npm run test:web013:migration-gate; npx wrangler deploy --dry-run; D1 SELECT-only preflight",
+  "started_revision": "20415af0459c8f10cbd1ba119e029ed4de3ca3ba",
+  "finished_revision": "9fd4fa007d73ce8b7b9c0310c6abf8783d0e68dc",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
