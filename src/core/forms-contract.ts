@@ -11,7 +11,7 @@ export const MAX_FORM_OPTIONS = 20;
 export const MAX_FORM_DEFINITION_BYTES = 16_384;
 export const MAX_FORM_SUBMISSION_BYTES = 12_288;
 
-export type FormFieldType = "text" | "email" | "textarea" | "select" | "checkbox";
+export type FormFieldType = "text" | "email" | "textarea" | "select" | "radio" | "date" | "checkbox";
 
 export type FormFieldDefinition = {
   id: string;
@@ -87,7 +87,7 @@ export function normalizeFormDefinition(input: unknown): FormValidationResult<Fo
       return { ok: false, code: "INVALID_FORM_FIELD_ID" };
     }
     ids.add(raw.id);
-    if (!(["text", "email", "textarea", "select", "checkbox"] as unknown[]).includes(raw.type)) {
+    if (!(["text", "email", "textarea", "select", "radio", "date", "checkbox"] as unknown[]).includes(raw.type)) {
       return { ok: false, code: "UNSUPPORTED_FORM_FIELD_TYPE", fieldId: raw.id };
     }
     if (!boundedText(raw.label, 120) || typeof raw.required !== "boolean") {
@@ -104,12 +104,12 @@ export function normalizeFormDefinition(input: unknown): FormValidationResult<Fo
     };
     if (raw.helpText !== undefined && raw.helpText.trim()) field.helpText = raw.helpText.trim();
     if (raw.maxLength !== undefined) {
-      if (!Number.isInteger(raw.maxLength) || (raw.maxLength as number) < 1 || (raw.maxLength as number) > 4_000 || raw.type === "checkbox" || raw.type === "select") {
+      if (!Number.isInteger(raw.maxLength) || (raw.maxLength as number) < 1 || (raw.maxLength as number) > 4_000 || raw.type === "checkbox" || raw.type === "select" || raw.type === "radio" || raw.type === "date") {
         return { ok: false, code: "INVALID_FORM_FIELD_LENGTH", fieldId: raw.id };
       }
       field.maxLength = raw.maxLength as number;
     }
-    if (raw.type === "select") {
+    if (raw.type === "select" || raw.type === "radio") {
       if (!Array.isArray(raw.options) || raw.options.length < 1 || raw.options.length > MAX_FORM_OPTIONS ||
           raw.options.some(option => !boundedText(option, 120)) ||
           new Set((raw.options as string[]).map(option => option.trim())).size !== raw.options.length) {
@@ -147,6 +147,12 @@ export function normalizeFormDefinition(input: unknown): FormValidationResult<Fo
   return { ok: true, value: definition };
 }
 
+const isValidIsoDate = (value: string): boolean => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || value.startsWith("0000")) return false;
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+  return Number.isFinite(parsed.valueOf()) && parsed.toISOString().slice(0, 10) === value;
+};
+
 export function normalizeFormSubmission(
   definition: FormDefinition,
   input: unknown
@@ -175,10 +181,13 @@ export function normalizeFormSubmission(
     if (normalized.length > (field.maxLength ?? (field.type === "textarea" ? 4_000 : 500))) {
       return { ok: false, code: "FORM_FIELD_TOO_LONG", fieldId: field.id };
     }
+    if (field.type === "date" && !isValidIsoDate(normalized)) {
+      return { ok: false, code: "INVALID_FORM_DATE", fieldId: field.id };
+    }
     if (field.type === "email" && !/^[^\s@<>]{1,128}@[A-Za-z0-9.-]{1,190}\.[A-Za-z]{2,63}$/.test(normalized)) {
       return { ok: false, code: "INVALID_FORM_EMAIL", fieldId: field.id };
     }
-    if (field.type === "select" && !field.options?.includes(normalized)) {
+    if ((field.type === "select" || field.type === "radio") && !field.options?.includes(normalized)) {
       return { ok: false, code: "INVALID_FORM_OPTION", fieldId: field.id };
     }
     if (/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(normalized)) {

@@ -1,6 +1,6 @@
 const FIELD_TYPES = Object.freeze([
   ["text", "Rövid szöveg"], ["email", "E-mail"], ["textarea", "Hosszú szöveg"],
-  ["select", "Legördülő választás"], ["checkbox", "Jelölőnégyzet"]
+  ["select", "Legördülő választás"], ["radio", "Választógombok"], ["date", "Dátum"], ["checkbox", "Jelölőnégyzet"]
 ]);
 const clone = value => structuredClone(value);
 const defaultDefinition = () => ({
@@ -99,8 +99,9 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
       type.onchange = () => {
         const focusFieldId = field.id;
         field.type = type.value;
-        if (field.type === "select" && !field.options?.length) field.options = ["Első választás"];
-        if (field.type !== "select") delete field.options;
+        if ((field.type === "select" || field.type === "radio") && !field.options?.length) field.options = ["Első választás"];
+        if (field.type !== "select" && field.type !== "radio") delete field.options;
+        if (!["text", "email", "textarea"].includes(field.type)) delete field.maxLength;
         renderEditor(); markDirty(); focusFieldControl(focusFieldId, "Mezőtípus");
       };
       typeLabel.append(typeCaption, type);
@@ -114,8 +115,8 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
       lengthInput.input.min = "1"; lengthInput.input.max = "4000";
       lengthInput.input.onchange = () => { field.maxLength = Math.max(1, Math.min(4_000, Number(lengthInput.input.value) || 500)); markDirty(); };
       card.append(idInput.wrapper, labelInput.wrapper, typeLabel, requiredLabel, helpInput.wrapper);
-      if (field.type !== "checkbox" && field.type !== "select") card.append(lengthInput.wrapper);
-      if (field.type === "select") {
+      if (["text", "email", "textarea"].includes(field.type)) card.append(lengthInput.wrapper);
+      if (field.type === "select" || field.type === "radio") {
         const optionsInput = control("textarea", "Választások (soronként egy)", (field.options || []).join("\n"), { maxLength: 2_400 });
         optionsInput.input.rows = 4;
         optionsInput.input.oninput = () => { field.options = optionsInput.input.value.split("\n").map(value => value.trim()).filter(Boolean).slice(0, 20); markDirty(); };

@@ -16,7 +16,9 @@ const formDefinition = {
     { id: 'email', type: 'email', label: 'E-mail', required: true, maxLength: 254 },
     { id: 'message', type: 'textarea', label: 'Üzenet', required: true, maxLength: 2000 },
     { id: 'topic', type: 'select', label: 'Téma', required: true, options: ['Együttműködés', 'Egyéb'] },
-    { id: 'updates', type: 'checkbox', label: 'Kérek híreket', required: false }
+    { id: 'updates', type: 'checkbox', label: 'Kérek híreket', required: false },
+    { id: 'contact', type: 'radio', label: 'Kapcsolat módja', required: true, options: ['E-mail', 'Telefon'] },
+    { id: 'event-date', type: 'date', label: 'Időpont', required: true }
   ],
   consent: { text: 'Elfogadom az adatkezelési <szabályokat>.', version: 'privacy-v1', privacyUrl: 'https://creator.test/privacy' },
   successMessage: 'Köszönöm a megkeresést.', retentionDays: 30
@@ -77,10 +79,15 @@ test('public form renders only data, enforces browser consent and submits first-
   await f.page.goto(f.base + '/p/forms-test');
   const region = f.page.getByRole('region', { name: 'Írj a Sanci9517-nek' });
   await region.waitFor();
-  await f.page.getByLabel('E-mail', { exact: true }).fill('creator@example.test');
+  await region.getByRole('textbox', { name: 'E-mail', exact: true }).fill('creator@example.test');
   await f.page.getByLabel('Üzenet', { exact: true }).fill('Szia, együttműködnék.');
   await f.page.getByLabel('Téma', { exact: true }).selectOption('Együttműködés');
   await f.page.getByLabel('Kérek híreket', { exact: true }).check();
+  assert.equal(await region.getByRole('group', { name: 'Kapcsolat módja' }).count(), 1, 'radio choices expose an accessible group name');
+  await region.getByLabel('Telefon', { exact: true }).check();
+  const eventDate = region.getByLabel('Időpont', { exact: true });
+  assert.equal(await eventDate.getAttribute('type'), 'date', 'date fields use the native date input');
+  await eventDate.fill('2024-02-29');
   assert.equal(await region.locator('img,script,b').count(), 0, 'form copy is rendered as text, not interpreted markup');
   assert.equal(await region.locator('.creator-form-consent a').count(), 0, 'privacy link is not nested in the checkbox label');
   assert.equal(await region.getByRole('link', { name: 'Adatkezelési tájékoztató' }).getAttribute('href'), 'https://creator.test/privacy');
@@ -91,7 +98,7 @@ test('public form renders only data, enforces browser consent and submits first-
   await region.getByRole('status').filter({ hasText: 'Köszönöm a megkeresést.' }).waitFor();
   assert.equal(f.submissions.length, 1);
   assert.deepEqual(f.submissions[0], {
-    values: { email: 'creator@example.test', message: 'Szia, együttműködnék.', topic: 'Együttműködés', updates: true },
+    values: { email: 'creator@example.test', message: 'Szia, együttműködnék.', topic: 'Együttműködés', updates: true, contact: 'Telefon', 'event-date': '2024-02-29' },
     consentAccepted: true,
     website: ''
   });

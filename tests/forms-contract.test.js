@@ -116,3 +116,46 @@ test("honeypot signals spam without persisting its value or changing the truthfu
   assert.equal(result.value.spam, true);
   assert.equal(Object.hasOwn(result.value, "website"), false);
 });
+
+
+test("radio submissions stay within options and date fields require a real ISO calendar date", () => {
+  const input = validDefinition();
+  input.fields.push(
+    { id: "contact", type: "radio", label: "Kapcsolat módja", required: true, options: ["E-mail", "Telefon"] },
+    { id: "event-date", type: "date", label: "Időpont", required: true }
+  );
+  const normalized = normalizeFormDefinition(input);
+  assert.equal(normalized.ok, true);
+  const result = normalizeFormSubmission(normalized.value, {
+    values: { email: "creator@example.com", message: "Szia", contact: "Telefon", "event-date": "2024-02-29" },
+    consentAccepted: true
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.value.values.contact, "Telefon");
+  assert.equal(result.value.values["event-date"], "2024-02-29");
+  for (const [id, value, code] of [
+    ["contact", "Fax", "INVALID_FORM_OPTION"],
+    ["event-date", "2025-02-29", "INVALID_FORM_DATE"],
+    ["event-date", "2024-2-09", "INVALID_FORM_DATE"],
+    ["event-date", "0000-12-31", "INVALID_FORM_DATE"]
+  ]) {
+    const rejected = normalizeFormSubmission(normalized.value, {
+      values: { email: "creator@example.com", message: "Szia", contact: "Telefon", "event-date": "2024-03-01", [id]: value },
+      consentAccepted: true
+    });
+    assert.equal(rejected.ok, false);
+    assert.equal(rejected.code, code);
+    assert.equal(rejected.fieldId, id);
+  }
+});
+
+test("radio and date definitions reject irrelevant limits and option metadata", () => {
+  for (const mutate of [
+    value => { value.fields.push({ id: "contact", type: "radio", label: "Kapcsolat", required: false, options: ["A"], maxLength: 12 }); },
+    value => { value.fields.push({ id: "event-date", type: "date", label: "Dátum", required: false, maxLength: 12 }); },
+    value => { value.fields.push({ id: "event-date", type: "date", label: "Dátum", required: false, options: ["A"] }); }
+  ]) {
+    const value = validDefinition(); mutate(value);
+    assert.equal(normalizeFormDefinition(value).ok, false);
+  }
+});

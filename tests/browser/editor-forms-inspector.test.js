@@ -100,6 +100,14 @@ test("Forms Inspector preserves field focus and keeps form Save/Publish independ
   assert.equal(await cards.nth(0).getByLabel("Választások (soronként egy)").count(), 1,
     "select fields should retain their type-specific option editor after rerender");
 
+  await cards.nth(1).getByLabel("Mezőtípus").selectOption("radio");
+  const radioOptions = cards.nth(1).getByLabel("Választások (soronként egy)");
+  assert.equal(await radioOptions.count(), 1, "radio fields share the bounded option editor");
+  await radioOptions.fill("E-mail\nDiscord");
+  assert.equal(await cards.nth(1).getByLabel("Maximális karakterszám").count(), 0, "radio options do not expose text length");
+  await cards.nth(2).getByLabel("Mezőtípus").selectOption("date");
+  assert.equal(await cards.nth(2).getByLabel("Maximális karakterszám").count(), 0, "date fields do not expose text length");
+  assert.equal(await cards.nth(2).getByLabel("Választások (soronként egy)").count(), 0, "date fields clear irrelevant choices");
   await cards.nth(1).getByRole("button", { name: "Mező törlése: Név" }).click();
   assert.equal(await cards.nth(1).getByLabel("Mezőcímke").evaluate(element => element === document.activeElement), true,
     "removing a row should focus the next field at the same position");
@@ -123,6 +131,7 @@ test("Forms Inspector preserves field focus and keeps form Save/Publish independ
   assert.equal(await publish.isDisabled(), true, "editing the definition must be saved before it can be published");
   await page.getByRole("button", { name: "Űrlap piszkozat mentése" }).click();
   await page.getByRole("status").filter({ hasText: "Űrlap piszkozat mentve: v2" }).waitFor();
+  assert.deepEqual(storedDefinition.fields.map(field => field.type), ["select", "date"]);
   assert.deepEqual(formActions, ["save"]);
   assert.equal(publishedVersion, null, "Save updates only the form draft");
   assert.deepEqual(pageDraft.props, { formId, formBindingVersion: 1 });
