@@ -1,5 +1,5 @@
-export type ElementCapabilityStatus = 'PARTIAL' | 'PLANNED';
-export type PublicCapabilityStatus = 'PARTIAL' | 'PLANNED';
+export type ElementCapabilityStatus = 'PARTIAL' | 'PLANNED' | 'UNAVAILABLE';
+export type PublicCapabilityStatus = 'PARTIAL' | 'PLANNED' | 'UNAVAILABLE';
 
 export type ElementCapability = Readonly<{
   status: ElementCapabilityStatus;

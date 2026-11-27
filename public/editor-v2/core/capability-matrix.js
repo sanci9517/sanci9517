@@ -17,7 +17,7 @@ export const ELEMENT_CAPABILITIES = Object.freeze(Object.fromEntries(
   })])
 ));
 
-const unavailable=Object.freeze({status:'PLANNED',canvas:false,inspector:'PLANNED',public:'PLANNED'});
+const unavailable=Object.freeze({status:'UNAVAILABLE',canvas:false,inspector:'UNAVAILABLE',public:'UNAVAILABLE'});
 
 function inspectorInitialValueSource(property){
   if(property.responsive)return Object.freeze({
@@ -41,7 +41,7 @@ export function getElementCapability(type) {
  */
 export function getElementInspectorContract(type) {
   const capability=getElementCapability(type);
-  const properties=capability.status==='PLANNED'?[]:listProperties({nodeType:type});
+  const properties=['PLANNED','UNAVAILABLE'].includes(capability.status)?[]:listProperties({nodeType:type});
   const fields=properties.map(property=>Object.freeze({
     id:property.id,
     group:property.group,

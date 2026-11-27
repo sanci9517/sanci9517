@@ -88,10 +88,15 @@ test('Inspector value contracts match required, trimming, and literal content-te
  assert.equal(normalizeInspectorValue(getProperty('typography.fontSize'),' 24px '),'24px');
  assert.equal(normalizeInspectorValue(getProperty('advanced.nodeName'),' hello '),'hello');
 });
-test('unknown and unimplemented field types stay planned while the Forms container is honestly partial',()=>{
- for(const type of [null,undefined,{},'constructor','toString','__proto__','unknown','input']){
-  assert.equal(getElementCapability(type).status,'PLANNED');assert.deepEqual(getElementInspectorContract(type).fields,[]);
+test('unknown types are explicitly unavailable while known incomplete types stay planned',()=>{
+ for(const type of [null,undefined,{},'constructor','toString','__proto__','unknown']){
+  const capability=getElementCapability(type);
+  assert.equal(capability.status,'UNAVAILABLE');assert.equal(capability.canvas,false);
+  assert.equal(capability.inspector,'UNAVAILABLE');assert.equal(capability.public,'UNAVAILABLE');
+  assert.equal(getElementInspectorContract(type).status,'UNAVAILABLE');
+  assert.deepEqual(getElementInspectorContract(type).fields,[]);
  }
+ assert.equal(getElementCapability('input').status,'PLANNED','a known but not implemented node stays planned');
  assert.equal(getElementCapability('form').status,'PARTIAL','the form container has a real Inspector, renderer, and first-party service slice');
  assert.deepEqual(CONTENT_FIELDS.form,[],'form definitions are not represented as arbitrary element props');
 });
