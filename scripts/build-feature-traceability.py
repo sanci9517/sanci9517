@@ -37,6 +37,7 @@ PARTIAL = {
 }
 # Narrow references for requirements whose evidence is outside their module shell.
 EXACT_SOURCES = {
+ 'EDT-036':['public/editor-v2/ui/shell.js','public/editor-v2/index.html','tests/browser/editor-workspace-appearance.test.js'],
  'WEB-020':['src/core/forms-contract.ts','src/routes/admin/forms.ts','src/routes/public/forms.ts','public/assets/page-renderer.js','scripts/pending/0032_forms_service.sql','tests/forms-contract.test.js','tests/forms-routes.test.js','tests/browser/editor-form-public-page.test.js'],
  'EDT-016':['public/editor-v2/core/hierarchy-limits.js','public/editor-v2/core/hierarchy-limits.d.ts','public/editor-v2/core/schema.js','public/editor-v2/core/validation.js','public/editor-v2/app.js','public/editor-v2/core/state.js','public/editor-v2/core/commands.js','public/editor-v2/core/editor-templates.js','public/editor-v2/core/design-system/template-catalog.js','src/core/editor-validation.ts','src/routes/admin/editor.ts','src/routes/admin/pages.ts','public/editor-v2/tests/core.test.js','tests/f0-3-route-integration.test.js','tests/editor-public-asset-cache-bust.test.js'],
  'EDT-038':['public/editor-v2/core/node-clipboard.js','public/editor-v2/core/commands.js','public/editor-v2/app.js','public/editor-v2/index.html','public/editor-v2/editor-refresh.css'],
@@ -61,6 +62,7 @@ EXACT_SOURCES = {
  'SEC-006':['src/core/page-redirects.ts','public/editor-v2/core/richtext-links.js'],
 }
 EXACT_TESTS = {
+ 'EDT-036':['tests/browser/editor-workspace-appearance.test.js'],
  'WEB-020':['tests/forms-contract.test.js','tests/forms-routes.test.js','tests/browser/editor-form-public-page.test.js'],
  'EDT-042':['tests/browser/editor-diagnostics-redaction.test.js','tests/browser/editor-page-load-recovery.test.js'],
 }

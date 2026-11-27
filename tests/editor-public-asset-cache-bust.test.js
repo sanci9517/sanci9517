@@ -40,8 +40,8 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'the deployed entry page must request the active conditional Forms Inspector');
   assert.match(html,new RegExp(`href="/editor-v2/editor\\.css\\?v=${editorTreeVersion}"`),
     'the deployed entry page must request full-width nested tree groups');
-  assert.match(html,/src="\/editor-v2\/ui\/shell\.js\?v=20261126-edt007-keyboard-pan-v1"/,
-    'the deployed entry page must request the shell with keyboard-pan action help');
+  assert.match(html,/src="\/editor-v2\/ui\/shell\.js\?v=20261127-edt036-mobile-focus-bookmark-v1"/,
+    'the deployed entry page must request the mobile panel focus bookmark fix');
   const [shell,actionHelp,actionCatalog]=await Promise.all(['ui/shell.js','ui/action-help.js','ui/action-catalog.js'].map(path=>readFile(resolve(root,path),'utf8')));
   assert.match(shell,/action-help\.js\?v=20261126-edt007-keyboard-pan-v1/);
   assert.match(shell,/action-catalog\.js\?v=20261126-edt007-keyboard-pan-v1/);

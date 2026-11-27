@@ -5,7 +5,9 @@ import {existsSync} from 'node:fs';
 import {resolve,extname} from 'node:path';
 import {after,test} from 'node:test';
 import {chromium} from 'playwright';
-import {createDocument} from '../../public/editor-v2/core/schema.js';
+import {createDocument,NODE_TYPES} from '../../public/editor-v2/core/schema.js';
+import {createEditorState} from '../../public/editor-v2/core/state.js';
+import {execute} from '../../public/editor-v2/core/commands.js';
 import {LEGACY_WORKSPACE_PREFERENCES_KEY,WORKSPACE_PREFERENCES_KEY} from '../../public/editor-v2/ui/workspace-appearance.js';
 import {workspacePreferenceStorageKey} from '../../public/editor-v2/ui/workspace-preference-storage.js';
 
@@ -19,8 +21,8 @@ function getBrowser(){
 after(async()=>{
   if(browserPromise)await (await browserPromise).close();
 });
-function fixtureServer({accountUser=null,sessionDelayMs=0}={}){
-  const document=createDocument();const pageId=document.activePageId;const draft=structuredClone(document);const writes=[];let activeAccountUser=accountUser;const accountPreferencesByUser=new Map();const emptyPreferences=()=>({version:1,paletteFavoriteTypes:[],workspace:null,revisions:{paletteFavoriteTypes:0,workspace:0}});const preferencesForUser=()=>{if(!activeAccountUser)return emptyPreferences();if(!accountPreferencesByUser.has(activeAccountUser))accountPreferencesByUser.set(activeAccountUser,emptyPreferences());return accountPreferencesByUser.get(activeAccountUser)};
+function fixtureServer({accountUser=null,sessionDelayMs=0,initialDocument=null}={}){
+  const document=initialDocument?structuredClone(initialDocument):createDocument();const pageId=document.activePageId;const draft=structuredClone(document);const writes=[];let activeAccountUser=accountUser;const accountPreferencesByUser=new Map();const emptyPreferences=()=>({version:1,paletteFavoriteTypes:[],workspace:null,revisions:{paletteFavoriteTypes:0,workspace:0}});const preferencesForUser=()=>{if(!activeAccountUser)return emptyPreferences();if(!accountPreferencesByUser.has(activeAccountUser))accountPreferencesByUser.set(activeAccountUser,emptyPreferences());return accountPreferencesByUser.get(activeAccountUser)};
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
     const json=value=>{res.setHeader('content-type','application/json; charset=utf-8');res.end(JSON.stringify(value))};
@@ -56,8 +58,8 @@ function fixtureServer({accountUser=null,sessionDelayMs=0}={}){
   });
   return {server,writes,accountPreferencesByUser,get accountPreferences(){return preferencesForUser()},switchAccountUser(userId){activeAccountUser=userId}};
 }
-async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false,blockWorkspaceStorageReads=false,blockShellStorageReads=false,ignoreWorkspacePreferenceWrites=false,initialDockState=null,initialAppearance=null,initialLegacyAppearance=null,unownedDockState=null,unownedAppearance=null,accountUser=null,sessionDelayMs=0}={}){
-  const fixture=fixtureServer({accountUser,sessionDelayMs});await new Promise(done=>fixture.server.listen(0,'127.0.0.1',done));
+async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false,blockWorkspaceStorageReads=false,blockShellStorageReads=false,ignoreWorkspacePreferenceWrites=false,initialDockState=null,initialAppearance=null,initialLegacyAppearance=null,unownedDockState=null,unownedAppearance=null,accountUser=null,sessionDelayMs=0,initialDocument=null}={}){
+  const fixture=fixtureServer({accountUser,sessionDelayMs,initialDocument});await new Promise(done=>fixture.server.listen(0,'127.0.0.1',done));
   t.after(()=>new Promise(done=>fixture.server.close(done)));
   const browser=await getBrowser();
   const context=await browser.newContext({viewport:{width,height},isMobile,hasTouch});t.after(()=>context.close());
@@ -3377,6 +3379,38 @@ test('mobile drawer scrim returns focus to the latest opener after switching dra
   assert.equal(await page.locator('#editorMenu').evaluate(element=>document.activeElement===element),true,'switching to the tool drawer also restores its opener when Escape closes it');
   assert.equal(await page.locator('.canvas-area').evaluate(element=>element.inert),false,'Escape releases the canvas after closing the switched drawer');
   assert.deepEqual(writes,[],'switching or closing mobile drawers does not save or publish page content');
+  assert.deepEqual(errors,[]);
+});
+
+test('mobile Layers↔Inspector switching restores the focused field without changing selected draft state',async t=>{
+  const seeded=createEditorState(createDocument());
+  const rootId=seeded.document.pages[seeded.document.activePageId].rootId;
+  execute(seeded,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:rootId}});
+  const nodeId=seeded.selection.primaryId;
+  const {page,writes,errors}=await openEditor(t,{width:850,height:900,isMobile:true,hasTouch:true,initialDocument:seeded.document});
+  const node=page.locator(`#canvas .node[data-node-id="${nodeId}"]`);
+  await node.click();
+  await page.waitForFunction(id=>document.querySelector(`#canvas .node[data-node-id="${id}"]`)?.classList.contains('selected'),nodeId);
+  const selectionBefore=await page.locator('#selection').textContent();
+  await page.locator('#openInspector').tap();
+  await page.waitForFunction(()=>!document.querySelector('#rightDock')?.classList.contains('closed'));
+  await page.locator('#inspectorTabContent').tap();
+  const field=page.locator('#inspectorBody input:visible,#inspectorBody select:visible,#inspectorBody textarea:visible').first();
+  await field.waitFor({state:'visible'});
+  await field.focus();
+  await page.evaluate(()=>{window.__mobileInspectorFocus=document.activeElement});
+  const draftBefore=await node.getAttribute('style');
+
+  await page.locator('#editorMenu').tap();
+  await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed')&&document.querySelector('#rightDock')?.classList.contains('closed'));
+  assert.equal(await node.getAttribute('style'),draftBefore,'opening Layers preserves the selected Page Model node and its draft style');
+  await page.locator('#openInspector').tap();
+  await page.waitForFunction(()=>!document.querySelector('#rightDock')?.classList.contains('closed')&&document.querySelector('#leftDock')?.classList.contains('closed'));
+  await page.waitForFunction(()=>document.activeElement===window.__mobileInspectorFocus);
+  assert.equal(await page.evaluate(()=>document.activeElement===window.__mobileInspectorFocus),true,'returning to the Inspector restores the exact focused control');
+  assert.equal(await page.locator('#selection').textContent(),selectionBefore,'the same node remains selected through both panel transitions');
+  assert.equal(await node.getAttribute('style'),draftBefore,'panel switching does not mutate or autosave the selected node');
+  assert.deepEqual(writes,[],'switching mobile panels does not Save or Publish');
   assert.deepEqual(errors,[]);
 });
 

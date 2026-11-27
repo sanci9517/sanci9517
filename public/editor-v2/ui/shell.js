@@ -24,6 +24,7 @@ let dockStorageDurable=true;
 const initialAppearance=readWorkspacePreferences();
 applyWorkspacePreferences(editorRoot,initialAppearance);
 let focusBeforeMobilePanel=null;
+const mobilePanelFocus=new Map();
 let workspaceAppearance=null;
 let workspaceDockRenderer=null;
 let mountedDockTreeSignature='';
@@ -195,15 +196,18 @@ function setCanvasFocus(open){
 }
 function setPanel(side,open,{save=true,restoreFocus=true,customize=false}={}){
   const panel=panels[side];if(!panel)return;
-  if(save&&mobileQuery.matches)desktopDockSnapshot=null;
   const wasOpen=!panel.classList.contains('closed');
+  const mobileOpener=mobileQuery.matches&&open&&!wasOpen&&document.activeElement instanceof HTMLElement
+    ?document.activeElement:null;
+  if(save&&mobileQuery.matches)desktopDockSnapshot=null;
   if(customize&&wasOpen!==open)workspaceAppearance?.remember();
   if(open && mobileQuery.matches){
+    // Capture the actual opener before closing the other drawer; otherwise
+    // focus can still point into the drawer that is about to become inert.
+    if(mobileOpener&&!panel.contains(mobileOpener))focusBeforeMobilePanel=mobileOpener;
     const other=side==='left'?'right':'left';
     if(!panels[other]?.classList.contains('closed'))setPanel(other,false,{save,restoreFocus:false});
     else if(save)persisted[other==='left'?'leftOpen':'rightOpen']=false;
-    if(!wasOpen && document.activeElement instanceof HTMLElement &&
-        !panel.contains(document.activeElement))focusBeforeMobilePanel=document.activeElement;
   }
   if(open&&save)persisted.panelActive=side;
   const wasFocused=panel.contains(document.activeElement);
@@ -219,7 +223,10 @@ function setPanel(side,open,{save=true,restoreFocus=true,customize=false}={}){
   if(mobileQuery.matches && open && !wasOpen){
     requestAnimationFrame(()=>{
       if(!panel.classList.contains('closed')){
-        panel.querySelector('[data-collapse]')?.focus({preventScroll:true});
+        const remembered=mobilePanelFocus.get(side);
+        const canRestore=remembered instanceof HTMLElement&&remembered.isConnected&&panel.contains(remembered)&&
+          !remembered.matches(':disabled')&&!remembered.closest('[hidden],[inert],.hidden')&&remembered.getClientRects().length>0;
+        (canRestore?remembered:panel.querySelector('[data-collapse]'))?.focus({preventScroll:true});
       }
     });
   }
@@ -229,6 +236,10 @@ function setPanel(side,open,{save=true,restoreFocus=true,customize=false}={}){
   }
   emit('panel:change',{side,open});
 }
+document.addEventListener('focusin',event=>{
+  if(!mobileQuery.matches||!(event.target instanceof HTMLElement))return;
+  for(const [side,panel] of Object.entries(panels))if(panel?.contains(event.target))mobilePanelFocus.set(side,event.target);
+});
 function showLeftTab(tab,{save=true,open=true,customize=false}={}){
   if(!LEFT_TABS.includes(tab))return;
   const opensLeft=open&&panels.left?.classList.contains('closed');
