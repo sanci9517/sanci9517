@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261127184425-d9ccb14f",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-27T18:44:25.915Z",
+  "finished_at": "2026-11-27T19:09:34.378Z",
+  "wall_seconds": 1508,
+  "paused_seconds": 0,
+  "measured_seconds": 1508,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Conditional Forms fields implemented, locally verified, and released with exact-SHA production smoke; hosted Editor Core layout remains in progress, so full Editor acceptance stays open.",
+  "evidence": [
+    "71ceb89d219789fb3ac04106e1bd080fe48c8c3b",
+    "docs/evidence/editor-d06-conditional-fields-2026-11-27.json"
+  ],
+  "checks": "Forms unit and Chromium, Editor unit, typecheck, migration gate, canonical plan, feature traceability, Wrangler dry-run, exact-SHA CF build and 100% deployment, production HTTP 200 and exact asset hashes, D1 SELECT-only preflight, GitHub CI remaining",
+  "started_revision": "20415af0459c8f10cbd1ba119e029ed4de3ca3ba",
+  "finished_revision": "20415af0459c8f10cbd1ba119e029ed4de3ca3ba",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

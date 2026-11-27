@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "evidence_id": "editor-d06-conditional-fields-2026-11-27",
+  "plan_point": "77.44.7.D / D-06 — conditional Forms fields",
+  "scope_status": "PARTIAL FEATURE SLICE; D-06, D-01–D-07, 77.44.7.D and complete Visual Editor remain OPEN / NOT CERTIFIED.",
+  "branch": "v2/foundation",
+  "base_sha": "9ed175a8b0ef2ae3071bcb1502337adcd0954b1f",
+  "runtime_commit": "71ceb89d219789fb3ac04106e1bd080fe48c8c3b",
+  "commit_url": "https://github.com/sanci9517/sanci9517/commit/71ceb89d219789fb3ac04106e1bd080fe48c8c3b",
+  "change": {
+    "behavior": "Schema v2 allows a select/radio/checkbox source field to reveal target fields for a configured option. Invalid, missing, self, chained or cyclic source references fail closed. Public forms clear and disable hidden values, do not block on hidden required fields, and omit hidden values from accepted payloads.",
+    "security": "The server normalizes conditional rules against the current published version. A forged submission containing any hidden field is rejected as HIDDEN_FORM_FIELD_SUBMITTED. Save and Publish remain separate; Inspector preview is inert.",
+    "save_publish_separation": "unchanged",
+    "files": [
+      "src/core/forms-contract.ts",
+      "public/editor-v2/ui/forms-inspector.js",
+      "public/assets/page-renderer.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html",
+      "public/visual-page.html",
+      "tests/forms-contract.test.js",
+      "tests/forms-routes.test.js",
+      "tests/browser/editor-form-public-page.test.js",
+      "tests/browser/editor-forms-inspector.test.js",
+      "tests/editor-public-asset-cache-bust.test.js"
+    ]
+  },
+  "public_asset_sha256": {
+    "public/assets/page-renderer.js": "3a4040cab46d8b4b23e039c812561803ff11d716175dcd8478b43dae35f4ce78",
+    "public/editor-v2/app.js": "37094cca2a50162b7e70c7d6d2d885ec81a688077224a638047925fe432fedd3",
+    "public/editor-v2/index.html": "95992dedab51aabe8d3c26f53ae67870ebb7774dabf1d0b9cd205b7235eaebdb",
+    "public/editor-v2/ui/forms-inspector.js": "f48252efd648d8be75495327868eb81b08c46699d140b306f6704a8d04ee20ae",
+    "public/visual-page.html": "c4ca85fedea460c9a7a2b08b06d065afa29d0285a7d9396322796e3534362a0a"
+  },
+  "checks": [
+    { "command": "npm run test:forms", "result": "PASS", "summary": "5/5 Forms test files." },
+    { "command": "npm run test:forms:browser", "result": "PASS", "summary": "7/7 real-Chromium cases across public Forms, Inspector and inbox tests." },
+    { "command": "npm run test:editor", "result": "PASS", "summary": "25/25 Editor unit files; preferences 12/12 and Linux subreaper 4/4." },
+    { "command": "npm run typecheck -- --pretty false", "result": "PASS" },
+    { "command": "node --test tests/editor-public-asset-cache-bust.test.js", "result": "PASS", "summary": "1/1." },
+    { "command": "npm run test:web013:migration-gate", "result": "PASS" },
+    { "command": "python3 tests/plan-contract.test.py", "result": "PASS", "summary": "17/17." },
+    { "command": "python3 scripts/check-canonical-plan.py", "result": "PASS", "summary": "One complete 13-file canonical master; acceptance NOT_CERTIFIED." },
+    { "command": "python3 scripts/audit-active-plan-point.py", "result": "PASS", "summary": "77.44 / WEB-011 to 77.44.7.D; 396 features; acceptance NOT_CERTIFIED." },
+    { "command": "python3 scripts/build-feature-traceability.py --check", "result": "PASS", "summary": "396 source mappings." },
+    { "command": "node --check changed JavaScript and tests; git diff --check", "result": "PASS" },
+    { "command": "npx wrangler deploy --dry-run", "result": "PASS", "summary": "Wrangler 4.130.0 packaged 206 assets (483.92 KiB; 119.59 KiB gzip). A sandbox EROFS warning affected only Wrangler log-file writing; dry-run exited 0 and completed packaging." }
+  ],
+  "production_preflight": {
+    "method": "Cloudflare D1 Query API; SELECT-only",
+    "queries": [
+      "SELECT type, COUNT(*) AS count FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' GROUP BY type ORDER BY type",
+      "SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 5"
+    ],
+    "schema_objects": { "indexes": 45, "tables": 37, "triggers": 29 },
+    "latest_migration": "0032_forms_service.sql",
+    "database_size_bytes": 3883008,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "release": {
+    "cloudflare_build_uuid": "72484f73-e4eb-4fcd-812f-ded5a61b38ce",
+    "cloudflare_build_outcome": "success",
+    "cloudflare_source_sha": "71ceb89d219789fb3ac04106e1bd080fe48c8c3b",
+    "deployment_id": "b7e66eee-44c5-4e2a-8269-11f99c554634",
+    "worker_version_id": "943b12e6-1fe0-4c03-b85c-44962764ec18",
+    "worker_version_number": 4228,
+    "traffic_percent": 100,
+    "production_source_smoke": {
+      "run_id": 46053881242,
+      "status": "SUCCESS",
+      "health_http": 200,
+      "changed_public_asset_hashes": "all matched exact-source expected hashes"
+    },
+    "github_exact_sha_runs": [
+      { "name": "Production Worker source smoke", "run_id": 46053881242, "status": "SUCCESS" },
+      { "name": "F0 baseline checks", "run_id": 46053881224, "status": "SUCCESS" },
+      { "name": "Twitch Integration Check", "run_id": 46053881331, "status": "SUCCESS" },
+      { "name": "Editor Core Test", "run_id": 46053881233, "status": "IN_PROGRESS", "last_observed_step": "Run Editor browser layout regression" }
+    ],
+    "editor_core_isolated_r2_d1_step": "SUCCESS; tests used the workflow's isolated test resources, not production data"
+  },
+  "mutations_and_cost": {
+    "production_d1_migration_or_write": false,
+    "production_r2_mutation": false,
+    "new_dependency": false,
+    "new_cost_huf": 0
+  },
+  "acceptance": {
+    "d06": "OPEN / NOT CERTIFIED",
+    "d01_d07": "OPEN / NOT CERTIFIED",
+    "complete_visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until all planned Editor functionality is implemented",
+    "save_publish": "separate and unchanged"
+  }
+}

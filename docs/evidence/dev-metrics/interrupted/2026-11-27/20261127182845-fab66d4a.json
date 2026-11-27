@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261127182845-fab66d4a",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-27T18:28:45.622Z",
+  "abandoned_at": "2026-11-27T18:44:25.852Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Prior Codex session ended; no reliable active-time boundary after 2026-11-27T18:28:45Z.",
+  "started_revision": "20415af0459c8f10cbd1ba119e029ed4de3ca3ba",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}
