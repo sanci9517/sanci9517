@@ -212,6 +212,49 @@ test("telephone fields accept bounded international formatting and reject malfor
   }
 });
 
+test("number fields accept finite bounded numeric values and reject malformed or unsafe values", () => {
+  const input = validDefinition();
+  input.fields.push({ id: "viewers", type: "number", label: "Nézőszám", required: false });
+  const normalized = normalizeFormDefinition(input);
+  assert.equal(normalized.ok, true);
+  const invalidDefinition = validDefinition();
+  invalidDefinition.fields.push({ id: "viewers", type: "number", label: "Nézőszám", required: false, maxLength: 12 });
+  assert.equal(normalizeFormDefinition(invalidDefinition).code, "INVALID_FORM_FIELD_LENGTH", "numbers use a numeric bound instead of a character limit");
+  const accepted = normalizeFormSubmission(normalized.value, {
+    values: { email: "creator@example.com", message: "Szia", viewers: "1.25e2" }, consentAccepted: true
+  });
+  assert.equal(accepted.ok, true);
+  assert.equal(accepted.value.values.viewers, 125);
+  assert.equal(typeof accepted.value.values.viewers, "number");
+  const zero = normalizeFormSubmission(normalized.value, {
+    values: { email: "creator@example.com", message: "Szia", viewers: 0 }, consentAccepted: true
+  });
+  assert.equal(zero.ok, true);
+  assert.equal(zero.value.values.viewers, 0);
+  const emptyOptional = normalizeFormSubmission(normalized.value, {
+    values: { email: "creator@example.com", message: "Szia", viewers: "" }, consentAccepted: true
+  });
+  assert.equal(emptyOptional.ok, true);
+  assert.equal(Object.hasOwn(emptyOptional.value.values, "viewers"), false, "empty optional numeric fields are omitted, not coerced to zero");
+  for (const value of ["", "0x10", "Infinity", "1e999", "1".repeat(65), 1_000_000_000_001, Number.NaN]) {
+    if (value === "") continue; // Empty optional fields are omitted by the shared submission contract.
+    const rejected = normalizeFormSubmission(normalized.value, {
+      values: { email: "creator@example.com", message: "Szia", viewers: value }, consentAccepted: true
+    });
+    assert.equal(rejected.ok, false, String(value));
+    assert.equal(rejected.code, "INVALID_FORM_NUMBER", String(value));
+    assert.equal(rejected.fieldId, "viewers");
+  }
+  const required = structuredClone(normalized.value);
+  required.fields.at(-1).required = true;
+  const missing = normalizeFormSubmission(required, {
+    values: { email: "creator@example.com", message: "Szia" }, consentAccepted: true
+  });
+  assert.equal(missing.ok, false);
+  assert.equal(missing.code, "FORM_FIELD_REQUIRED");
+  assert.equal(missing.fieldId, "viewers");
+});
+
 test("radio and date definitions reject irrelevant limits and option metadata", () => {
   for (const mutate of [
     value => { value.fields.push({ id: "contact", type: "radio", label: "Kapcsolat", required: false, options: ["A"], maxLength: 12 }); },

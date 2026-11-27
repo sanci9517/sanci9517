@@ -336,7 +336,7 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
     }else if(field.type==='select'){
      control=document.createElement('select');const empty=document.createElement('option');empty.value='';empty.textContent='Válassz…';control.append(empty);
      for(const value of field.options||[]){const option=document.createElement('option');option.value=value;option.textContent=value;control.append(option)}
-    }else{control=document.createElement('input');control.type=field.type==='email'?'email':field.type==='tel'?'tel':field.type==='url'?'url':field.type==='date'?'date':field.type==='checkbox'?'checkbox':'text'}
+    }else{control=document.createElement('input');control.type=field.type==='email'?'email':field.type==='tel'?'tel':field.type==='url'?'url':field.type==='number'?'number':field.type==='date'?'date':field.type==='checkbox'?'checkbox':'text';if(field.type==='number')control.step='any'}
     control.name=field.id;control.required=field.required===true;control.setAttribute('aria-label',field.label);
     if(field.type!=='radio')control.id=fieldDomId;
     if(field.type==='email')control.autocomplete='email';else if(field.type==='tel')control.autocomplete='tel';else if(field.type==='url')control.autocomplete='url';

@@ -19,7 +19,8 @@ const definition = (retentionDays = 30, versionName = "contact-v1") => ({
   name: versionName,
   fields: [
     { id: "email", type: "email", label: "E-mail", required: true, maxLength: 254 },
-    { id: "message", type: "textarea", label: "Üzenet", required: true, maxLength: 2_000 }
+    { id: "message", type: "textarea", label: "Üzenet", required: true, maxLength: 2_000 },
+    { id: "viewers", type: "number", label: "Nézőszám", required: false }
   ],
   consent: { text: "Az üzenet kezeléséhez hozzájárulok.", version: versionName, privacyUrl: "https://creator.test/privacy" },
   successMessage: "Köszönöm, megkaptuk.",
@@ -120,14 +121,14 @@ test("public submission is bound to the published schema and snapshots its conse
   assert.equal(get.status, 200);
   assert.equal((await get.json()).data.version, 1);
 
-  const response = await publicFormRoute(publicRequest("POST", validSubmission(), { headers: { "CF-Connecting-IP": "203.0.113.23" } }), env, siteId);
+  const response = await publicFormRoute(publicRequest("POST", validSubmission({ values: { email: "creator@example.test", message: "Szia", viewers: "125.5" } }), { headers: { "CF-Connecting-IP": "203.0.113.23" } }), env, siteId);
   assert.equal(response.status, 200);
   assert.deepEqual(await response.json(), { ok: true, data: { submitted: true, message: published.successMessage } });
   const row = db.prepare(`SELECT form_version,page_revision_id,values_json,consent_text,consent_version,
       consent_accepted_at,expires_at FROM form_submissions`).get();
   assert.equal(row.form_version, 1);
   assert.equal(row.page_revision_id, "page-revision-v1");
-  assert.deepEqual(JSON.parse(row.values_json), { email: "creator@example.test", message: "Szia" });
+  assert.deepEqual(JSON.parse(row.values_json), { email: "creator@example.test", message: "Szia", viewers: 125.5 });
   assert.equal(row.consent_text, published.consent.text);
   assert.equal(row.consent_version, published.consent.version);
   assert.ok(Number.isFinite(Date.parse(row.consent_accepted_at)));

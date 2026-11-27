@@ -167,6 +167,10 @@ test("Forms Inspector preserves field focus and keeps form Save/Publish independ
   assert.equal(await cards.nth(2).getByLabel("Maximális karakterszám").count(), 0, "date fields do not expose text length");
   assert.equal(await cards.nth(2).getByLabel("Választások (soronként egy)").count(), 0, "date fields clear irrelevant choices");
   assert.equal(await preview.getByLabel("Üzenet").getAttribute("type"), "date");
+  await cards.nth(2).getByLabel("Mezőtípus").selectOption("number");
+  assert.equal(await cards.nth(2).getByLabel("Maximális karakterszám").count(), 0, "number fields do not expose a text-only length limit");
+  assert.equal(await preview.getByLabel("Üzenet").getAttribute("type"), "number", "the inert draft preview follows the numeric field type");
+  assert.equal(await preview.getByLabel("Üzenet").isDisabled(), true, "the numeric preview remains inert and cannot submit data");
   await cards.nth(2).getByLabel("Mezőtípus").selectOption("checkbox");
   assert.equal(await preview.getByLabel("Üzenet").getAttribute("type"), "checkbox");
   assert.equal(await preview.getByLabel("Üzenet").isDisabled(), true);

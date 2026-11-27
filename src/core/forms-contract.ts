@@ -11,7 +11,7 @@ export const MAX_FORM_OPTIONS = 20;
 export const MAX_FORM_DEFINITION_BYTES = 16_384;
 export const MAX_FORM_SUBMISSION_BYTES = 12_288;
 
-export type FormFieldType = "text" | "email" | "tel" | "url" | "textarea" | "select" | "radio" | "date" | "checkbox";
+export type FormFieldType = "text" | "email" | "tel" | "url" | "number" | "textarea" | "select" | "radio" | "date" | "checkbox";
 
 export type FormFieldDefinition = {
   id: string;
@@ -43,7 +43,7 @@ export type FormSubmissionInput = {
 };
 
 export type NormalizedFormSubmission = {
-  values: Record<string, string | boolean>;
+  values: Record<string, string | number | boolean>;
   consentAccepted: true;
   spam: boolean;
 };
@@ -80,6 +80,15 @@ const validHttpUrlFieldValue = (value: string): boolean => {
   }
 };
 
+const normalizeNumberFieldValue = (value: unknown): number | null => {
+  if (typeof value === "number") return Number.isFinite(value) && Math.abs(value) <= 1_000_000_000_000 ? value : null;
+  if (typeof value !== "string" || value.length > 64) return null;
+  const normalized = value.trim();
+  if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(normalized)) return null;
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) && Math.abs(parsed) <= 1_000_000_000_000 ? parsed : null;
+};
+
 const validPhoneFieldValue = (value: string): boolean => {
   // Phone formatting varies by country; accept common display punctuation
   // without imposing a country-specific numbering plan.
@@ -114,7 +123,7 @@ export function normalizeFormDefinition(input: unknown): FormValidationResult<Fo
       return { ok: false, code: "INVALID_FORM_FIELD_ID" };
     }
     ids.add(raw.id);
-    if (!(["text", "email", "tel", "url", "textarea", "select", "radio", "date", "checkbox"] as unknown[]).includes(raw.type)) {
+    if (!(["text", "email", "tel", "url", "number", "textarea", "select", "radio", "date", "checkbox"] as unknown[]).includes(raw.type)) {
       return { ok: false, code: "UNSUPPORTED_FORM_FIELD_TYPE", fieldId: raw.id };
     }
     if (!boundedText(raw.label, 120) || typeof raw.required !== "boolean") {
@@ -131,7 +140,7 @@ export function normalizeFormDefinition(input: unknown): FormValidationResult<Fo
     };
     if (raw.helpText !== undefined && raw.helpText.trim()) field.helpText = raw.helpText.trim();
     if (raw.maxLength !== undefined) {
-      if (!Number.isInteger(raw.maxLength) || (raw.maxLength as number) < 1 || (raw.maxLength as number) > (raw.type === "url" ? 2_048 : raw.type === "tel" ? 40 : 4_000) || raw.type === "checkbox" || raw.type === "select" || raw.type === "radio" || raw.type === "date") {
+      if (!Number.isInteger(raw.maxLength) || (raw.maxLength as number) < 1 || (raw.maxLength as number) > (raw.type === "url" ? 2_048 : raw.type === "tel" ? 40 : 4_000) || raw.type === "checkbox" || raw.type === "select" || raw.type === "radio" || raw.type === "date" || raw.type === "number") {
         return { ok: false, code: "INVALID_FORM_FIELD_LENGTH", fieldId: raw.id };
       }
       field.maxLength = raw.maxLength as number;
@@ -191,7 +200,7 @@ export function normalizeFormSubmission(
   if (input.consentAccepted !== true) return { ok: false, code: "FORM_CONSENT_REQUIRED" };
   const allowedIds = new Set(definition.fields.map(field => field.id));
   if (Object.keys(input.values).some(id => !allowedIds.has(id))) return { ok: false, code: "UNKNOWN_FORM_FIELD" };
-  const values: Record<string, string | boolean> = {};
+  const values: Record<string, string | number | boolean> = {};
   for (const field of definition.fields) {
     const value = input.values[field.id];
     const empty = value === undefined || value === null || value === "" || (typeof value === "string" && value.trim() === "");
@@ -201,6 +210,12 @@ export function normalizeFormSubmission(
       if (typeof value !== "boolean") return { ok: false, code: "INVALID_FORM_FIELD_VALUE", fieldId: field.id };
       if (field.required && value !== true) return { ok: false, code: "FORM_FIELD_REQUIRED", fieldId: field.id };
       values[field.id] = value;
+      continue;
+    }
+    if (field.type === "number") {
+      const normalized = normalizeNumberFieldValue(value);
+      if (normalized === null) return { ok: false, code: "INVALID_FORM_NUMBER", fieldId: field.id };
+      values[field.id] = normalized;
       continue;
     }
     if (typeof value !== "string") return { ok: false, code: "INVALID_FORM_FIELD_VALUE", fieldId: field.id };

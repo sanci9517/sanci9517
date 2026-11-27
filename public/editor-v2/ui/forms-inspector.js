@@ -1,5 +1,5 @@
 const FIELD_TYPES = Object.freeze([
-  ["text", "Rövid szöveg"], ["email", "E-mail"], ["tel", "Telefonszám"], ["url", "Webcím"], ["textarea", "Hosszú szöveg"],
+  ["text", "Rövid szöveg"], ["email", "E-mail"], ["tel", "Telefonszám"], ["url", "Webcím"], ["number", "Szám"], ["textarea", "Hosszú szöveg"],
   ["select", "Legördülő választás"], ["radio", "Választógombok"], ["date", "Dátum"], ["checkbox", "Jelölőnégyzet"]
 ]);
 const clone = value => structuredClone(value);
@@ -303,7 +303,7 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
         wrapper.append(choices);
       } else {
         const control = document.createElement("input");
-        control.type = ({ email: "email", tel: "tel", url: "url", date: "date", checkbox: "checkbox" })[type] || "text";
+        control.type = ({ email: "email", tel: "tel", url: "url", number: "number", date: "date", checkbox: "checkbox" })[type] || "text";
         control.setAttribute("aria-label", label);
         if (control.type !== "checkbox") { control.maxLength = maxLength; control.placeholder = label; }
         wrapper.append(control);
