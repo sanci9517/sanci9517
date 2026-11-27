@@ -180,6 +180,38 @@ test("URL fields accept safe absolute HTTP(S) values and reject non-web or crede
   }
 });
 
+test("telephone fields accept bounded international formatting and reject malformed values", () => {
+  const input = validDefinition();
+  input.fields.push({ id: "phone", type: "tel", label: "Telefonszám", required: false, maxLength: 40 });
+  const normalized = normalizeFormDefinition(input);
+  assert.equal(normalized.ok, true);
+  const tooLongDefinition = validDefinition();
+  tooLongDefinition.fields.push({ id: "phone", type: "tel", label: "Telefonszám", required: false, maxLength: 41 });
+  assert.equal(normalizeFormDefinition(tooLongDefinition).code, "INVALID_FORM_FIELD_LENGTH");
+
+  const accepted = normalizeFormSubmission(normalized.value, {
+    values: { email: "creator@example.com", message: "Szia", phone: " +36 (30) 123-4567 " },
+    consentAccepted: true
+  });
+  assert.equal(accepted.ok, true);
+  assert.equal(accepted.value.values.phone, "+36 (30) 123-4567");
+  const oversized = normalizeFormSubmission(normalized.value, {
+    values: { email: "creator@example.com", message: "Szia", phone: `+${"1".repeat(40)}` },
+    consentAccepted: true
+  });
+  assert.equal(oversized.ok, false);
+  assert.equal(oversized.code, "FORM_FIELD_TOO_LONG");
+  for (const phone of ["555-CALL", "++36301234567", "+36) (30", "---"]) {
+    const rejected = normalizeFormSubmission(normalized.value, {
+      values: { email: "creator@example.com", message: "Szia", phone },
+      consentAccepted: true
+    });
+    assert.equal(rejected.ok, false, phone);
+    assert.equal(rejected.code, "INVALID_FORM_PHONE", phone);
+    assert.equal(rejected.fieldId, "phone");
+  }
+});
+
 test("radio and date definitions reject irrelevant limits and option metadata", () => {
   for (const mutate of [
     value => { value.fields.push({ id: "contact", type: "radio", label: "Kapcsolat", required: false, options: ["A"], maxLength: 12 }); },

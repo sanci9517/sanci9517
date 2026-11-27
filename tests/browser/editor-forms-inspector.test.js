@@ -136,6 +136,13 @@ test("Forms Inspector preserves field focus and keeps form Save/Publish independ
     "URL fields expose the bounded length control");
   assert.equal(await cards.nth(2).getByLabel("Maximális karakterszám").getAttribute("max"), "2048",
     "the Inspector caps URLs at the same limit as the server contract");
+  await cards.nth(2).getByLabel("Mezőtípus").selectOption("tel");
+  assert.equal(await cards.nth(2).getByLabel("Mezőtípus").evaluate(element => element === document.activeElement), true,
+    "changing to a telephone field preserves focus on its type control");
+  assert.equal(await cards.nth(2).getByLabel("Maximális karakterszám").getAttribute("max"), "40",
+    "the Inspector caps telephone values to the same limit as the server contract");
+  assert.equal(await cards.nth(2).getByLabel("Maximális karakterszám").inputValue(), "40",
+    "switching from the longer URL limit clamps the stored field length instead of creating a save-invalid definition");
   await cards.nth(2).getByLabel("Mezőtípus").selectOption("date");
   assert.equal(await cards.nth(2).getByLabel("Maximális karakterszám").count(), 0, "date fields do not expose text length");
   assert.equal(await cards.nth(2).getByLabel("Választások (soronként egy)").count(), 0, "date fields clear irrelevant choices");

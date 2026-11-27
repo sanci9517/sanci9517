@@ -11,7 +11,7 @@ export const MAX_FORM_OPTIONS = 20;
 export const MAX_FORM_DEFINITION_BYTES = 16_384;
 export const MAX_FORM_SUBMISSION_BYTES = 12_288;
 
-export type FormFieldType = "text" | "email" | "url" | "textarea" | "select" | "radio" | "date" | "checkbox";
+export type FormFieldType = "text" | "email" | "tel" | "url" | "textarea" | "select" | "radio" | "date" | "checkbox";
 
 export type FormFieldDefinition = {
   id: string;
@@ -80,6 +80,24 @@ const validHttpUrlFieldValue = (value: string): boolean => {
   }
 };
 
+const validPhoneFieldValue = (value: string): boolean => {
+  // Phone formatting varies by country; accept common display punctuation
+  // without imposing a country-specific numbering plan.
+  if (!/^[+0-9(). -]+$/.test(value) || !/[0-9]/.test(value)) return false;
+  if (value.includes("+") && (value[0] !== "+" || value.indexOf("+") !== value.lastIndexOf("+"))) return false;
+  let depth = 0;
+  for (const character of value) {
+    if (character === "(") {
+      if (depth !== 0) return false;
+      depth = 1;
+    } else if (character === ")") {
+      if (depth !== 1) return false;
+      depth = 0;
+    }
+  }
+  return depth === 0;
+};
+
 export function normalizeFormDefinition(input: unknown): FormValidationResult<FormDefinition> {
   if (!isRecord(input) || !hasOnlyKeys(input, ["schemaVersion", "name", "fields", "consent", "successMessage", "retentionDays"]) || input.schemaVersion !== FORM_SCHEMA_VERSION) {
     return { ok: false, code: "UNSUPPORTED_FORM_SCHEMA_VERSION" };
@@ -96,7 +114,7 @@ export function normalizeFormDefinition(input: unknown): FormValidationResult<Fo
       return { ok: false, code: "INVALID_FORM_FIELD_ID" };
     }
     ids.add(raw.id);
-    if (!(["text", "email", "url", "textarea", "select", "radio", "date", "checkbox"] as unknown[]).includes(raw.type)) {
+    if (!(["text", "email", "tel", "url", "textarea", "select", "radio", "date", "checkbox"] as unknown[]).includes(raw.type)) {
       return { ok: false, code: "UNSUPPORTED_FORM_FIELD_TYPE", fieldId: raw.id };
     }
     if (!boundedText(raw.label, 120) || typeof raw.required !== "boolean") {
@@ -113,7 +131,7 @@ export function normalizeFormDefinition(input: unknown): FormValidationResult<Fo
     };
     if (raw.helpText !== undefined && raw.helpText.trim()) field.helpText = raw.helpText.trim();
     if (raw.maxLength !== undefined) {
-      if (!Number.isInteger(raw.maxLength) || (raw.maxLength as number) < 1 || (raw.maxLength as number) > (raw.type === "url" ? 2_048 : 4_000) || raw.type === "checkbox" || raw.type === "select" || raw.type === "radio" || raw.type === "date") {
+      if (!Number.isInteger(raw.maxLength) || (raw.maxLength as number) < 1 || (raw.maxLength as number) > (raw.type === "url" ? 2_048 : raw.type === "tel" ? 40 : 4_000) || raw.type === "checkbox" || raw.type === "select" || raw.type === "radio" || raw.type === "date") {
         return { ok: false, code: "INVALID_FORM_FIELD_LENGTH", fieldId: raw.id };
       }
       field.maxLength = raw.maxLength as number;
@@ -187,7 +205,7 @@ export function normalizeFormSubmission(
     }
     if (typeof value !== "string") return { ok: false, code: "INVALID_FORM_FIELD_VALUE", fieldId: field.id };
     const normalized = value.trim();
-    if (normalized.length > (field.maxLength ?? (field.type === "textarea" ? 4_000 : 500))) {
+    if (normalized.length > (field.maxLength ?? (field.type === "textarea" ? 4_000 : field.type === "tel" ? 40 : 500))) {
       return { ok: false, code: "FORM_FIELD_TOO_LONG", fieldId: field.id };
     }
     if (field.type === "date" && !isValidIsoDate(normalized)) {
@@ -195,6 +213,9 @@ export function normalizeFormSubmission(
     }
     if (field.type === "url" && !validHttpUrlFieldValue(normalized)) {
       return { ok: false, code: "INVALID_FORM_URL", fieldId: field.id };
+    }
+    if (field.type === "tel" && !validPhoneFieldValue(normalized)) {
+      return { ok: false, code: "INVALID_FORM_PHONE", fieldId: field.id };
     }
     if (field.type === "email" && !/^[^\s@<>]{1,128}@[A-Za-z0-9.-]{1,190}\.[A-Za-z]{2,63}$/.test(normalized)) {
       return { ok: false, code: "INVALID_FORM_EMAIL", fieldId: field.id };
