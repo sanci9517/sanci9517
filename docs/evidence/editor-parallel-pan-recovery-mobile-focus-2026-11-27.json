@@ -7,7 +7,9 @@
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "start_sha": "5482c138e4d7e613d738bd6cb4c59bb630bab02f",
-    "canonical_plan_sha256": "7fa60a... (complete canonical master read; unchanged)",
+    "canonical_plan_blob_sha": "85e57ba2811c8f3ab1476bf3d2fb39ab1c150dd4",
+    "canonical_plan_sha256": "7fa60aee137d7568d72da6e22ce1d7b6ba1e4681704e8a40d52619f6188d749a",
+    "canonical_plan_size_bytes": 1940502,
     "cursor": "77.44 / WEB-011 -> 77.44.7.D",
     "functional_acceptance": "OPEN / NOT_CERTIFIED",
     "traceability": "396 IDs: 148 PARTIAL_SOURCE, 248 UNVERIFIED"
