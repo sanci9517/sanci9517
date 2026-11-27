@@ -169,6 +169,16 @@ test("Forms Inspector preserves field focus and keeps form Save/Publish independ
     "URL fields expose the bounded length control");
   assert.equal(await cards.nth(2).getByLabel("Maximális karakterszám").getAttribute("max"), "2048",
     "the Inspector caps URLs at the same limit as the server contract");
+  await cards.nth(2).getByLabel("Mezőtípus").selectOption("email");
+  const emailLength = cards.nth(2).getByLabel("Maximális karakterszám");
+  assert.equal(await emailLength.getAttribute("max"), "254",
+    "the email Inspector cannot configure a length above the address standard");
+  await emailLength.fill("4000");
+  await emailLength.press("Tab");
+  assert.equal(await cards.nth(2).getByLabel("Maximális karakterszám").inputValue(), "254",
+    "the Inspector clamps legacy or manually entered email limits");
+  assert.equal(await preview.getByLabel("Üzenet").getAttribute("maxlength"), "254",
+    "the inert preview uses the same email length contract");
   await cards.nth(2).getByLabel("Mezőtípus").selectOption("tel");
   assert.equal(await cards.nth(2).getByLabel("Mezőtípus").evaluate(element => element === document.activeElement), true,
     "changing to a telephone field preserves focus on its type control");

@@ -145,7 +145,7 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
         if ((field.type === "select" || field.type === "radio") && !field.options?.length) field.options = ["Első választás"];
         if (field.type !== "select" && field.type !== "radio") delete field.options;
         if (["text", "email", "tel", "url", "textarea"].includes(field.type)) {
-          const limit = field.type === "url" ? 2_048 : field.type === "tel" ? 40 : 4_000;
+          const limit = field.type === "url" ? 2_048 : field.type === "tel" ? 40 : field.type === "email" ? 254 : 4_000;
           const fallback = field.type === "url" ? 2_048 : field.type === "textarea" ? 2_000 : field.type === "email" ? 254 : field.type === "tel" ? 40 : 500;
           field.maxLength = Math.max(1, Math.min(limit, field.maxLength ?? fallback));
         } else delete field.maxLength;
@@ -158,9 +158,11 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
       requiredLabel.append(required, document.createTextNode("Kötelező"));
       const helpInput = control("input", "Súgó a mezőhöz", field.helpText || "", { maxLength: 240 });
       helpInput.input.oninput = () => { field.helpText = helpInput.input.value; markDirty(); };
-      const lengthInput = control("input", "Maximális karakterszám", field.maxLength ?? (field.type === "textarea" ? 2_000 : field.type === "url" ? 2_048 : field.type === "tel" ? 40 : 500), { type: "number", maxLength: 4 });
-      lengthInput.input.min = "1"; lengthInput.input.max = field.type === "url" ? "2048" : field.type === "tel" ? "40" : "4000";
-      lengthInput.input.onchange = () => { const limit = field.type === "url" ? 2_048 : field.type === "tel" ? 40 : 4_000; field.maxLength = Math.max(1, Math.min(limit, Number(lengthInput.input.value) || 500)); markDirty(); };
+      const maxTextLength = field.type === "email" ? 254 : field.type === "url" ? 2_048 : field.type === "tel" ? 40 : 4_000;
+      const defaultTextLength = field.type === "email" ? 254 : field.type === "textarea" ? 2_000 : field.type === "url" ? 2_048 : field.type === "tel" ? 40 : 500;
+      const lengthInput = control("input", "Maximális karakterszám", Math.min(field.maxLength ?? defaultTextLength, maxTextLength), { type: "number", maxLength: 4 });
+      lengthInput.input.min = "1"; lengthInput.input.max = String(maxTextLength);
+      lengthInput.input.onchange = () => { field.maxLength = Math.max(1, Math.min(maxTextLength, Number(lengthInput.input.value) || defaultTextLength)); lengthInput.input.value = String(field.maxLength); markDirty(); };
       card.append(idInput.wrapper, labelInput.wrapper, typeLabel, requiredLabel, helpInput.wrapper);
       if (["text", "email", "tel", "url", "textarea"].includes(field.type)) card.append(lengthInput.wrapper);
       if (field.type === "select" || field.type === "radio") {
@@ -386,7 +388,9 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
     const caption = document.createElement("span"); caption.textContent = `${label}${field.required === true ? " · Kötelező" : ""}${conditionLabel}`;
       wrapper.append(caption);
       const type = String(field.type || "text");
-      const maxLength = Number.isInteger(field.maxLength) ? Math.max(1, Math.min(4000, field.maxLength)) : 500;
+      const maxLength = Number.isInteger(field.maxLength)
+        ? Math.max(1, Math.min(field.type === "email" ? 254 : 4_000, field.maxLength))
+        : field.type === "email" ? 254 : 500;
       if (type === "textarea") {
         const control = document.createElement("textarea"); control.rows = 3; control.maxLength = maxLength;
         control.setAttribute("aria-label", label); control.placeholder = label; wrapper.append(control);

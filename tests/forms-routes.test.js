@@ -139,6 +139,23 @@ test("public submission is bound to the published schema and snapshots its conse
   assert.doesNotMatch(JSON.stringify(db.prepare("SELECT client_hash FROM form_submission_rate_limits").get()), /203\.0\.113\.23/);
 });
 
+test("public submission rejects a malformed email without writing a submission", async t => {
+  const { db, env } = makeDb();
+  t.after(() => db.close());
+  const published = definition();
+  published.fields[0].maxLength = 4_000; // Simulate an older over-permissive saved definition.
+  bindPublishedForm(db, { publishedDefinition: published });
+
+  const response = await publicFormRoute(publicRequest("POST", validSubmission({
+    values: { email: "creator..clips@example.test", message: "Szia" }
+  }), { headers: { "CF-Connecting-IP": "203.0.113.24" } }), env, siteId);
+
+  assert.equal(response.status, 400);
+  assert.equal((await response.json()).error.code, "INVALID_FORM_EMAIL");
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM form_submissions").get().n, 0,
+    "invalid contact data must not be persisted");
+});
+
 test("public v2 Forms accept visible conditional values and reject submitted hidden fields without storing them", async t => {
   const { db, env } = makeDb();
   t.after(() => db.close());

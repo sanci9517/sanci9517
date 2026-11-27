@@ -143,6 +143,22 @@ test('public form renders only data, enforces browser consent and submits first-
   assert.equal(f.getFormReads(), 1);
 });
 
+test('legacy email field limits render with the shared 254-character ceiling', async t => {
+  const legacyDefinition = structuredClone(formDefinition);
+  legacyDefinition.fields[0].maxLength = 4_000;
+  const f = await fixture(t, { definitionOverride: legacyDefinition });
+  await f.page.goto(f.base + '/p/forms-test');
+  const email = f.page.getByRole('textbox', { name: 'E-mail', exact: true });
+  await email.waitFor();
+
+  assert.equal(await email.getAttribute('maxlength'), '254',
+    'a legacy schema cannot advertise values that the server will reject');
+  await email.fill('a'.repeat(300));
+  assert.equal(await email.inputValue().then(value => value.length), 254,
+    'native input truncation matches the server validation limit');
+  assert.equal(f.submissions.length, 0, 'the length correction does not auto-submit');
+});
+
 test('conditional public fields clear hidden values, skip hidden requirements, and return to required validation when shown', async t => {
   const conditionalDefinition = structuredClone(formDefinition);
   conditionalDefinition.schemaVersion = 3;

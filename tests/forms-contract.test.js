@@ -31,6 +31,14 @@ test("form definitions normalize only versioned, bounded first-party fields", ()
   assert.equal(result.value.retentionDays, 30);
 });
 
+test("legacy email field lengths normalize to the address limit without rejecting the saved form", () => {
+  const legacy = validDefinition();
+  legacy.fields[0].maxLength = 4_000;
+  const result = normalizeFormDefinition(legacy);
+  assert.equal(result.ok, true, "an existing form with a larger email limit remains readable");
+  assert.equal(result.value.fields[0].maxLength, 254, "the normalized field cannot advertise an impossible address limit");
+});
+
 test("unsupported versions, field types, duplicate IDs, and external actions fail closed", () => {
   const cases = [
     value => { value.schemaVersion = 4; },
@@ -161,6 +169,34 @@ test("consent, required values, field types, formats, options, and unknown keys 
     const result = normalizeFormSubmission(definition(), payload);
     assert.equal(result.ok, false);
     assert.equal(result.code, code);
+  }
+});
+
+test("email values enforce address length, dot-atom, and DNS label boundaries", () => {
+  const current = definition();
+  current.fields[0].maxLength = 4_000;
+  const valid = normalizeFormSubmission(current, {
+    values: { email: "creator+clips@example.com", message: "Szia" }, consentAccepted: true
+  });
+  assert.equal(valid.ok, true);
+
+  const tooLong = `${"a".repeat(64)}@${"a".repeat(63)}.${"b".repeat(63)}.${"c".repeat(59)}.de`;
+  assert.equal(tooLong.length, 255);
+  for (const email of [
+    tooLong,
+    ".creator@example.com",
+    "creator.@example.com",
+    "creator..name@example.com",
+    "creator@-example.com",
+    "creator@example-.com",
+    "creator@example..com",
+    "creator@localhost"
+  ]) {
+    const result = normalizeFormSubmission(current, {
+      values: { email, message: "Szia" }, consentAccepted: true
+    });
+    assert.equal(result.ok, false, `invalid address accepted: ${email}`);
+    assert.equal(result.code, email.length > 254 ? "FORM_FIELD_TOO_LONG" : "INVALID_FORM_EMAIL");
   }
 });
 

@@ -344,7 +344,8 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
      const checkboxLabel=document.createElement('label');checkboxLabel.className='creator-form-checkbox';
      checkboxLabel.append(control,document.createTextNode(' '+field.label));label.replaceChildren(checkboxLabel);
     }else if(field.type!=='radio'){
-     if(['text','email','tel','url','textarea'].includes(field.type)&&Number.isInteger(field.maxLength))control.maxLength=field.maxLength;
+     if(field.type==='email')control.maxLength=Math.min(Number.isInteger(field.maxLength)?field.maxLength:254,254);
+     else if(['text','tel','url','textarea'].includes(field.type)&&Number.isInteger(field.maxLength))control.maxLength=field.maxLength;
      if(field.helpText){const help=document.createElement('small');help.id=fieldDomId+'-help';help.textContent=field.helpText;label.append(control,help);control.setAttribute('aria-describedby',help.id)}else label.append(control);
      if(sliderOutput)label.append(sliderOutput);
     }

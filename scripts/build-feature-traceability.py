@@ -37,6 +37,7 @@ PARTIAL = {
 }
 # Narrow references for requirements whose evidence is outside their module shell.
 EXACT_SOURCES = {
+ 'WEB-020':['src/core/forms-contract.ts','src/routes/admin/forms.ts','src/routes/public/forms.ts','public/assets/page-renderer.js','scripts/pending/0032_forms_service.sql','tests/forms-contract.test.js','tests/forms-routes.test.js','tests/browser/editor-form-public-page.test.js'],
  'EDT-016':['public/editor-v2/core/hierarchy-limits.js','public/editor-v2/core/hierarchy-limits.d.ts','public/editor-v2/core/schema.js','public/editor-v2/core/validation.js','public/editor-v2/app.js','public/editor-v2/core/state.js','public/editor-v2/core/commands.js','public/editor-v2/core/editor-templates.js','public/editor-v2/core/design-system/template-catalog.js','src/core/editor-validation.ts','src/routes/admin/editor.ts','src/routes/admin/pages.ts','public/editor-v2/tests/core.test.js','tests/f0-3-route-integration.test.js','tests/editor-public-asset-cache-bust.test.js'],
  'EDT-038':['public/editor-v2/core/node-clipboard.js','public/editor-v2/core/commands.js','public/editor-v2/app.js','public/editor-v2/index.html','public/editor-v2/editor-refresh.css'],
  'RES-006':['src/routes/admin/media.ts','public/admin-media.html','public/assets/admin-media.js','public/assets/admin-media-organization.js','scripts/pending/0030_media_library_organization.sql','tests/media-api.test.js','tests/browser/admin-media-organization.test.js'],
@@ -58,6 +59,9 @@ EXACT_SOURCES = {
  'SEC-003':['src/index.ts','src/core/site-domain.ts','src/core/auth/site-access.ts'],
  'SEC-005':['src/core/editor-validation.ts','public/editor-v2/core/richtext-links.js','public/editor-v2/core/creator-embed.js'],
  'SEC-006':['src/core/page-redirects.ts','public/editor-v2/core/richtext-links.js'],
+}
+EXACT_TESTS = {
+ 'WEB-020':['tests/forms-contract.test.js','tests/forms-routes.test.js','tests/browser/editor-form-public-page.test.js'],
 }
 TEST_GLOBS = {
  'ADM':['tests/admin-home*'], 'WEB':['tests/f1-1-*','tests/f0-3-route*','tests/web013-runtime*'],
@@ -91,7 +95,7 @@ def build(root=ROOT):
         prefix,number = row['id'].split('-'); partial = int(number) in PARTIAL.get(prefix,[])
         cells,source = contracts[row['id']]
         implementation = EXACT_SOURCES.get(row['id'], SOURCES.get(prefix,[])) if partial else []
-        tests = sorted({str(p.relative_to(root)) for g in TEST_GLOBS.get(prefix,[]) for p in root.glob(g) if p.is_file()}) if partial else []
+        tests = EXACT_TESTS.get(row['id'], sorted({str(p.relative_to(root)) for g in TEST_GLOBS.get(prefix,[]) for p in root.glob(g) if p.is_file()})) if partial else []
         features.append({**row,'surface':cells[1],'owner':cells[2],'positive_acceptance':cells[3],
           'negative_acceptance':cells[4],'dependencies':cells[5],'contract_source':source,
           'source_status':'PARTIAL_SOURCE' if partial else 'UNVERIFIED',

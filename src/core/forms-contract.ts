@@ -10,6 +10,7 @@ export const CONDITIONAL_FORM_SCHEMA_VERSION = 2 as const;
 export const RANGE_FORM_SCHEMA_VERSION = 3 as const;
 export const MAX_FORM_FIELDS = 24;
 export const MAX_FORM_OPTIONS = 20;
+export const MAX_FORM_EMAIL_LENGTH = 254;
 export const MAX_FORM_DEFINITION_BYTES = 16_384;
 export const MAX_FORM_SUBMISSION_BYTES = 12_288;
 
@@ -114,6 +115,20 @@ const validPhoneFieldValue = (value: string): boolean => {
   return depth === 0;
 };
 
+const validEmailFieldValue = (value: string): boolean => {
+  if (value.length > MAX_FORM_EMAIL_LENGTH) return false;
+  const separator = value.indexOf("@");
+  if (separator <= 0 || separator !== value.lastIndexOf("@")) return false;
+  const local = value.slice(0, separator);
+  const domain = value.slice(separator + 1);
+  if (local.length > 64 || !/^[A-Za-z0-9!#$%&'*+/=?^_`{|}~.-]+$/.test(local) || /(^\.|\.\.|\.$)/.test(local)) return false;
+  if (domain.length > 253) return false;
+  const labels = domain.split(".");
+  if (labels.length < 2 || labels.some(label => label.length > 63 || !/^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?$/.test(label))) return false;
+  const topLevel = labels.at(-1)!;
+  return /^[A-Za-z]{2,63}$/.test(topLevel) || /^xn--[A-Za-z0-9](?:[A-Za-z0-9-]{0,57}[A-Za-z0-9])?$/.test(topLevel);
+};
+
 export function normalizeFormDefinition(input: unknown): FormValidationResult<FormDefinition> {
   if (!isRecord(input) || !hasOnlyKeys(input, ["schemaVersion", "name", "fields", "consent", "successMessage", "retentionDays"]) ||
       (input.schemaVersion !== FORM_SCHEMA_VERSION && input.schemaVersion !== CONDITIONAL_FORM_SCHEMA_VERSION && input.schemaVersion !== RANGE_FORM_SCHEMA_VERSION)) {
@@ -153,7 +168,12 @@ export function normalizeFormDefinition(input: unknown): FormValidationResult<Fo
       if (!Number.isInteger(raw.maxLength) || (raw.maxLength as number) < 1 || (raw.maxLength as number) > (raw.type === "url" ? 2_048 : raw.type === "tel" ? 40 : 4_000) || raw.type === "checkbox" || raw.type === "select" || raw.type === "radio" || raw.type === "date" || raw.type === "number" || raw.type === "slider") {
         return { ok: false, code: "INVALID_FORM_FIELD_LENGTH", fieldId: raw.id };
       }
-      field.maxLength = raw.maxLength as number;
+      // Older saved definitions could allow email text beyond the platform's
+      // 254-character address limit. Normalize those definitions safely instead
+      // of rejecting them or advertising an unusable limit to the editor.
+      field.maxLength = raw.type === "email"
+        ? Math.min(raw.maxLength as number, MAX_FORM_EMAIL_LENGTH)
+        : raw.maxLength as number;
     }
     if (raw.type === "select" || raw.type === "radio") {
       if (!Array.isArray(raw.options) || raw.options.length < 1 || raw.options.length > MAX_FORM_OPTIONS ||
@@ -285,7 +305,10 @@ export function normalizeFormSubmission(
     }
     if (typeof value !== "string") return { ok: false, code: "INVALID_FORM_FIELD_VALUE", fieldId: field.id };
     const normalized = value.trim();
-    if (normalized.length > (field.maxLength ?? (field.type === "textarea" ? 4_000 : field.type === "tel" ? 40 : 500))) {
+    const maxLength = field.type === "email"
+      ? Math.min(field.maxLength ?? MAX_FORM_EMAIL_LENGTH, MAX_FORM_EMAIL_LENGTH)
+      : field.maxLength ?? (field.type === "textarea" ? 4_000 : field.type === "tel" ? 40 : 500);
+    if (normalized.length > maxLength) {
       return { ok: false, code: "FORM_FIELD_TOO_LONG", fieldId: field.id };
     }
     if (field.type === "date" && !isValidIsoDate(normalized)) {
@@ -297,7 +320,7 @@ export function normalizeFormSubmission(
     if (field.type === "tel" && !validPhoneFieldValue(normalized)) {
       return { ok: false, code: "INVALID_FORM_PHONE", fieldId: field.id };
     }
-    if (field.type === "email" && !/^[^\s@<>]{1,128}@[A-Za-z0-9.-]{1,190}\.[A-Za-z]{2,63}$/.test(normalized)) {
+    if (field.type === "email" && !validEmailFieldValue(normalized)) {
       return { ok: false, code: "INVALID_FORM_EMAIL", fieldId: field.id };
     }
     if ((field.type === "select" || field.type === "radio") && !field.options?.includes(normalized)) {
