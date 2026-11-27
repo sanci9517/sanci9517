@@ -185,8 +185,24 @@ test("Forms Inspector preserves field focus and keeps form Save/Publish independ
   assert.equal(await cards.nth(2).getByLabel("Maximális karakterszám").count(), 0, "number fields do not expose a text-only length limit");
   assert.equal(await preview.getByLabel("Üzenet").getAttribute("type"), "number", "the inert draft preview follows the numeric field type");
   assert.equal(await preview.getByLabel("Üzenet").isDisabled(), true, "the numeric preview remains inert and cannot submit data");
-  await cards.nth(2).getByLabel("Mezőtípus").selectOption("checkbox");
-  assert.equal(await preview.getByLabel("Üzenet").getAttribute("type"), "checkbox");
+  await cards.nth(2).getByLabel("Mezőtípus").selectOption("slider");
+  const slider = cards.nth(2);
+  assert.equal(await slider.getByLabel("Csúszka minimumértéke").inputValue(), "0");
+  assert.equal(await slider.getByLabel("Csúszka maximumértéke").inputValue(), "100");
+  assert.equal(await slider.getByLabel("Csúszka lépésköze").inputValue(), "1");
+  await slider.getByLabel("Csúszka minimumértéke").fill("0");
+  await slider.getByLabel("Csúszka maximumértéke").fill("20");
+  const stepInput = slider.getByLabel("Csúszka lépésköze");
+  await stepInput.fill("2");
+  await stepInput.press("Tab", { timeout: 1_000 });
+  const sliderPreview = preview.getByLabel("Üzenet");
+  assert.equal(await sliderPreview.getAttribute("type"), "range");
+  assert.equal(await sliderPreview.getAttribute("min"), "0");
+  assert.equal(await sliderPreview.getAttribute("max"), "20");
+  assert.equal(await sliderPreview.getAttribute("step"), "2");
+  assert.equal(await sliderPreview.isDisabled(), true, "the slider preview remains inert");
+  assert.deepEqual(formActions, [], "editing and previewing slider settings never saves or publishes implicitly");
+  assert.equal(publishedVersion, null);
   assert.equal(await preview.getByLabel("Üzenet").isDisabled(), true);
   await cards.nth(1).getByRole("button", { name: "Mező törlése: Név" }).click();
   assert.equal(await cards.nth(1).getByLabel("Mezőcímke").evaluate(element => element === document.activeElement), true,
@@ -211,10 +227,11 @@ test("Forms Inspector preserves field focus and keeps form Save/Publish independ
   assert.equal(await publish.isDisabled(), true, "editing the definition must be saved before it can be published");
   await page.getByRole("button", { name: "Űrlap piszkozat mentése" }).click();
   await page.getByRole("status").filter({ hasText: "Űrlap piszkozat mentve: v2" }).waitFor();
-  assert.deepEqual(storedDefinition.fields.map(field => field.type), ["select", "checkbox"]);
+  assert.deepEqual(storedDefinition.fields.map(field => field.type), ["select", "slider"]);
   assert.deepEqual(storedDefinition.fields.map(field => field.id), ["email", "field-3"],
     "the saved field order persists through explicit save after reordering");
-  assert.equal(storedDefinition.schemaVersion, 2);
+  assert.equal(storedDefinition.schemaVersion, 3);
+  assert.deepEqual({ min: storedDefinition.fields[1].min, max: storedDefinition.fields[1].max, step: storedDefinition.fields[1].step }, { min: 0, max: 20, step: 2 });
   assert.deepEqual(storedDefinition.fields[1].condition, { fieldId: "email", equals: "Első választás" });
   assert.deepEqual(formActions, ["save"]);
   assert.equal(publishedVersion, null, "Save updates only the form draft");

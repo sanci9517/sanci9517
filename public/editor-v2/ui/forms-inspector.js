@@ -1,6 +1,6 @@
 const FIELD_TYPES = Object.freeze([
   ["text", "Rövid szöveg"], ["email", "E-mail"], ["tel", "Telefonszám"], ["url", "Webcím"], ["number", "Szám"], ["textarea", "Hosszú szöveg"],
-  ["select", "Legördülő választás"], ["radio", "Választógombok"], ["date", "Dátum"], ["checkbox", "Jelölőnégyzet"]
+  ["select", "Legördülő választás"], ["radio", "Választógombok"], ["date", "Dátum"], ["checkbox", "Jelölőnégyzet"], ["slider", "Csúszka"]
 ]);
 const clone = value => structuredClone(value);
 const defaultDefinition = () => ({
@@ -131,6 +131,12 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
         const focusFieldId = field.id;
         const previousType = field.type;
         field.type = type.value;
+        if (field.type === "slider") {
+          definition.schemaVersion = 3;
+          field.min ??= 0; field.max ??= 100; field.step ??= 1;
+        } else if (previousType === "slider") {
+          delete field.min; delete field.max; delete field.step;
+        }
         if (previousType !== field.type) {
           const dependent = definition.fields.filter(candidate => candidate.condition?.fieldId === field.id);
           for (const candidate of dependent) delete candidate.condition;
@@ -162,6 +168,16 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
         optionsInput.input.rows = 4;
         optionsInput.input.oninput = () => { field.options = optionsInput.input.value.split("\n").map(value => value.trim()).filter(Boolean).slice(0, 20); refreshConditionValueOptions(field.id); markDirty(); };
         card.append(optionsInput.wrapper);
+      }
+      if (field.type === "slider") {
+        const minInput = control("input", "Csúszka minimumértéke", field.min ?? 0, { type: "number", maxLength: 16 });
+        const maxInput = control("input", "Csúszka maximumértéke", field.max ?? 100, { type: "number", maxLength: 16 });
+        const stepInput = control("input", "Csúszka lépésköze", field.step ?? 1, { type: "number", maxLength: 16 });
+        for (const input of [minInput.input, maxInput.input, stepInput.input]) input.step = "any";
+        minInput.input.onchange = () => { field.min = Number(minInput.input.value); markDirty(); };
+        maxInput.input.onchange = () => { field.max = Number(maxInput.input.value); markDirty(); };
+        stepInput.input.onchange = () => { field.step = Number(stepInput.input.value); markDirty(); };
+        card.append(minInput.wrapper, maxInput.wrapper, stepInput.wrapper);
       }
       const conditionLabel = document.createElement("label"); conditionLabel.className = "form-inspector-field";
       const conditionCaption = document.createElement("span"); conditionCaption.textContent = "Feltételes megjelenítés";
@@ -198,7 +214,7 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
         else {
           const source = definition.fields.find(candidate => candidate.id === conditionSource.value);
           if (source) {
-            definition.schemaVersion = 2;
+            if (definition.schemaVersion < 2) definition.schemaVersion = 2;
             field.condition = { fieldId: source.id, equals: source.type === "checkbox" ? true : (source.options?.[0] || "") };
           }
         }
@@ -208,7 +224,7 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
         const source = definition.fields.find(candidate => candidate.id === conditionSource.value);
         if (!source) return;
         field.condition = { fieldId: source.id, equals: source.type === "checkbox" ? conditionValue.value === "true" : conditionValue.value };
-        definition.schemaVersion = 2; markDirty();
+        if (definition.schemaVersion < 2) definition.schemaVersion = 2; markDirty();
       };
       renderConditionValue();
       conditionLabel.append(conditionCaption, conditionSource, conditionValue);
@@ -393,9 +409,13 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
         wrapper.append(choices);
       } else {
         const control = document.createElement("input");
-        control.type = ({ email: "email", tel: "tel", url: "url", number: "number", date: "date", checkbox: "checkbox" })[type] || "text";
+        control.type = ({ email: "email", tel: "tel", url: "url", number: "number", date: "date", checkbox: "checkbox", slider: "range" })[type] || "text";
         control.setAttribute("aria-label", label);
-        if (control.type !== "checkbox") { control.maxLength = maxLength; control.placeholder = label; }
+        if (type === "slider") {
+          control.min = String(field.min ?? 0); control.max = String(field.max ?? 100); control.step = String(field.step ?? 1);
+          control.value = String((Number(field.min ?? 0) + Number(field.max ?? 100)) / 2);
+        }
+        if (control.type !== "checkbox" && type !== "slider") { control.maxLength = maxLength; control.placeholder = label; }
         wrapper.append(control);
       }
       if (field.helpText) { const help = document.createElement("small"); help.textContent = String(field.helpText); wrapper.append(help); }

@@ -11,7 +11,7 @@ import { execute } from '../../public/editor-v2/core/commands.js';
 
 const formId = '11111111-1111-4111-8111-111111111111';
 const formDefinition = {
-  schemaVersion: 1, name: 'Kapcsolat',
+  schemaVersion: 3, name: 'Kapcsolat',
   fields: [
     { id: 'email', type: 'email', label: 'E-mail', required: true, maxLength: 254 },
     { id: 'message', type: 'textarea', label: 'Üzenet', required: true, maxLength: 2000 },
@@ -21,6 +21,7 @@ const formDefinition = {
     { id: 'event-date', type: 'date', label: 'Időpont', required: true },
     { id: 'phone', type: 'tel', label: 'Telefonszám', required: false, maxLength: 40 },
     { id: 'viewers', type: 'number', label: 'Nézőszám', required: false },
+    { id: 'intensity', type: 'slider', label: 'Intenzitás', required: true, min: 0, max: 10, step: 0.5 },
     { id: 'website', type: 'url', label: 'Weboldal', required: false, maxLength: 2048 }
   ],
   consent: { text: 'Elfogadom az adatkezelési <szabályokat>.', version: 'privacy-v1', privacyUrl: 'https://creator.test/privacy' },
@@ -111,6 +112,16 @@ test('public form renders only data, enforces browser consent and submits first-
   assert.equal(await viewers.getAttribute('type'), 'number', 'number fields use the native numeric input');
   assert.equal(await viewers.getAttribute('step'), 'any', 'number fields accept decimal values without an implicit integer-only constraint');
   await viewers.fill('125.5');
+  const intensity = region.getByLabel('Intenzitás', { exact: true });
+  assert.equal(await intensity.getAttribute('type'), 'range', 'slider fields use a native accessible range control');
+  assert.equal(await intensity.getAttribute('min'), '0');
+  assert.equal(await intensity.getAttribute('max'), '10');
+  assert.equal(await intensity.getAttribute('step'), '0.5');
+  const intensityOutput = region.locator('.creator-form-slider-value');
+  assert.equal(await intensityOutput.getAttribute('for'), await intensity.getAttribute('id'), 'the current value is associated with the range input');
+  assert.equal(await intensityOutput.textContent(), '5', 'the range starts at the midpoint of its configured bounds');
+  await intensity.evaluate(element => { element.value = '6.5'; element.dispatchEvent(new Event('input', { bubbles: true })); });
+  assert.equal(await intensityOutput.textContent(), '6.5', 'the visible output follows user changes without HTML interpretation');
   const website = region.getByLabel('Weboldal', { exact: true });
   assert.equal(await website.getAttribute('type'), 'url', 'URL fields use native browser URL validation');
   assert.equal(await website.getAttribute('maxlength'), '2048');
@@ -125,7 +136,7 @@ test('public form renders only data, enforces browser consent and submits first-
   await region.getByRole('status').filter({ hasText: 'Köszönöm a megkeresést.' }).waitFor();
   assert.equal(f.submissions.length, 1);
   assert.deepEqual(f.submissions[0], {
-    values: { email: 'creator@example.test', message: 'Szia, együttműködnék.', topic: 'Együttműködés', updates: true, contact: 'Telefon', 'event-date': '2024-02-29', phone: '+36 (30) 123-4567', viewers: '125.5', website: 'https://creator.test/portfolio' },
+    values: { email: 'creator@example.test', message: 'Szia, együttműködnék.', topic: 'Együttműködés', updates: true, contact: 'Telefon', 'event-date': '2024-02-29', phone: '+36 (30) 123-4567', viewers: '125.5', intensity: '6.5', website: 'https://creator.test/portfolio' },
     consentAccepted: true,
     website: ''
   });
@@ -134,7 +145,7 @@ test('public form renders only data, enforces browser consent and submits first-
 
 test('conditional public fields clear hidden values, skip hidden requirements, and return to required validation when shown', async t => {
   const conditionalDefinition = structuredClone(formDefinition);
-  conditionalDefinition.schemaVersion = 2;
+  conditionalDefinition.schemaVersion = 3;
   conditionalDefinition.fields.push(
     { id: 'details', type: 'text', label: 'Részletek', required: true, condition: { fieldId: 'topic', equals: 'Egyéb' } },
     { id: 'alternative-contact', type: 'radio', label: 'Másik elérhetőség', required: false, options: ['Hang', 'Chat'], condition: { fieldId: 'topic', equals: 'Egyéb' } }
@@ -150,7 +161,7 @@ test('conditional public fields clear hidden values, skip hidden requirements, a
   await topic.selectOption('Egyéb');
   assert.equal(await detailsWrapper.isVisible(), true, 'the matching source option reveals its field');
   await details.fill('Ezt az adatot nem szabad rejtve beküldeni');
-  const conditionalRadios = region.locator('#creator-form-field-10');
+  const conditionalRadios = region.locator('#creator-form-field-11');
   await conditionalRadios.locator('input[type=radio]').nth(1).check();
   await topic.selectOption('Együttműködés');
   assert.equal(await detailsWrapper.isVisible(), false);

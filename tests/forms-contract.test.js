@@ -33,7 +33,7 @@ test("form definitions normalize only versioned, bounded first-party fields", ()
 
 test("unsupported versions, field types, duplicate IDs, and external actions fail closed", () => {
   const cases = [
-    value => { value.schemaVersion = 3; },
+    value => { value.schemaVersion = 4; },
     value => { value.fields[0].type = "file"; },
     value => { value.fields[1].id = "email"; },
     value => { value.action = "https://attacker.test/collect"; },
@@ -330,6 +330,57 @@ test("number fields accept finite bounded numeric values and reject malformed or
   assert.equal(missing.ok, false);
   assert.equal(missing.code, "FORM_FIELD_REQUIRED");
   assert.equal(missing.fieldId, "viewers");
+});
+
+test("slider fields enforce a versioned finite range and normalize only in-range step-aligned values", () => {
+  const input = validDefinition();
+  input.schemaVersion = 3;
+  input.fields.push({ id: "intensity", type: "slider", label: "Intenzitás", required: true, min: -1, max: 1, step: 0.25 });
+  const normalized = normalizeFormDefinition(input);
+  assert.equal(normalized.ok, true);
+  assert.deepEqual(normalized.value.fields.at(-1), {
+    id: "intensity", type: "slider", label: "Intenzitás", required: true, min: -1, max: 1, step: 0.25
+  });
+
+  for (const [value, expected] of [["-1", -1], ["0.5", 0.5], [1, 1]]) {
+    const accepted = normalizeFormSubmission(normalized.value, {
+      values: { email: "creator@example.com", message: "Szia", intensity: value }, consentAccepted: true
+    });
+    assert.equal(accepted.ok, true, String(value));
+    assert.equal(accepted.value.values.intensity, expected);
+    assert.equal(typeof accepted.value.values.intensity, "number");
+  }
+
+  for (const [value, code] of [["1.25", "FORM_SLIDER_OUT_OF_RANGE"], ["0.3", "FORM_SLIDER_INVALID_STEP"]]) {
+    const rejected = normalizeFormSubmission(normalized.value, {
+      values: { email: "creator@example.com", message: "Szia", intensity: value }, consentAccepted: true
+    });
+    assert.equal(rejected.ok, false, value);
+    assert.equal(rejected.code, code, value);
+    assert.equal(rejected.fieldId, "intensity");
+  }
+
+  const missing = normalizeFormSubmission(normalized.value, {
+    values: { email: "creator@example.com", message: "Szia" }, consentAccepted: true
+  });
+  assert.equal(missing.code, "FORM_FIELD_REQUIRED");
+  assert.equal(missing.fieldId, "intensity");
+
+  const invalidDefinitions = [
+    value => { value.fields.push({ id: "intensity", type: "slider", label: "Intenzitás", required: false, min: 0, max: 10, step: 0 }); },
+    value => { value.fields.push({ id: "intensity", type: "slider", label: "Intenzitás", required: false, min: 10, max: 10, step: 1 }); },
+    value => { value.fields.push({ id: "intensity", type: "slider", label: "Intenzitás", required: false, min: 0, max: 10, step: 3 }); },
+    value => { value.fields.push({ id: "intensity", type: "slider", label: "Intenzitás", required: false, min: 0, max: 1_000_001, step: 1 }); },
+    value => { value.fields.push({ id: "intensity", type: "slider", label: "Intenzitás", required: false, min: 0, max: 10, step: 1, maxLength: 12 }); },
+    value => { value.fields.push({ id: "other", type: "text", label: "Másik mező", required: false, maxLength: 120, min: 0 }); }
+  ];
+  for (const mutate of invalidDefinitions) {
+    const invalid = validDefinition(); invalid.schemaVersion = 3; mutate(invalid);
+    assert.equal(normalizeFormDefinition(invalid).ok, false);
+  }
+  const oldVersion = validDefinition();
+  oldVersion.fields.push({ id: "intensity", type: "slider", label: "Intenzitás", required: false, min: 0, max: 10, step: 1 });
+  assert.equal(normalizeFormDefinition(oldVersion).code, "FORM_SLIDER_SCHEMA_VERSION_REQUIRED");
 });
 
 test("radio and date definitions reject irrelevant limits and option metadata", () => {

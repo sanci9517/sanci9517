@@ -7,12 +7,13 @@
  */
 export const FORM_SCHEMA_VERSION = 1 as const;
 export const CONDITIONAL_FORM_SCHEMA_VERSION = 2 as const;
+export const RANGE_FORM_SCHEMA_VERSION = 3 as const;
 export const MAX_FORM_FIELDS = 24;
 export const MAX_FORM_OPTIONS = 20;
 export const MAX_FORM_DEFINITION_BYTES = 16_384;
 export const MAX_FORM_SUBMISSION_BYTES = 12_288;
 
-export type FormFieldType = "text" | "email" | "tel" | "url" | "number" | "textarea" | "select" | "radio" | "date" | "checkbox";
+export type FormFieldType = "text" | "email" | "tel" | "url" | "number" | "textarea" | "select" | "radio" | "date" | "checkbox" | "slider";
 export type FormFieldCondition = { fieldId: string; equals: string | boolean };
 
 export type FormFieldDefinition = {
@@ -23,11 +24,14 @@ export type FormFieldDefinition = {
   helpText?: string;
   options?: string[];
   maxLength?: number;
+  min?: number;
+  max?: number;
+  step?: number;
   condition?: FormFieldCondition;
 };
 
 export type FormDefinition = {
-  schemaVersion: typeof FORM_SCHEMA_VERSION | typeof CONDITIONAL_FORM_SCHEMA_VERSION;
+  schemaVersion: typeof FORM_SCHEMA_VERSION | typeof CONDITIONAL_FORM_SCHEMA_VERSION | typeof RANGE_FORM_SCHEMA_VERSION;
   name: string;
   fields: FormFieldDefinition[];
   consent: {
@@ -112,7 +116,7 @@ const validPhoneFieldValue = (value: string): boolean => {
 
 export function normalizeFormDefinition(input: unknown): FormValidationResult<FormDefinition> {
   if (!isRecord(input) || !hasOnlyKeys(input, ["schemaVersion", "name", "fields", "consent", "successMessage", "retentionDays"]) ||
-      (input.schemaVersion !== FORM_SCHEMA_VERSION && input.schemaVersion !== CONDITIONAL_FORM_SCHEMA_VERSION)) {
+      (input.schemaVersion !== FORM_SCHEMA_VERSION && input.schemaVersion !== CONDITIONAL_FORM_SCHEMA_VERSION && input.schemaVersion !== RANGE_FORM_SCHEMA_VERSION)) {
     return { ok: false, code: "UNSUPPORTED_FORM_SCHEMA_VERSION" };
   }
   const schemaVersion = input.schemaVersion;
@@ -124,12 +128,12 @@ export function normalizeFormDefinition(input: unknown): FormValidationResult<Fo
   const fields: FormFieldDefinition[] = [];
   const conditions: Array<{ fieldId: string; condition: unknown }> = [];
   for (const raw of input.fields) {
-    if (!isRecord(raw) || !hasOnlyKeys(raw, ["id", "type", "label", "required", "helpText", "options", "maxLength", "condition"]) ||
+    if (!isRecord(raw) || !hasOnlyKeys(raw, ["id", "type", "label", "required", "helpText", "options", "maxLength", "min", "max", "step", "condition"]) ||
         typeof raw.id !== "string" || !/^[a-z][a-z0-9_-]{0,39}$/.test(raw.id) || ids.has(raw.id)) {
       return { ok: false, code: "INVALID_FORM_FIELD_ID" };
     }
     ids.add(raw.id);
-    if (!(["text", "email", "tel", "url", "number", "textarea", "select", "radio", "date", "checkbox"] as unknown[]).includes(raw.type)) {
+    if (!(["text", "email", "tel", "url", "number", "textarea", "select", "radio", "date", "checkbox", "slider"] as unknown[]).includes(raw.type)) {
       return { ok: false, code: "UNSUPPORTED_FORM_FIELD_TYPE", fieldId: raw.id };
     }
     if (!boundedText(raw.label, 120) || typeof raw.required !== "boolean") {
@@ -146,7 +150,7 @@ export function normalizeFormDefinition(input: unknown): FormValidationResult<Fo
     };
     if (raw.helpText !== undefined && raw.helpText.trim()) field.helpText = raw.helpText.trim();
     if (raw.maxLength !== undefined) {
-      if (!Number.isInteger(raw.maxLength) || (raw.maxLength as number) < 1 || (raw.maxLength as number) > (raw.type === "url" ? 2_048 : raw.type === "tel" ? 40 : 4_000) || raw.type === "checkbox" || raw.type === "select" || raw.type === "radio" || raw.type === "date" || raw.type === "number") {
+      if (!Number.isInteger(raw.maxLength) || (raw.maxLength as number) < 1 || (raw.maxLength as number) > (raw.type === "url" ? 2_048 : raw.type === "tel" ? 40 : 4_000) || raw.type === "checkbox" || raw.type === "select" || raw.type === "radio" || raw.type === "date" || raw.type === "number" || raw.type === "slider") {
         return { ok: false, code: "INVALID_FORM_FIELD_LENGTH", fieldId: raw.id };
       }
       field.maxLength = raw.maxLength as number;
@@ -161,12 +165,30 @@ export function normalizeFormDefinition(input: unknown): FormValidationResult<Fo
     } else if (raw.options !== undefined) {
       return { ok: false, code: "UNEXPECTED_FORM_FIELD_OPTIONS", fieldId: raw.id };
     }
+    if (raw.type === "slider") {
+      if (schemaVersion !== RANGE_FORM_SCHEMA_VERSION) return { ok: false, code: "FORM_SLIDER_SCHEMA_VERSION_REQUIRED", fieldId: raw.id };
+      if (typeof raw.min !== "number" || typeof raw.max !== "number" || typeof raw.step !== "number" ||
+          !Number.isFinite(raw.min) || !Number.isFinite(raw.max) || !Number.isFinite(raw.step) ||
+          Math.abs(raw.min) > 1_000_000_000_000 || Math.abs(raw.max) > 1_000_000_000_000 ||
+          raw.max <= raw.min || raw.step <= 0) {
+        return { ok: false, code: "INVALID_FORM_FIELD_RANGE", fieldId: raw.id };
+      }
+      const stepCount = (raw.max - raw.min) / raw.step;
+      if (!Number.isFinite(stepCount) || stepCount > 1_000_000 || Math.abs(stepCount - Math.round(stepCount)) > 1e-8) {
+        return { ok: false, code: "INVALID_FORM_FIELD_RANGE", fieldId: raw.id };
+      }
+      field.min = raw.min;
+      field.max = raw.max;
+      field.step = raw.step;
+    } else if (raw.min !== undefined || raw.max !== undefined || raw.step !== undefined) {
+      return { ok: false, code: "UNEXPECTED_FORM_FIELD_RANGE", fieldId: raw.id };
+    }
     if (raw.condition !== undefined) conditions.push({ fieldId: raw.id, condition: raw.condition });
     fields.push(field);
   }
   for (const { fieldId, condition } of conditions) {
     const target = fields.find(field => field.id === fieldId)!;
-    if (schemaVersion !== CONDITIONAL_FORM_SCHEMA_VERSION || !isRecord(condition) || !hasOnlyKeys(condition, ["fieldId", "equals"]) ||
+    if (schemaVersion < CONDITIONAL_FORM_SCHEMA_VERSION || !isRecord(condition) || !hasOnlyKeys(condition, ["fieldId", "equals"]) ||
         typeof condition.fieldId !== "string" || !/^[a-z][a-z0-9_-]{0,39}$/.test(condition.fieldId)) {
       return { ok: false, code: "INVALID_FORM_FIELD_CONDITION", fieldId };
     }
@@ -246,9 +268,18 @@ export function normalizeFormSubmission(
       values[field.id] = value;
       continue;
     }
-    if (field.type === "number") {
+    if (field.type === "number" || field.type === "slider") {
       const normalized = normalizeNumberFieldValue(value);
       if (normalized === null) return { ok: false, code: "INVALID_FORM_NUMBER", fieldId: field.id };
+      if (field.type === "slider") {
+        if (normalized < field.min! || normalized > field.max!) {
+          return { ok: false, code: "FORM_SLIDER_OUT_OF_RANGE", fieldId: field.id };
+        }
+        const stepPosition = (normalized - field.min!) / field.step!;
+        if (Math.abs(stepPosition - Math.round(stepPosition)) > 1e-8) {
+          return { ok: false, code: "FORM_SLIDER_INVALID_STEP", fieldId: field.id };
+        }
+      }
       values[field.id] = normalized;
       continue;
     }

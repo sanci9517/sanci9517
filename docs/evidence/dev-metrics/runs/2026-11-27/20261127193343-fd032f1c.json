@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261127193343-fd032f1c",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-27T19:33:43.400Z",
+  "finished_at": "2026-11-27T19:53:33.045Z",
+  "wall_seconds": 1190,
+  "paused_seconds": 0,
+  "measured_seconds": 1190,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Implemented bounded slider Forms field; unit, browser and Editor checks pass. Release verification pending exact-SHA CI/deploy.",
+  "evidence": [
+    "tests/forms-contract.test.js",
+    "tests/browser/editor-form-public-page.test.js",
+    "tests/browser/editor-forms-inspector.test.js"
+  ],
+  "checks": "test:forms PASS; test:forms:browser PASS; test:editor PASS 25/25; typecheck PASS; cache/plan/traceability PASS; D1 SELECT-only; Wrangler dry-run PASS",
+  "started_revision": "af2483c4e8a3787359bba251861eaba5d250373b",
+  "finished_revision": "af2483c4e8a3787359bba251861eaba5d250373b",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
