@@ -2,7 +2,7 @@
   "schema_version": 1,
   "evidence_id": "editor-d06-forms-validation-edt039-submit-2026-11-27",
   "plan_point": "77.44.7.D / D-06 — Forms accessibility and EDT-039 safe submit result action",
-  "status": "RUNTIME DEPLOYED AND EXACT-SHA PRODUCTION SMOKE PASSED; exact-SHA Editor Core CI remains IN_PROGRESS.",
+  "status": "RUNTIME DEPLOYED AND EXACT-SHA PRODUCTION SMOKE PASSED; exact-SHA Editor Core CI later FAILED at one unrelated flaky browser layout assertion.",
   "scope": "Adds accessible public form validation feedback and a constrained same-page action that runs only after successful public submission. This is a D-06/EDT-039 partial feature slice and does not close D-06, the D-block, the complete Visual Editor, or final acceptance.",
   "branch": "v2/foundation",
   "base_sha": "9b072ed76ef14ba7513b7fbcfcd601b12f74323a",
@@ -110,6 +110,11 @@
       "command": "npm run test:editor:layout",
       "result": "PARTIAL",
       "summary": "Locally stopped intentionally after 24 of 62 serial browser files passed without failures; the complete 62-file matrix is running on the exact runtime SHA in hosted Editor Core CI, so no local full-suite PASS is claimed."
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-name-pattern='keyboard dock resizing follows the physical track after separate docks are reordered' tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS",
+      "summary": "1/1 isolated replay passed after the full 2c Editor Core run failed once; the full run remains recorded as FAILURE."
     }
   ],
   "production_preflight": {
@@ -162,8 +167,8 @@
       {
         "name": "Editor Core Test",
         "run_id": 46038154728,
-        "status": "in_progress",
-        "conclusion": null,
+        "status": "completed",
+        "conclusion": "failure",
         "url": "https://github.com/sanci9517/sanci9517/actions/runs/46038154728"
       },
       {
@@ -195,6 +200,16 @@
       "exact_source_sha": "2c530668c78df688ad40dc28bc23373db9b7758b",
       "changed_public_assets_sha256_match": true,
       "url": "https://github.com/sanci9517/sanci9517/actions/runs/46038154749"
+    },
+    "editor_core_failure_follow_up": {
+      "run_id": 46038154728,
+      "job_id": 140638766763,
+      "conclusion": "failure",
+      "failed_step": "Run Editor browser layout regression (step 16 of the editor-core job).",
+      "failed_assertion": "tests/browser/editor-workspace-appearance.test.js:2402, keyboard dock resizing follows the physical track after separate docks are reordered; actual width 310, expected 326.",
+      "other_ci_steps": "All earlier steps 1-15, including typecheck, Editor unit, Forms schema/routes, Forms Chromium, offline D1 checks, R2 media tests and showcase tests, succeeded; later steps skipped after the failure.",
+      "isolated_local_replay": "The targeted Chromium assertion was rerun locally and passed 1/1. This does not replace or turn the failed full hosted run into PASS.",
+      "isolated_local_replay_command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-name-pattern='keyboard dock resizing follows the physical track after separate docks are reordered' tests/browser/editor-workspace-appearance.test.js"
     }
   },
   "acceptance": {
@@ -203,6 +218,6 @@
     "complete_visual_editor": "OPEN / NOT CERTIFIED",
     "manual_physical_acceptance": "DEFERRED until all planned Editor functionality is implemented",
     "save_publish": "separate and unchanged",
-    "exact_sha_editor_core_ci": "IN_PROGRESS / NOT CERTIFIED; 24/62 local layout files completed with zero observed failures, full hosted matrix still running."
+    "exact_sha_editor_core_ci": "FAILED / NOT CERTIFIED; run 46038154728 failed only at the keyboard dock resizing assertion in tests/browser/editor-workspace-appearance.test.js:2402 (310px actual vs 326px expected); targeted local Chromium replay 1/1 passed; no complete hosted Editor Core PASS is claimed."
   }
 }

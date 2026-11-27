@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261127171842-a2ead6dc",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-27T17:18:42.323Z",
+  "finished_at": "2026-11-27T17:51:22.549Z",
+  "wall_seconds": 1960,
+  "paused_seconds": 0,
+  "measured_seconds": 1960,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Implemented and deployed the planned Forms number field with regression coverage; exact-SHA health and asset smoke and Cloudflare Build pass; Editor Core hosted workflow remains in progress, so full Editor acceptance is open.",
+  "evidence": [
+    "docs/evidence/editor-d06-form-number-field-2026-11-27.json",
+    "docs/evidence/editor-d06-forms-validation-edt039-submit-2026-11-27.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "Forms unit 5/5 files; Forms Chromium 6/6; Editor unit 25/25; typecheck; plan 17/17; crosswalk 396/396; canonical and active-point checks; D1 SELECT-only preflight; Wrangler dry-run; targeted prior flaky layout replay 1/1; source smoke PASS; Editor Core IN_PROGRESS.",
+  "started_revision": "20415af0459c8f10cbd1ba119e029ed4de3ca3ba",
+  "finished_revision": "20415af0459c8f10cbd1ba119e029ed4de3ca3ba",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

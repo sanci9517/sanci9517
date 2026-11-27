@@ -1,0 +1,204 @@
+{
+  "schema_version": 1,
+  "evidence_id": "editor-d06-form-number-field-2026-11-27",
+  "plan_point": "77.44.7.D / D-06 — Forms number field",
+  "status": "RUNTIME DEPLOYED; exact-SHA production smoke PASSED; Editor Core CI IN_PROGRESS at evidence capture.",
+  "scope": "Implements the already-planned number Forms field end to end in Inspector, preview, public renderer and server normalization. Partial D-06 work only; does not certify the complete Editor.",
+  "branch": "v2/foundation",
+  "base_sha": "1553a857e5bbe78504f3ffac7ec365cfa153ea1c",
+  "runtime_commit": "2bb9c8dd282ca202a4820557d9644f775a937e35",
+  "github_ref_readback": "refs/heads/v2/foundation resolved to runtime_commit after an expected-head, non-forced fast-forward update.",
+  "features": [
+    {
+      "summary": "The versioned Forms Inspector offers the planned number field type and renders it as a native disabled input in the inert draft preview.",
+      "acceptance": "The Inspector browser regression asserts number input type, step any, and no text maxLength control."
+    },
+    {
+      "summary": "The public form uses native input[type=number] with step=any, so decimal submissions remain available. The service accepts finite decimal/exponent representations and stores a normalized number.",
+      "acceptance": "Route/browser regression confirms 125.5 reaches storage as a numeric value, not a string."
+    },
+    {
+      "summary": "The contract rejects malformed, hexadecimal, NaN, Infinity, oversized and out-of-range values; number fields reject maxLength. Blank optional values are omitted and required-number blanks use the existing required validation.",
+      "acceptance": "Unit tests cover positive, negative, decimal, exponent, boundary, malformed, unsafe, optional blank and required behavior."
+    }
+  ],
+  "files": {
+    "runtime": [
+      "public/assets/page-renderer.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html",
+      "public/editor-v2/ui/forms-inspector.js",
+      "public/visual-page.html",
+      "src/core/forms-contract.ts"
+    ],
+    "tests": [
+      "tests/forms-contract.test.js",
+      "tests/forms-routes.test.js",
+      "tests/browser/editor-form-public-page.test.js",
+      "tests/browser/editor-forms-inspector.test.js",
+      "tests/editor-public-asset-cache-bust.test.js"
+    ],
+    "documentation_follow_up": [
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+      "docs/evidence/feature-traceability.json",
+      "docs/evidence/editor-d06-form-number-field-2026-11-27.json",
+      "docs/evidence/editor-d06-forms-validation-edt039-submit-2026-11-27.json"
+    ]
+  },
+  "public_asset_sha256": {
+    "public/assets/page-renderer.js": "76fabcb48f44486011b672b0e916dfe873d246293326243ac1421965b884d7ab",
+    "public/editor-v2/app.js": "18cd5601d3caf6cde435995489c013a8b518a2a771e92249b29c1a8ee253d746",
+    "public/editor-v2/index.html": "2bc8285d0d69ae31bb270404147b10739a65d56986d1adf660a45f168277b301",
+    "public/editor-v2/ui/forms-inspector.js": "083b0e6346c9631fa620fb6486aa8349122adb4cc1b6ff9e0e81ffae9293c4fa",
+    "public/visual-page.html": "e4d8754effd08340e90045634f031331b41e6df14c6722239876cdd6bc6008e5"
+  },
+  "checks": [
+    {
+      "command": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/forms-contract.test.js tests/forms-migration-candidate.test.js tests/forms-migration-release.test.js tests/forms-retention.test.js tests/forms-routes.test.js",
+      "result": "PASS",
+      "summary": "5/5 Forms unit test files."
+    },
+    {
+      "command": "npm run test:forms:browser",
+      "result": "PASS",
+      "summary": "6/6 Chromium tests across public Forms, Forms Inspector and Admin inbox; first sandbox-denied loopback attempt was rerun with authorized network permissions and passed."
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "summary": "25/25 Editor unit test files, including page interaction registry and cache contracts."
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "node tests/editor-public-asset-cache-bust.test.js",
+      "result": "PASS",
+      "summary": "3/3 tests; entry HTML version now points to the Number-enabled app.js."
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "summary": "17/17 tests before evidence-only canonical status update; rerun in documentation follow-up."
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "summary": "396/396 source mappings, regenerated after the Number implementation and validated again after plan evidence update."
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "summary": "Complete 13-file canonical master contract before the appended evidence note; rerun in documentation follow-up."
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "summary": "Cursor 77.44 / WEB-011, next 77.44.7.D, 396 mappings; acceptance NOT CERTIFIED."
+    },
+    {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS"
+    },
+    {
+      "command": "node --check public/assets/page-renderer.js && node --check public/editor-v2/ui/forms-inspector.js && git diff --check",
+      "result": "PASS"
+    },
+    {
+      "command": "XDG_CONFIG_HOME=/tmp/codex-wrangler-config npx wrangler deploy --dry-run",
+      "result": "PASS",
+      "summary": "Wrangler 4.130.0 read 206 assets; 480.49 KiB, 119.12 KiB gzip; dry-run exited without deployment."
+    }
+  ],
+  "production_preflight": {
+    "method": "Cloudflare D1 Query API; two SELECT-only statements.",
+    "statements": [
+      "SELECT type, COUNT(*) AS count FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' GROUP BY type ORDER BY type",
+      "SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 5"
+    ],
+    "object_counts": {
+      "indexes": 45,
+      "tables": 37,
+      "triggers": 29
+    },
+    "latest_migration": "0032_forms_service.sql",
+    "size_after_bytes": 3883008,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "production_mutation": {
+    "d1_write_or_migration": false,
+    "r2_operation": false,
+    "new_dependency": false,
+    "save_publish_separation_changed": false,
+    "new_cost_huf": 0
+  },
+  "release": {
+    "runtime_commit": "2bb9c8dd282ca202a4820557d9644f775a937e35",
+    "cloudflare_build": {
+      "id": "3876bf32-36eb-4c2b-be31-20eed7a8e69b",
+      "source_sha": "2bb9c8dd282ca202a4820557d9644f775a937e35",
+      "branch": "v2/foundation",
+      "build_outcome": "success",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "deployment": {
+      "id": "bffb086a-6a38-4f88-a1eb-9281ad6f48b5",
+      "worker_version": "170f36ae-c4c5-43a2-bb94-7948d2830d6d",
+      "version_number": 4226,
+      "traffic_percent": 100,
+      "created_on": "2026-11-27T17:45:16.972961Z"
+    },
+    "source_smoke": {
+      "run_id": 46044185445,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/46044185445",
+      "status": "success",
+      "health_http": 200,
+      "exact_source_sha": "2bb9c8dd282ca202a4820557d9644f775a937e35",
+      "changed_public_asset_sha256_match": true
+    },
+    "workflow_runs": [
+      {
+        "name": "F0 baseline checks",
+        "run_id": 46044185587,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Twitch Integration Check",
+        "run_id": 46044185449,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Production Worker source smoke",
+        "run_id": 46044185445,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Editor Core Test",
+        "run_id": 46044185458,
+        "status": "in_progress",
+        "conclusion": null
+      }
+    ],
+    "previous_runtime_editor_core_run": {
+      "source_sha": "2c530668c78df688ad40dc28bc23373db9b7758b",
+      "run_id": 46038154728,
+      "conclusion": "failure",
+      "failed_step": "Editor browser layout regression, one keyboard dock resizing assertion in tests/browser/editor-workspace-appearance.test.js:2402 reported 310px actual versus 326px expected; preceding steps 1-15 succeeded; targeted local Chromium replay passed 1/1."
+    }
+  },
+  "acceptance": {
+    "d06": "OPEN / NOT CERTIFIED",
+    "d01_d07": "OPEN / NOT CERTIFIED",
+    "complete_visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until planned Editor functionality is implemented",
+    "save_publish": "separate and unchanged",
+    "exact_sha_editor_core_ci": "IN_PROGRESS / NOT CERTIFIED"
+  }
+}
