@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task": "77.44.7.D / D-06 — Forms e-mail address contract",
   "date_utc": "2026-11-27",
-  "status": "IMPLEMENTED_AND_LOCALLY_VERIFIED; RELEASE_PENDING",
+  "status": "RELEASED_AND_EXACT_SOURCE_VERIFIED; EDITOR_CORE_CI_IN_PROGRESS; D06_OPEN_NOT_CERTIFIED",
   "baseline": {
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
@@ -83,11 +83,43 @@
     }
   },
   "release": {
-    "runtime_commit": "PENDING",
-    "github_ci": "PENDING",
-    "cloudflare_deployment": "PENDING",
-    "exact_sha_production_health": "PENDING",
-    "modified_asset_hashes": "PENDING",
-    "documentation_followup": "PENDING; use [skip ci] and do not create a redundant Worker deployment"
+    "runtime_commit": "8bf6883fb36166a454b86d46b0de7422e6e9527c",
+    "github_ci": {
+      "completed_workflows": "5/6 successful on exact runtime SHA (canonical plan, active-point audit, Twitch integration, F0 baseline, production smoke)",
+      "editor_core": {
+        "run_id": 46069444163,
+        "status": "in_progress",
+        "completed_steps": 15,
+        "current_step": "Run Editor browser layout regression",
+        "failed_steps": 0
+      },
+      "cloudflare_build_check": "SUCCESS — exact source SHA, build b9f7180a-c2a4-43d8-af3f-598f104066ca"
+    },
+    "cloudflare_deployment": {
+      "deployment_id": "ac21cede-883d-4f58-9b7e-20b39be88ec2",
+      "worker_version_id": "0a6cd274-c538-4c99-8423-9b69b92ffa4a",
+      "traffic_percent": 100,
+      "source_sha": "8bf6883fb36166a454b86d46b0de7422e6e9527c",
+      "build_check_id": 140743116645
+    },
+    "exact_sha_production_health": {
+      "status": "PASS",
+      "workflow_run_id": 46069444127,
+      "http_status": 200,
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?release=8bf6883fb36166a454b86d46b0de7422e6e9527c",
+      "result": "Smoke step verified exact deployed source SHA-256 bytes for the public asset set after propagation; all checks passed."
+    },
+    "modified_asset_hashes": {
+      "public/assets/page-renderer.js": "4200c46e604a4055dcdcbab097076e4a1c5600ebce050014b50ef196fded24f2",
+      "public/editor-v2/ui/forms-inspector.js": "e706c6951b57ef7de88517247ff686e6062009d2a92f7e2344a76495b54d8dc1",
+      "verification": "Exact-source production smoke PASS; the two asset bytes match their source SHA-256."
+    },
+    "documentation_followup": "This verified release record is being pushed as docs-only [skip ci]; no redundant Worker deployment."
+  },
+  "development_metrics": {
+    "session_id": "20261127205842-f98feaf6",
+    "status": "partial",
+    "measured_seconds": 1615,
+    "archive": "docs/evidence/dev-metrics/runs/2026-11-27/20261127205842-f98feaf6.json"
   }
 }

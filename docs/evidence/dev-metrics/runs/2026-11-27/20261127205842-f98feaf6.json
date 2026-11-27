@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261127205842-f98feaf6",
+  "task": "77.44.7.D-email-validation",
+  "trigger": "manual",
+  "started_at": "2026-11-27T20:58:42.153Z",
+  "finished_at": "2026-11-27T21:25:36.961Z",
+  "wall_seconds": 1615,
+  "paused_seconds": 0,
+  "measured_seconds": 1615,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Implemented and released D-06 Forms email validation at exact SHA; targeted tests and production smoke pass, hosted Editor Core workflow is still in progress.",
+  "evidence": [
+    "docs/evidence/editor-d06-email-validation-2026-11-27.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "77455b92ab6921546ecf9d09c59184f2bcbc45b4",
+  "finished_revision": "8bf6883fb36166a454b86d46b0de7422e6e9527c",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
