@@ -325,7 +325,7 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
    const fieldWrappers=new Map();
    for(const [fieldIndex,field] of definition.fields.entries()){
     const label=document.createElement(field.type==='checkbox'||field.type==='radio'?'div':'label');label.className='creator-form-field';
-    const fieldDomId='creator-form-field-'+fieldIndex;label.id=fieldDomId;fieldWrappers.set(field.id,label);
+     const fieldDomId='creator-form-field-'+fieldIndex;label.id=fieldDomId;fieldWrappers.set(field.id,label);
     const caption=document.createElement(field.type==='radio'?'legend':'span');caption.textContent=field.label;label.append(caption);if(field.type==='radio'){label.className='creator-form-radio-group';label.setAttribute('role','group')}
     let control;
     if(field.type==='textarea')control=document.createElement('textarea');
@@ -369,12 +369,37 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
     if(validity.tooLong)return `A(z) „${label}” mező legfeljebb ${control.maxLength} karakter lehet.`;
     return `A(z) „${label}” mező értéke nem megfelelő.`;
    };
-   const updateValidationErrors=({focus=false}={})=>{
-    const errors=[];
-    const clearError=(wrapper,controls)=>{
+    const conditionValue=(field)=>{
+     const source=definition.fields.find(candidate=>candidate.id===field.condition?.fieldId);
+     if(!source)return undefined;
+     const control=fieldControls.get(source.id);
+     if(source.type==='checkbox')return control?.checked===true;
+     if(source.type==='radio')return control?.querySelector('input[type="radio"]:checked')?.value||'';
+     return control?.value||'';
+    };
+    const clearFieldError=(wrapper,controls)=>{
      wrapper.querySelector('.creator-form-field-error')?.remove();
      for(const control of controls){control.removeAttribute('aria-invalid');const ids=(control.getAttribute('aria-describedby')||'').split(/\s+/).filter(id=>id&&id!==wrapper.id+'-error');if(ids.length)control.setAttribute('aria-describedby',ids.join(' '));else control.removeAttribute('aria-describedby')}
     };
+    const updateConditionalFields=()=>{
+     for(const field of definition.fields){
+      if(!field.condition)continue;
+      const wrapper=fieldWrappers.get(field.id),control=fieldControls.get(field.id);
+      if(!wrapper||!control)continue;
+      const visible=conditionValue(field)===field.condition.equals;
+      wrapper.hidden=!visible;
+      const controls=control.classList?.contains('creator-form-radio-group')?[...control.querySelectorAll('input[type="radio"]')]:[control];
+      for(const item of controls){
+       item.disabled=!visible;
+       if(!visible){if(item.type==='checkbox'||item.type==='radio')item.checked=false;else item.value='';}
+      }
+      if(!visible)clearFieldError(wrapper,controls);
+     }
+    };
+    updateConditionalFields();
+    const updateValidationErrors=({focus=false}={})=>{
+    const errors=[];
+     const clearError=clearFieldError;
     const addError=(id,label,wrapper,controls,target)=>{
      clearError(wrapper,controls);
      const error=document.createElement('small');error.className='creator-form-field-error';error.id=wrapper.id+'-error';error.setAttribute('aria-live','polite');error.textContent=validationMessage(target,label);wrapper.append(error);
@@ -383,6 +408,7 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
     };
     for(const [fieldId,wrapper] of fieldWrappers){
      const value=fieldControls.get(fieldId),controls=value?.classList?.contains('creator-form-radio-group')?[...value.querySelectorAll('input[type="radio"]')]:[value];
+      if(wrapper.hidden){clearError(wrapper,controls);continue;}
      const invalid=controls.find(control=>control&&!control.validity.valid);
      if(invalid)addError(fieldId,definition.fields.find(field=>field.id===fieldId)?.label||fieldId,wrapper,controls,invalid);else clearError(wrapper,controls);
     }
@@ -393,11 +419,11 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
     if(focus&&errors.length)errorSummary.focus();
     return errors.length===0;
    };
-   form.addEventListener('input',()=>{if(!errorSummary.hidden)updateValidationErrors()});
-   form.addEventListener('change',()=>{if(!errorSummary.hidden)updateValidationErrors()});
+    form.addEventListener('input',()=>{updateConditionalFields();if(!errorSummary.hidden)updateValidationErrors()});
+    form.addEventListener('change',()=>{updateConditionalFields();if(!errorSummary.hidden)updateValidationErrors()});
    form.addEventListener('submit',async event=>{
-    event.preventDefault();if(!form.checkValidity()){updateValidationErrors({focus:true});return}updateValidationErrors();submit.disabled=true;status.textContent='Küldés…';
-    const values=Object.fromEntries([...fieldControls].map(([id,control])=>[id,control.classList?.contains('creator-form-radio-group')?(control.querySelector('input:checked')?.value||''):control.type==='checkbox'?control.checked:control.value]));
+     event.preventDefault();updateConditionalFields();if(!form.checkValidity()){updateValidationErrors({focus:true});return}updateValidationErrors();submit.disabled=true;status.textContent='Küldés…';
+     const values=Object.fromEntries([...fieldControls].filter(([id])=>!fieldWrappers.get(id)?.hidden).map(([id,control])=>[id,control.classList?.contains('creator-form-radio-group')?(control.querySelector('input:checked')?.value||''):control.type==='checkbox'?control.checked:control.value]));
     try{
      const result=await fetch('/api/public/forms?formId='+encodeURIComponent(formId)+'&pageId='+encodeURIComponent(pageId),{
       method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},
@@ -405,7 +431,7 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
      });
      const resultPayload=await result.json().catch(()=>null);
      if(!result.ok||resultPayload?.ok!==true)throw new Error(result.status===429?'Túl sok beküldés érkezett. Próbáld újra később.':'A beküldést most nem tudtuk fogadni. Ellenőrizd az adatokat, majd próbáld újra.');
-     form.reset();status.textContent=typeof resultPayload.data?.message==='string'?resultPayload.data.message:'Köszönöm, a beküldés megérkezett.';
+      form.reset();updateConditionalFields();status.textContent=typeof resultPayload.data?.message==='string'?resultPayload.data.message:'Köszönöm, a beküldés megérkezett.';
      emitAcceptedPublicFormSubmission(form);
     }catch(error){status.textContent=error?.message||'A beküldés most nem sikerült. Próbáld újra később.'}
     finally{submit.disabled=false}

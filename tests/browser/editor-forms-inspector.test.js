@@ -139,6 +139,20 @@ test("Forms Inspector preserves field focus and keeps form Save/Publish independ
   assert.equal(await preview.getByLabel('E-mail "creator"').isDisabled(), true);
   assert.equal(await preview.getByLabel('E-mail "creator"').locator("option").nth(1).textContent(), "Első választás");
 
+  const conditionalField = cards.nth(2);
+  await conditionalField.getByLabel("Feltétel forrása").selectOption("email");
+  assert.equal(await conditionalField.getByLabel("Feltétel értéke").inputValue(), "Első választás");
+  assert.match(await preview.locator(".form-inspector-preview-field").nth(2).textContent(), /Csak akkor jelenik meg: E-mail "creator" = Első választás/);
+  assert.equal(await page.getByRole("button", { name: "Űrlap publikálása" }).isDisabled(), true,
+    "a new conditional rule remains an unsaved form draft");
+  await cards.nth(0).getByLabel("Mezőtípus").selectOption("checkbox");
+  assert.equal(await page.locator(".form-inspector-field-card").nth(2).getByLabel("Feltétel forrása").inputValue(), "",
+    "changing a source into an unsupported type clears dependent rules instead of leaving an invalid schema");
+  await page.getByRole("status").filter({ hasText: "mezők feltételeit újra be kell állítani" }).waitFor();
+  await cards.nth(0).getByLabel("Mezőtípus").selectOption("select");
+  await page.locator(".form-inspector-field-card").nth(2).getByLabel("Feltétel forrása").selectOption("email");
+  await cards.nth(2).getByLabel("Feltétel értéke").selectOption("Első választás");
+
   await cards.nth(1).getByLabel("Mezőtípus").selectOption("radio");
   const radioOptions = cards.nth(1).getByLabel("Választások (soronként egy)");
   assert.equal(await radioOptions.count(), 1, "radio fields share the bounded option editor");
@@ -200,6 +214,8 @@ test("Forms Inspector preserves field focus and keeps form Save/Publish independ
   assert.deepEqual(storedDefinition.fields.map(field => field.type), ["select", "checkbox"]);
   assert.deepEqual(storedDefinition.fields.map(field => field.id), ["email", "field-3"],
     "the saved field order persists through explicit save after reordering");
+  assert.equal(storedDefinition.schemaVersion, 2);
+  assert.deepEqual(storedDefinition.fields[1].condition, { fieldId: "email", equals: "Első választás" });
   assert.deepEqual(formActions, ["save"]);
   assert.equal(publishedVersion, null, "Save updates only the form draft");
   assert.deepEqual(pageDraft.props, { formId, formBindingVersion: 1 });

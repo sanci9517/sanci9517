@@ -87,12 +87,39 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
         .find(control => control.getAttribute("aria-label") === controlName);
       target?.focus();
     };
+    const conditionValueInputs = new Map();
+    const refreshConditionValueOptions = sourceId => {
+      const source = definition.fields.find(candidate => candidate.id === sourceId);
+      if (!source) return;
+      for (const target of definition.fields) {
+        if (target.condition?.fieldId !== sourceId) continue;
+        const input = conditionValueInputs.get(target.id);
+        if (!input) continue;
+        const previous = target.condition.equals;
+        input.replaceChildren();
+        const choices = source.type === "checkbox" ? [["true", "Bejelölve"], ["false", "Nincs bejelölve"]] :
+          (source.options || []).map(value => [value, value]);
+        for (const [value, label] of choices) {
+          const option = document.createElement("option"); option.value = value; option.textContent = label; input.append(option);
+        }
+        if (!choices.some(([value]) => String(value) === String(previous))) {
+          const invalid = document.createElement("option"); invalid.value = String(previous); invalid.textContent = "Korábbi választás — válassz érvényes értéket"; input.append(invalid);
+        }
+        input.value = String(previous);
+      }
+    };
     definition.fields.forEach((field, index) => {
       const card = document.createElement("fieldset"); card.className = "form-inspector-field-card";
       card.dataset.formFieldId = field.id;
       const legend = document.createElement("legend"); legend.textContent = `Mező ${index + 1}`; card.append(legend);
       const idInput = control("input", "Belső mezőazonosító", field.id, { maxLength: 40 });
-      idInput.input.onchange = () => { field.id = idInput.input.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, "-").replace(/^[^a-z]+/, "field-").slice(0, 40); idInput.input.value = field.id; card.dataset.formFieldId = field.id; markDirty(); };
+      idInput.input.onchange = () => {
+        const previousId = field.id;
+        field.id = idInput.input.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, "-").replace(/^[^a-z]+/, "field-").slice(0, 40);
+        idInput.input.value = field.id; card.dataset.formFieldId = field.id;
+        for (const candidate of definition.fields) if (candidate.condition?.fieldId === previousId) candidate.condition.fieldId = field.id;
+        markDirty();
+      };
       const labelInput = control("input", "Mezőcímke", field.label, { maxLength: 120 });
       labelInput.input.oninput = () => { field.label = labelInput.input.value; markDirty(); };
       const typeLabel = document.createElement("label"); typeLabel.className = "form-inspector-field";
@@ -102,7 +129,13 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
       type.value = field.type;
       type.onchange = () => {
         const focusFieldId = field.id;
+        const previousType = field.type;
         field.type = type.value;
+        if (previousType !== field.type) {
+          const dependent = definition.fields.filter(candidate => candidate.condition?.fieldId === field.id);
+          for (const candidate of dependent) delete candidate.condition;
+          if (dependent.length) announce("A feltétel forrásának típusa megváltozott; az érintett mezők feltételeit újra be kell állítani.");
+        }
         if ((field.type === "select" || field.type === "radio") && !field.options?.length) field.options = ["Első választás"];
         if (field.type !== "select" && field.type !== "radio") delete field.options;
         if (["text", "email", "tel", "url", "textarea"].includes(field.type)) {
@@ -127,9 +160,61 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
       if (field.type === "select" || field.type === "radio") {
         const optionsInput = control("textarea", "Választások (soronként egy)", (field.options || []).join("\n"), { maxLength: 2_400 });
         optionsInput.input.rows = 4;
-        optionsInput.input.oninput = () => { field.options = optionsInput.input.value.split("\n").map(value => value.trim()).filter(Boolean).slice(0, 20); markDirty(); };
+        optionsInput.input.oninput = () => { field.options = optionsInput.input.value.split("\n").map(value => value.trim()).filter(Boolean).slice(0, 20); refreshConditionValueOptions(field.id); markDirty(); };
         card.append(optionsInput.wrapper);
       }
+      const conditionLabel = document.createElement("label"); conditionLabel.className = "form-inspector-field";
+      const conditionCaption = document.createElement("span"); conditionCaption.textContent = "Feltételes megjelenítés";
+      const conditionSource = document.createElement("select"); conditionSource.setAttribute("aria-label", "Feltétel forrása");
+      const noCondition = document.createElement("option"); noCondition.value = ""; noCondition.textContent = "Mindig látható"; conditionSource.append(noCondition);
+      const conditionSources = definition.fields.filter(candidate => candidate.id !== field.id && !candidate.condition && ["select", "radio", "checkbox"].includes(candidate.type));
+      for (const candidate of conditionSources) {
+        const option = document.createElement("option"); option.value = candidate.id; option.textContent = `${candidate.label} (${candidate.id})`; conditionSource.append(option);
+      }
+      if (field.condition && !conditionSources.some(candidate => candidate.id === field.condition.fieldId)) {
+        const invalid = document.createElement("option"); invalid.value = field.condition.fieldId; invalid.textContent = "Érvénytelen forrás — válassz újat"; conditionSource.append(invalid);
+      }
+      conditionSource.value = field.condition?.fieldId || "";
+      const conditionValue = document.createElement("select"); conditionValue.setAttribute("aria-label", "Feltétel értéke");
+      const renderConditionValue = () => {
+        conditionValue.replaceChildren();
+        const source = definition.fields.find(candidate => candidate.id === conditionSource.value);
+        if (!source) { conditionValue.disabled = true; return; }
+        conditionValue.disabled = false;
+        const choices = source.type === "checkbox" ? [["true", "Bejelölve"], ["false", "Nincs bejelölve"]] :
+          (source.options || []).map(value => [value, value]);
+        for (const [value, label] of choices) {
+          const option = document.createElement("option"); option.value = value; option.textContent = label; conditionValue.append(option);
+        }
+        const current = field.condition?.fieldId === source.id ? field.condition.equals : (source.type === "checkbox" ? true : source.options?.[0]);
+        if (current !== undefined && !choices.some(([value]) => String(value) === String(current))) {
+          const invalid = document.createElement("option"); invalid.value = String(current); invalid.textContent = "Korábbi választás — válassz érvényes értéket"; conditionValue.append(invalid);
+        }
+        if (current !== undefined) conditionValue.value = String(current);
+      };
+      conditionValueInputs.set(field.id, conditionValue);
+      conditionSource.onchange = () => {
+        if (!conditionSource.value) delete field.condition;
+        else {
+          const source = definition.fields.find(candidate => candidate.id === conditionSource.value);
+          if (source) {
+            definition.schemaVersion = 2;
+            field.condition = { fieldId: source.id, equals: source.type === "checkbox" ? true : (source.options?.[0] || "") };
+          }
+        }
+        markDirty(); renderEditor(); focusFieldControl(field.id, "Feltétel forrása");
+      };
+      conditionValue.onchange = () => {
+        const source = definition.fields.find(candidate => candidate.id === conditionSource.value);
+        if (!source) return;
+        field.condition = { fieldId: source.id, equals: source.type === "checkbox" ? conditionValue.value === "true" : conditionValue.value };
+        definition.schemaVersion = 2; markDirty();
+      };
+      renderConditionValue();
+      conditionLabel.append(conditionCaption, conditionSource, conditionValue);
+      const conditionHelp = document.createElement("small"); conditionHelp.className = "form-inspector-preview-notice";
+      conditionHelp.textContent = "Csak a saját űrlap egy nem feltételes választó- vagy jelölőmezője lehet forrás. A rejtett mező értéke nem küldhető be.";
+      card.append(conditionLabel, conditionHelp);
       const remove = document.createElement("button"); remove.type = "button"; remove.textContent = "Mező törlése"; remove.setAttribute("aria-label", `Mező törlése: ${field.label}`);
       remove.disabled = definition.fields.length <= 1;
       const orderActions = document.createElement("div"); orderActions.className = "form-inspector-field-order-actions";
@@ -151,7 +236,10 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
       };
       orderActions.append(moveUp, moveDown);
       remove.onclick = () => {
+        const dependent = definition.fields.filter(candidate => candidate.condition?.fieldId === field.id);
+        for (const candidate of dependent) delete candidate.condition;
         definition.fields.splice(index, 1); markDirty(); renderEditor();
+        if (dependent.length) announce("A törölt feltételforrás miatt az érintett feltételes mezők feltételei törlődtek.");
         const focusTarget = definition.fields[Math.min(index, definition.fields.length - 1)];
         if (focusTarget) focusFieldControl(focusTarget.id, "Mezőcímke");
       };
@@ -277,7 +365,9 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
       if (!field || typeof field !== "object" || Array.isArray(field)) continue;
       const label = String(field.label || "Mező");
       const wrapper = document.createElement("div"); wrapper.className = "form-inspector-preview-field";
-      const caption = document.createElement("span"); caption.textContent = `${label}${field.required === true ? " · Kötelező" : ""}`;
+    const conditionSource = field.condition ? previewFields.find(candidate => candidate?.id === field.condition.fieldId) : null;
+    const conditionLabel = field.condition ? ` · Csak akkor jelenik meg: ${String(conditionSource?.label || field.condition.fieldId)} = ${String(field.condition.equals)}` : "";
+    const caption = document.createElement("span"); caption.textContent = `${label}${field.required === true ? " · Kötelező" : ""}${conditionLabel}`;
       wrapper.append(caption);
       const type = String(field.type || "text");
       const maxLength = Number.isInteger(field.maxLength) ? Math.max(1, Math.min(4000, field.maxLength)) : 500;

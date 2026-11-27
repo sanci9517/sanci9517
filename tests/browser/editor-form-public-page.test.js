@@ -27,7 +27,8 @@ const formDefinition = {
   successMessage: 'Köszönöm a megkeresést.', retentionDays: 30
 };
 
-async function fixture(t, { withSubmitInteraction = false } = {}) {
+async function fixture(t, { withSubmitInteraction = false, definitionOverride = null } = {}) {
+  const activeDefinition = definitionOverride || formDefinition;
   const document = createDocument();
   const generatedPageId = document.activePageId;
   const pageId = crypto.randomUUID();
@@ -61,12 +62,12 @@ async function fixture(t, { withSubmitInteraction = false } = {}) {
     if (url.pathname === '/api/public/navigation') return json({ ok: true, data: { items: [] } });
     if (url.pathname === '/api/public/presentation') return json({ ok: true, data: { tokens: {} } });
     if (url.pathname === '/api/public/forms') {
-      if (request.method === 'GET') { formGetCount++; return json({ ok: true, data: { id: formId, name: formDefinition.name, version: 1, definition: formDefinition } }); }
+      if (request.method === 'GET') { formGetCount++; return json({ ok: true, data: { id: formId, name: activeDefinition.name, version: 1, definition: activeDefinition } }); }
       if (request.method === 'POST') {
         let body = ''; for await (const chunk of request) body += chunk;
         submissions.push(JSON.parse(body));
         if (submissionOutcome !== 'success') return json({ ok: false, error: { message: 'A beküldés most nem sikerült.' } }, 503);
-        return json({ ok: true, data: { submitted: true, message: formDefinition.successMessage } });
+        return json({ ok: true, data: { submitted: true, message: activeDefinition.successMessage } });
       }
     }
     if (url.pathname.startsWith('/api/')) return json({ ok: true, data: {} });
@@ -129,6 +130,59 @@ test('public form renders only data, enforces browser consent and submits first-
     website: ''
   });
   assert.equal(f.getFormReads(), 1);
+});
+
+test('conditional public fields clear hidden values, skip hidden requirements, and return to required validation when shown', async t => {
+  const conditionalDefinition = structuredClone(formDefinition);
+  conditionalDefinition.schemaVersion = 2;
+  conditionalDefinition.fields.push(
+    { id: 'details', type: 'text', label: 'Részletek', required: true, condition: { fieldId: 'topic', equals: 'Egyéb' } },
+    { id: 'alternative-contact', type: 'radio', label: 'Másik elérhetőség', required: false, options: ['Hang', 'Chat'], condition: { fieldId: 'topic', equals: 'Egyéb' } }
+  );
+  const f = await fixture(t, { definitionOverride: conditionalDefinition });
+  await f.page.goto(f.base + '/p/forms-test');
+  const region = f.page.getByRole('region', { name: 'Írj a Sanci9517-nek' });
+  await region.waitFor();
+  const topic = region.getByLabel('Téma', { exact: true });
+  const details = region.getByLabel('Részletek', { exact: true });
+  const detailsWrapper = details.locator('xpath=ancestor::*[contains(concat(" ", normalize-space(@class), " "), " creator-form-field ")]');
+
+  await topic.selectOption('Egyéb');
+  assert.equal(await detailsWrapper.isVisible(), true, 'the matching source option reveals its field');
+  await details.fill('Ezt az adatot nem szabad rejtve beküldeni');
+  const conditionalRadios = region.locator('#creator-form-field-10');
+  await conditionalRadios.locator('input[type=radio]').nth(1).check();
+  await topic.selectOption('Együttműködés');
+  assert.equal(await detailsWrapper.isVisible(), false);
+  assert.equal(await details.isDisabled(), true, 'a hidden control cannot receive focus or submission');
+  assert.equal(await details.inputValue(), '', 'hiding a field clears its previously entered value');
+  assert.equal(await conditionalRadios.locator('input').nth(1).getAttribute('value'), 'Chat', 'hiding a radio target preserves its schema option value');
+
+  await region.getByRole('textbox', { name: 'E-mail', exact: true }).fill('creator@example.test');
+  await region.getByLabel('Üzenet', { exact: true }).fill('Szia');
+  await region.getByLabel('Kérek híreket', { exact: true }).check();
+  await region.getByRole('group', { name: 'Kapcsolat módja' }).getByLabel('Telefon', { exact: true }).check();
+  await region.getByLabel('Időpont', { exact: true }).fill('2024-02-29');
+  await region.getByLabel('Elfogadom az adatkezelési <szabályokat>.').check();
+  assert.equal(await region.locator('form').evaluate(form => form.checkValidity()), true, 'a hidden required field does not invalidate the visible form');
+  await region.getByRole('button', { name: 'Küldés' }).click();
+  await region.getByRole('status').filter({ hasText: 'Köszönöm a megkeresést.' }).waitFor();
+  assert.equal(f.submissions.length, 1);
+  assert.equal(Object.hasOwn(f.submissions[0].values, 'details'), false, 'hidden values are omitted from the request payload');
+
+  await topic.selectOption('Egyéb');
+  assert.equal(await detailsWrapper.isVisible(), true);
+  assert.equal(await details.inputValue(), '', 'a previously hidden value stays cleared when the field is shown again');
+  assert.equal(await conditionalRadios.locator('input').nth(1).getAttribute('value'), 'Chat');
+  await conditionalRadios.locator('input[type=radio]').nth(1).check();
+  await region.getByRole('textbox', { name: 'E-mail', exact: true }).fill('creator@example.test');
+  await region.getByLabel('Üzenet', { exact: true }).fill('Szia');
+  await region.getByRole('group', { name: 'Kapcsolat módja' }).getByLabel('Telefon', { exact: true }).check();
+  await region.getByLabel('Időpont', { exact: true }).fill('2024-02-29');
+  await region.getByLabel('Elfogadom az adatkezelési <szabályokat>.').check();
+  await region.getByRole('button', { name: 'Küldés' }).click();
+  await region.getByRole('alert').getByRole('link', { name: /Részletek:.*kitöltése kötelező/ }).waitFor();
+  assert.equal(f.submissions.length, 1, 'a shown required field blocks submission until completed');
 });
 
 test('invalid public form exposes a focused accessible error summary and field associations without submitting', async t => {

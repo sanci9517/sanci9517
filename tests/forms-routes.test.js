@@ -84,9 +84,9 @@ async function addSession(db, token, userId) {
     .run(crypto.randomUUID(), userId, await hashSessionToken(token), "2999-01-01T00:00:00.000Z");
 }
 
-function bindPublishedForm(db, { currentRetentionDays = 1 } = {}) {
-  const published = definition(30, "published-v1");
-  const newerDraft = definition(currentRetentionDays, "draft-v2");
+function bindPublishedForm(db, { currentRetentionDays = 1, publishedDefinition, draftDefinition } = {}) {
+  const published = publishedDefinition ?? definition(30, "published-v1");
+  const newerDraft = draftDefinition ?? definition(currentRetentionDays, "draft-v2");
   const document = { pages: { [pageId]: { nodes: { contact: {
     type: "form", props: { formId, formBindingVersion: 1 }
   } } } } };
@@ -137,6 +137,42 @@ test("public submission is bound to the published schema and snapshots its conse
   assert.ok(Date.parse(row.expires_at) > Date.now() + 29 * 86_400_000);
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM form_submission_rate_limits").get().n, 1);
   assert.doesNotMatch(JSON.stringify(db.prepare("SELECT client_hash FROM form_submission_rate_limits").get()), /203\.0\.113\.23/);
+});
+
+test("public v2 Forms accept visible conditional values and reject submitted hidden fields without storing them", async t => {
+  const { db, env } = makeDb();
+  t.after(() => db.close());
+  const published = definition(30, "published-conditional-v2");
+  published.schemaVersion = 2;
+  published.fields.splice(2, 0, { id: "topic", type: "select", label: "Téma", required: true, options: ["Együttműködés", "Egyéb"] });
+  published.fields.push({
+    id: "details", type: "text", label: "Részletek", required: true,
+    condition: { fieldId: "topic", equals: "Egyéb" }
+  });
+  bindPublishedForm(db, { publishedDefinition: published, draftDefinition: definition(1, "draft-v1") });
+
+  const hidden = await publicFormRoute(publicRequest("POST", validSubmission({
+    values: { email: "creator@example.test", message: "Szia", topic: "Együttműködés", details: "" }
+  }), { headers: { "CF-Connecting-IP": "203.0.113.61" } }), env, siteId);
+  assert.equal(hidden.status, 400);
+  assert.equal((await hidden.json()).error.code, "HIDDEN_FORM_FIELD_SUBMITTED");
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM form_submissions").get().n, 0,
+    "a forged hidden value is rejected before any submission is stored");
+
+  const valid = await publicFormRoute(publicRequest("POST", validSubmission({
+    values: { email: "creator@example.test", message: "Szia", topic: "Együttműködés" }
+  }), { headers: { "CF-Connecting-IP": "203.0.113.62" } }), env, siteId);
+  assert.equal(valid.status, 200, "a hidden required conditional field is omitted from a valid submission");
+  const row = db.prepare("SELECT values_json,form_version FROM form_submissions").get();
+  assert.equal(row.form_version, 1, "the public page remains bound to the immutable published form version");
+  assert.deepEqual(JSON.parse(row.values_json), { email: "creator@example.test", message: "Szia", topic: "Együttműködés" });
+
+  const visibleMissing = await publicFormRoute(publicRequest("POST", validSubmission({
+    values: { email: "creator@example.test", message: "Szia", topic: "Egyéb" }
+  }), { headers: { "CF-Connecting-IP": "203.0.113.63" } }), env, siteId);
+  assert.equal(visibleMissing.status, 400, "a visible required conditional field is still required");
+  assert.equal((await visibleMissing.json()).error.code, "FORM_FIELD_REQUIRED");
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM form_submissions").get().n, 1);
 });
 
 test("public form rejects cross-origin and honeypot posts without storing user content", async t => {

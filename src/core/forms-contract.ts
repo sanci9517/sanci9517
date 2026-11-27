@@ -6,12 +6,14 @@
  * editor binding, and submission handling must all consume this same schema.
  */
 export const FORM_SCHEMA_VERSION = 1 as const;
+export const CONDITIONAL_FORM_SCHEMA_VERSION = 2 as const;
 export const MAX_FORM_FIELDS = 24;
 export const MAX_FORM_OPTIONS = 20;
 export const MAX_FORM_DEFINITION_BYTES = 16_384;
 export const MAX_FORM_SUBMISSION_BYTES = 12_288;
 
 export type FormFieldType = "text" | "email" | "tel" | "url" | "number" | "textarea" | "select" | "radio" | "date" | "checkbox";
+export type FormFieldCondition = { fieldId: string; equals: string | boolean };
 
 export type FormFieldDefinition = {
   id: string;
@@ -21,10 +23,11 @@ export type FormFieldDefinition = {
   helpText?: string;
   options?: string[];
   maxLength?: number;
+  condition?: FormFieldCondition;
 };
 
 export type FormDefinition = {
-  schemaVersion: typeof FORM_SCHEMA_VERSION;
+  schemaVersion: typeof FORM_SCHEMA_VERSION | typeof CONDITIONAL_FORM_SCHEMA_VERSION;
   name: string;
   fields: FormFieldDefinition[];
   consent: {
@@ -108,17 +111,20 @@ const validPhoneFieldValue = (value: string): boolean => {
 };
 
 export function normalizeFormDefinition(input: unknown): FormValidationResult<FormDefinition> {
-  if (!isRecord(input) || !hasOnlyKeys(input, ["schemaVersion", "name", "fields", "consent", "successMessage", "retentionDays"]) || input.schemaVersion !== FORM_SCHEMA_VERSION) {
+  if (!isRecord(input) || !hasOnlyKeys(input, ["schemaVersion", "name", "fields", "consent", "successMessage", "retentionDays"]) ||
+      (input.schemaVersion !== FORM_SCHEMA_VERSION && input.schemaVersion !== CONDITIONAL_FORM_SCHEMA_VERSION)) {
     return { ok: false, code: "UNSUPPORTED_FORM_SCHEMA_VERSION" };
   }
+  const schemaVersion = input.schemaVersion;
   if (!boundedText(input.name, 100)) return { ok: false, code: "INVALID_FORM_NAME" };
   if (!Array.isArray(input.fields) || input.fields.length < 1 || input.fields.length > MAX_FORM_FIELDS) {
     return { ok: false, code: "INVALID_FORM_FIELDS" };
   }
   const ids = new Set<string>();
   const fields: FormFieldDefinition[] = [];
+  const conditions: Array<{ fieldId: string; condition: unknown }> = [];
   for (const raw of input.fields) {
-    if (!isRecord(raw) || !hasOnlyKeys(raw, ["id", "type", "label", "required", "helpText", "options", "maxLength"]) ||
+    if (!isRecord(raw) || !hasOnlyKeys(raw, ["id", "type", "label", "required", "helpText", "options", "maxLength", "condition"]) ||
         typeof raw.id !== "string" || !/^[a-z][a-z0-9_-]{0,39}$/.test(raw.id) || ids.has(raw.id)) {
       return { ok: false, code: "INVALID_FORM_FIELD_ID" };
     }
@@ -155,7 +161,25 @@ export function normalizeFormDefinition(input: unknown): FormValidationResult<Fo
     } else if (raw.options !== undefined) {
       return { ok: false, code: "UNEXPECTED_FORM_FIELD_OPTIONS", fieldId: raw.id };
     }
+    if (raw.condition !== undefined) conditions.push({ fieldId: raw.id, condition: raw.condition });
     fields.push(field);
+  }
+  for (const { fieldId, condition } of conditions) {
+    const target = fields.find(field => field.id === fieldId)!;
+    if (schemaVersion !== CONDITIONAL_FORM_SCHEMA_VERSION || !isRecord(condition) || !hasOnlyKeys(condition, ["fieldId", "equals"]) ||
+        typeof condition.fieldId !== "string" || !/^[a-z][a-z0-9_-]{0,39}$/.test(condition.fieldId)) {
+      return { ok: false, code: "INVALID_FORM_FIELD_CONDITION", fieldId };
+    }
+    const source = fields.find(field => field.id === condition.fieldId);
+    if (!source || source.id === target.id || source.condition || !["select", "radio", "checkbox"].includes(source.type)) {
+      return { ok: false, code: "INVALID_FORM_CONDITION_SOURCE", fieldId };
+    }
+    if (source.type === "checkbox") {
+      if (typeof condition.equals !== "boolean") return { ok: false, code: "INVALID_FORM_CONDITION_VALUE", fieldId };
+    } else if (typeof condition.equals !== "string" || !source.options?.includes(condition.equals)) {
+      return { ok: false, code: "INVALID_FORM_CONDITION_VALUE", fieldId };
+    }
+    target.condition = { fieldId: source.id, equals: condition.equals as string | boolean };
   }
   if (!isRecord(input.consent) || !hasOnlyKeys(input.consent, ["text", "version", "privacyUrl"]) || !boundedText(input.consent.text, 2_000) ||
       !boundedText(input.consent.version, 64) || !validPrivacyUrl(input.consent.privacyUrl)) {
@@ -166,7 +190,7 @@ export function normalizeFormDefinition(input: unknown): FormValidationResult<Fo
     return { ok: false, code: "INVALID_FORM_RETENTION" };
   }
   const definition: FormDefinition = {
-    schemaVersion: FORM_SCHEMA_VERSION,
+    schemaVersion,
     name: input.name.trim(),
     fields,
     consent: {
@@ -202,6 +226,16 @@ export function normalizeFormSubmission(
   if (Object.keys(input.values).some(id => !allowedIds.has(id))) return { ok: false, code: "UNKNOWN_FORM_FIELD" };
   const values: Record<string, string | number | boolean> = {};
   for (const field of definition.fields) {
+    if (field.condition) {
+      const source = definition.fields.find(candidate => candidate.id === field.condition!.fieldId);
+      // An omitted optional checkbox has the same meaning as an unchecked one.
+      const rawConditionValue = input.values[field.condition.fieldId];
+      const conditionValue = source?.type === "checkbox" && rawConditionValue === undefined ? false : rawConditionValue;
+      if (conditionValue !== field.condition.equals) {
+        if (Object.hasOwn(input.values, field.id)) return { ok: false, code: "HIDDEN_FORM_FIELD_SUBMITTED", fieldId: field.id };
+        continue;
+      }
+    }
     const value = input.values[field.id];
     const empty = value === undefined || value === null || value === "" || (typeof value === "string" && value.trim() === "");
     if (empty && field.required) return { ok: false, code: "FORM_FIELD_REQUIRED", fieldId: field.id };

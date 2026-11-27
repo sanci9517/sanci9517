@@ -33,7 +33,7 @@ test("form definitions normalize only versioned, bounded first-party fields", ()
 
 test("unsupported versions, field types, duplicate IDs, and external actions fail closed", () => {
   const cases = [
-    value => { value.schemaVersion = 2; },
+    value => { value.schemaVersion = 3; },
     value => { value.fields[0].type = "file"; },
     value => { value.fields[1].id = "email"; },
     value => { value.action = "https://attacker.test/collect"; },
@@ -45,6 +45,83 @@ test("unsupported versions, field types, duplicate IDs, and external actions fai
     const result = normalizeFormDefinition(value);
     assert.equal(result.ok, false);
   }
+});
+
+test("conditional Forms v2 fields preserve v1 and validate choice/checkbox sources", () => {
+  const v1 = validDefinition();
+  assert.equal(normalizeFormDefinition(v1).ok, true, "existing v1 forms keep their schema and behavior");
+  const v1WithCondition = structuredClone(v1);
+  v1WithCondition.fields.push({ id: "details", type: "text", label: "Részletek", required: false, condition: { fieldId: "topic", equals: "Egyéb" } });
+  assert.equal(normalizeFormDefinition(v1WithCondition).code, "INVALID_FORM_FIELD_CONDITION",
+    "conditional fields are opt-in to the v2 contract");
+
+  const input = validDefinition();
+  input.schemaVersion = 2;
+  input.fields.push(
+    { id: "details", type: "text", label: "Részletek", required: true, maxLength: 120, condition: { fieldId: "topic", equals: "Egyéb" } },
+    { id: "callback", type: "text", label: "Visszahívás részletei", required: true, maxLength: 120, condition: { fieldId: "updates", equals: true } }
+  );
+  const normalized = normalizeFormDefinition(input);
+  assert.equal(normalized.ok, true);
+  assert.equal(normalized.value.schemaVersion, 2);
+  assert.deepEqual(normalized.value.fields.slice(-2).map(field => field.condition), [
+    { fieldId: "topic", equals: "Egyéb" }, { fieldId: "updates", equals: true }
+  ]);
+
+  const invalid = [];
+  const unknownSource = structuredClone(input); unknownSource.fields.at(-2).condition.fieldId = "missing"; invalid.push(unknownSource);
+  const selfSource = structuredClone(input); selfSource.fields.at(-2).condition.fieldId = "details"; invalid.push(selfSource);
+  const invalidChoice = structuredClone(input); invalidChoice.fields.at(-2).condition.equals = "Nincs ilyen választás"; invalid.push(invalidChoice);
+  const wrongCheckboxValue = structuredClone(input); wrongCheckboxValue.fields.at(-1).condition.equals = "true"; invalid.push(wrongCheckboxValue);
+  const nonChoiceSource = structuredClone(input); nonChoiceSource.fields.at(-2).condition.fieldId = "email"; invalid.push(nonChoiceSource);
+  const chainedSource = structuredClone(input);
+  chainedSource.fields.at(-1).condition.fieldId = "details";
+  chainedSource.fields.at(-1).condition.equals = "nyitott";
+  invalid.push(chainedSource);
+  for (const value of invalid) assert.equal(normalizeFormDefinition(value).ok, false);
+});
+
+test("conditional values skip hidden required fields, accept visible values, and reject forged hidden input", () => {
+  const input = validDefinition();
+  input.schemaVersion = 2;
+  input.fields.push(
+    { id: "details", type: "text", label: "Részletek", required: true, condition: { fieldId: "topic", equals: "Egyéb" } },
+    { id: "callback", type: "text", label: "Visszahívás részletei", required: true, condition: { fieldId: "updates", equals: true } }
+  );
+  const normalized = normalizeFormDefinition(input);
+  assert.equal(normalized.ok, true);
+  const hidden = normalizeFormSubmission(normalized.value, {
+    values: { email: "creator@example.com", message: "Szia", topic: "Együttműködés", updates: false }, consentAccepted: true
+  });
+  assert.equal(hidden.ok, true, "hidden required fields do not block the submission");
+  assert.equal(Object.hasOwn(hidden.value.values, "details"), false);
+  assert.equal(Object.hasOwn(hidden.value.values, "callback"), false);
+
+  const visible = normalizeFormSubmission(normalized.value, {
+    values: { email: "creator@example.com", message: "Szia", topic: "Egyéb", details: "Bővebben", updates: true, callback: "Este" }, consentAccepted: true
+  });
+  assert.equal(visible.ok, true);
+  assert.equal(visible.value.values.details, "Bővebben");
+  assert.equal(visible.value.values.callback, "Este");
+
+  for (const hiddenValue of ["", "hamisított", false]) {
+    const forged = normalizeFormSubmission(normalized.value, {
+      values: { email: "creator@example.com", message: "Szia", topic: "Együttműködés", details: hiddenValue }, consentAccepted: true
+    });
+    assert.equal(forged.ok, false);
+    assert.equal(forged.code, "HIDDEN_FORM_FIELD_SUBMITTED");
+    assert.equal(forged.fieldId, "details");
+  }
+
+  const uncheckedDefinition = structuredClone(input);
+  uncheckedDefinition.fields.at(-1).condition.equals = false;
+  const normalizedUnchecked = normalizeFormDefinition(uncheckedDefinition);
+  assert.equal(normalizedUnchecked.ok, true);
+  const uncheckedOmitted = normalizeFormSubmission(normalizedUnchecked.value, {
+    values: { email: "creator@example.com", message: "Szia", topic: "Együttműködés", callback: "Elérhető vagyok" }, consentAccepted: true
+  });
+  assert.equal(uncheckedOmitted.ok, true, "an omitted optional checkbox is treated as unchecked for visibility");
+  assert.equal(uncheckedOmitted.value.values.callback, "Elérhető vagyok");
 });
 
 test("consent wording and a bounded retention period are required in the schema", () => {
