@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "task": "77.44.7.D / D-06 — parallel bounded Editor fixes: interactive canvas pan, failed page-load recovery, mobile Inspector focus restoration",
+  "date_utc": "2026-11-27",
+  "status": "TWO_RUNTIME_SLICES_RELEASED_AND_EXACT_SOURCE_SMOKED; EDITOR_CORE_CI_PENDING; D06_OPEN_NOT_CERTIFIED",
+  "baseline": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "start_sha": "5482c138e4d7e613d738bd6cb4c59bb630bab02f",
+    "canonical_plan_sha256": "7fa60a... (complete canonical master read; unchanged)",
+    "cursor": "77.44 / WEB-011 -> 77.44.7.D",
+    "functional_acceptance": "OPEN / NOT_CERTIFIED",
+    "traceability": "396 IDs: 148 PARTIAL_SOURCE, 248 UNVERIFIED"
+  },
+  "changes": [
+    {
+      "commit": "92730fd453ee9ed97f645345cafd15a1aed4da65",
+      "parent": "5482c138e4d7e613d738bd6cb4c59bb630bab02f",
+      "subject": "fix(editor): recover pan and page load gestures safely",
+      "slices": [
+        {
+          "finding": "The capture-phase Editor Pan handler ignored buttons/inputs, but the separately loaded legacy canvas-pan.js bubbling listener still began panning for every pointerdown. Interactive Canvas controls could therefore be dragged instead of activated.",
+          "change": "Guard interactive descendants in the legacy canvas pan controller and version its public cache URL.",
+          "regression": "Added a real Chromium button-inside-Canvas test proving a drag does not scroll or capture pan while the button remains clickable.",
+          "local_result": "Baseline test failed before the fix with scroll movement (36,24); fixed target passed 1/1. Combined pan and failed-page-load browser tests passed 2/2."
+        },
+        {
+          "finding": "After a failed page GET or noncanonical document response, the previous Page Model remained visible but the page selector stayed on the failed target.",
+          "change": "On load failure re-render page list and current canvas from unchanged state, while showing the original error; no save or publish is triggered.",
+          "regression": "New browser test covers 503, malformed document, retry success, unchanged draft and no Save/Publish."
+        }
+      ],
+      "public_assets": {
+        "public/editor-v2/index.html": "0ce0fa4588c2e7fbddb426b99c887c624cc7dfba3c3346ab1f83815cd2748062",
+        "public/editor-v2/app.js": "a71f0860dcd0bd8a19ce3bc9dc0d7a2d7cb5ee4001ca587c3a9ab69a1171cca5",
+        "public/editor-v2/ui/canvas-pan.js": "a65e44dac3e5e569f1908de0c229a1d4088b7f396bcc1ea88a78f9b8f6e39916"
+      },
+      "deployment": {
+        "deployment_id": "1779a90c-db4f-4920-be3f-70aab2eeac14",
+        "version_id": "1508ab26-a8be-40f0-af61-8c7e638c03d6",
+        "traffic_percent": 100,
+        "source": "Cloudflare API deployment readback"
+      },
+      "production_smoke": {
+        "workflow_run_id": 46080099325,
+        "job_id": 140776834524,
+        "conclusion": "success",
+        "health": "HTTP 200",
+        "asset_sha256": "initial edge propagation mismatches retried; final exact source hash checks all passed"
+      },
+      "github_ci": {
+        "editor_core_run_id": 46080099424,
+        "status_at_evidence": "in_progress during full browser layout regression; not reported PASS"
+      }
+    },
+    {
+      "commit": "b3312c14bfe1597fb3ea34e1a31989f4e5dafd92",
+      "parent": "92730fd453ee9ed97f645345cafd15a1aed4da65",
+      "subject": "fix(editor): restore mobile inspector focus on panel return",
+      "slices": [
+        {
+          "plan_id": "EDT-036",
+          "finding": "Mobile panel switching returned focus to the opener but did not restore the Inspector control previously used; plan acceptance requires selected node, field focus and Page Model to survive Layers <-> Inspector switching.",
+          "change": "Remember the last focused element per mobile dock. Restore it only when it remains connected, enabled, visible, in the reopened dock, and outside hidden/inert content; otherwise focus the dock close control. Capture the current opener before closing the other dock so Escape/back restoration never points into a hidden panel.",
+          "regression": "New Chromium scenario seeds and selects a real text node, focuses an Inspector field, switches to Layers and back, asserts exact focus target and stable selection/draft, with zero Save/Publish writes."
+        }
+      ],
+      "public_assets": {
+        "public/editor-v2/index.html": "711be678ad07d28f19270622eba101f6b5f5816b42c81c1230cb601546916486",
+        "public/editor-v2/ui/shell.js": "a76e24e705b4c9c271e7c07c8d4440a27878adb56dc4e4f318f324340a0a9416"
+      },
+      "deployment": {
+        "deployment_id": "9720997f-0b58-4721-8630-2914b3cdbd46",
+        "version_id": "ec6edd7e-adc9-4dbd-92a3-4d0371a5b265",
+        "created_on": "2026-11-27T23:18:24.468766Z",
+        "traffic_percent": 100,
+        "source": "Cloudflare API deployment readback"
+      },
+      "production_smoke": {
+        "workflow_run_id": 46081700026,
+        "job_id": 140781925929,
+        "conclusion": "success",
+        "source_sha": "b3312c14bfe1597fb3ea34e1a31989f4e5dafd92",
+        "health": "HTTP 200",
+        "exact_assets": {
+          "public/editor-v2/index.html": "711be678ad07d28f19270622eba101f6b5f5816b42c81c1230cb601546916486",
+          "public/editor-v2/ui/shell.js": "a76e24e705b4c9c271e7c07c8d4440a27878adb56dc4e4f318f324340a0a9416"
+        },
+        "note": "First edge read had old hashes; retry completed with HTTP 200 and every exact changed-asset SHA-256 matching."
+      },
+      "github_ci": {
+        "canonical_plan": {"run_id": 46081699999, "conclusion": "success"},
+        "active_point_audit": {"run_id": 46081700030, "conclusion": "success"},
+        "f0_baseline": {"run_id": 46081699980, "status": "success"},
+        "twitch_integration": {"run_id": 46081700073, "status": "success"},
+        "production_source_smoke": {"run_id": 46081700026, "conclusion": "success"},
+        "editor_core": {"run_id": 46081700005, "status_at_evidence": "in_progress; full layout and remaining checks still open"}
+      }
+    }
+  ],
+  "local_checks": {
+    "tests/browser/editor-ux-p0-workflow.test.js + tests/browser/editor-page-load-recovery.test.js": "PASS 2/2 Chromium files on commit 92730fd",
+    "tests/browser/editor-workspace-appearance.test.js focused EDT-036 test": "PASS 1/1 Chromium on commit b3312c14",
+    "existing mobile drawer focus regression + EDT-036 regression": "PASS 2/2 Chromium",
+    "tests/editor-public-asset-cache-bust.test.js + tests/worker-production-source-smoke.test.mjs": "PASS 2/2",
+    "npm run test:editor on commit 92730fd": "PASS; 12/12 preferences files, 4/4 subreaper runner checks and 25/25 Editor unit files",
+    "npm run typecheck": "PASS on both source slices",
+    "python3 tests/plan-contract.test.py": "PASS 17/17",
+    "python3 scripts/check-canonical-plan.py": "PASS 13 master files, 396 feature mappings; acceptance not certified",
+    "python3 scripts/audit-active-plan-point.py": "PASS cursor remains 77.44.7.D; functional acceptance NOT_CERTIFIED",
+    "python3 scripts/build-feature-traceability.py --check": "PASS 396 mappings; EDT-036 now points to its exact source/test; acceptance not certified",
+    "python3 scripts/plan_contract.py": "PASS (exit 0)",
+    "npm run test:web013:migration-gate": "PASS; deploy:safe does not apply migrations",
+    "git diff --check": "PASS",
+    "wrangler dry run": "PASS; Wrangler 4.130.0, 206 assets, 486.66 KiB / 120.18 KiB gzip; no deploy"
+  },
+  "production_read_only_d1_preflight": {
+    "method": "Cloudflare D1 REST /query with SELECT-only SQL",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "queries": [
+      "SELECT type, COUNT(*) AS object_count FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%' GROUP BY type ORDER BY type",
+      "SELECT id, name, applied_at FROM d1_migrations ORDER BY id DESC LIMIT 5"
+    ],
+    "objects": {"index": 45, "table": 37, "trigger": 29},
+    "latest_migration": "0032_forms_service.sql (id 38)",
+    "meta": "both queries reported changes=0, changed_db=false, rows_written=0",
+    "production_data_write_or_migration": "not run"
+  },
+  "operations_and_limits": {
+    "r2": "no operations",
+    "new_dependencies": "none",
+    "paid_service_or_new_cost": "none; 0 Ft",
+    "cloudflare_build_quota": {"has_reached_build_minutes_limit": false, "refresh_on": "2026-11-30T23:59:59.999Z"},
+    "save_publish": "unchanged and separate",
+    "full_d06_editor_acceptance": "OPEN / NOT_CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until complete Editor scope",
+    "next": "wait for exact-SHA Editor Core on b3312c14 and 92730fd; on failure repair only the proven failing test; on success publish a CI follow-up evidence record with [skip ci]."
+  }
+}

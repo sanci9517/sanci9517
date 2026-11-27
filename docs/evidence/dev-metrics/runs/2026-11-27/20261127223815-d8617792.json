@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261127223815-d8617792",
+  "task": "77.44.7.D-canvas-pan-interactive-target-guard",
+  "trigger": "manual",
+  "started_at": "2026-11-27T22:38:15.866Z",
+  "finished_at": "2026-11-27T23:21:41.674Z",
+  "wall_seconds": 2606,
+  "paused_seconds": 0,
+  "measured_seconds": 2606,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Two independent Editor runtime slices shipped and exact public source smoke passed; exact-SHA Editor Core layout CI remains in progress.",
+  "evidence": [
+    "docs/evidence/editor-parallel-pan-recovery-mobile-focus-2026-11-27.json"
+  ],
+  "checks": "targeted Chromium 2/2, typecheck, plan/traceability, migration gate, Wrangler dry-run PASS; Editor Core CI pending",
+  "started_revision": "5482c138e4d7e613d738bd6cb4c59bb630bab02f",
+  "finished_revision": "b3312c14bfe1597fb3ea34e1a31989f4e5dafd92",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
