@@ -119,7 +119,8 @@ try {
     const readReportRecord = path => {
       try {
         return read(path);
-      } catch {
+      } catch (error) {
+        if (!(error instanceof SyntaxError)) throw error;
         // Corrupt legacy evidence must not crash the report or contribute
         // guessed time. Retain the path so the record can be repaired.
         invalidRecords.push(path.slice(root.length + 1));

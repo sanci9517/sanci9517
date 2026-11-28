@@ -53,4 +53,6 @@ node --test tests/dev-metrics.test.mjs
 
 A kimenet külön méri a naplózott teljes futásidőt, és az olyan kód-/tesztfutások idejét, amelyhez az ügynök `PASS` állapotot és bizonyítékot rendelt. A szám **falióra szerinti eltelt idő**, az explicit szünet nélkül; nem mért CPU-/token-/szigorúan aktív Codex-idő, és nem önmagában teljesítmény. Egyhetes ablak és legalább öt lezárt futás nélkül a dátum `null` marad. A 300 óra egy korábbi **becslés**, nem a tervből automatikusan kimért backlog; a tényleges hátralévő időt csak a lezárt tervpontok és minőségkapuk alapján lehet felülvizsgálni.
 
+A report az archív rekordok JSON-szintaxisát külön ellenőrzi. A hibás történeti JSON kimarad az idő-, státusz- és ETA-számításból, útvonala az `invalid_records` mezőben jelenik meg, az eredeti fájl pedig változatlan marad vizsgálatra. Fájlrendszer-hibát nem minősít hibás JSON-nak: az ilyen hiba továbbra is leállítja a riportot.
+
 A mérés a jelenlegi óránkénti fejlesztési automatizációhoz az `AGENTS.md` kötelező munkaindítási szabályán keresztül csatlakozik. Az automatizáció csak akkor gyűjt új adatot, ha ténylegesen végrehajtja a shell-parancsokat; pusztán az ütemezés engedélyezése nem garantál futásnaplót.
