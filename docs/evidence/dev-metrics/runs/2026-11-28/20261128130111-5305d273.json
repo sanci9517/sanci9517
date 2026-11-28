@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261128130111-5305d273",
+  "task": "77.44.7.D-Editor-Core-CI-failure",
+  "trigger": "scheduled",
+  "started_at": "2026-11-28T13:01:11.266Z",
+  "finished_at": "2026-11-28T13:09:05.357Z",
+  "wall_seconds": 474,
+  "paused_seconds": 0,
+  "measured_seconds": 474,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Exact-SHA Editor Core layout CI failed; fixed stale Playwright scroll baseline; targeted Chromium regression passed 3/3; hosted recheck pending.",
+  "evidence": [
+    "docs/evidence/editor-d06-forms-new-submission-notice-2026-11-28.json",
+    "tests/browser/editor-ux-p0-workflow.test.js"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "d2fe3507561c535b74dd299abd6a356f2af01297",
+  "finished_revision": "d2fe3507561c535b74dd299abd6a356f2af01297",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

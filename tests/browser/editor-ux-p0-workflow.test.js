@@ -57,8 +57,8 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   for(let index=0;index<8;index++)await tab.locator('#zoomIn').click();
   const canvas=tab.locator('#canvas'),panNode=tab.locator('.page-canvas .node').first();
   await canvas.evaluate(el=>el.scrollTo({left:0,top:0,behavior:'instant'}));
-  const panBefore=await canvas.evaluate(el=>({left:el.scrollLeft,top:el.scrollTop,maxLeft:el.scrollWidth-el.clientWidth,maxTop:el.scrollHeight-el.clientHeight,touchAction:getComputedStyle(el).touchAction}));
-  assert.ok(panBefore.maxLeft>40&&panBefore.maxTop>20,'the zoomed canvas exposes horizontal and vertical overflow for panning');
+  const panExtent=await canvas.evaluate(el=>({maxLeft:el.scrollWidth-el.clientWidth,maxTop:el.scrollHeight-el.clientHeight,touchAction:getComputedStyle(el).touchAction}));
+  assert.ok(panExtent.maxLeft>40&&panExtent.maxTop>20,'the zoomed canvas exposes horizontal and vertical overflow for panning');
   const nodeBeforePan=await panNode.evaluate(el=>({left:getComputedStyle(el).left,top:getComputedStyle(el).top,selected:el.classList.contains('selected')}));
   const modelBeforePan=JSON.stringify(draft),postsBeforePan=posts.length;
   await tab.locator('#panTool').click();
@@ -70,6 +70,11 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   await tab.mouse.move(interactiveBox.x+interactiveBox.width/2,interactiveBox.y+interactiveBox.height/2);await tab.mouse.down();await tab.mouse.move(interactiveBox.x+interactiveBox.width/2-36,interactiveBox.y+interactiveBox.height/2-24,{steps:4});await tab.mouse.up();
   assert.deepEqual(await canvas.evaluate(el=>({left:el.scrollLeft,top:el.scrollTop,panning:el.classList.contains('is-panning')})),{...interactiveCanvasControl,panning:false},'dragging an interactive canvas control never starts viewport panning or steals its pointer');
   await interactiveButton.click();assert.equal(await interactiveButton.getAttribute('data-activations'),'1','interactive controls remain clickable while Pan mode is selected');
+  // Playwright may scroll an offscreen interactive child into view when clicking it.
+  // Capture the baseline after that interaction so the pan assertion compares the
+  // pointer drag against its actual starting scroll position, not a stale snapshot.
+  const panBefore=await canvas.evaluate(el=>{el.scrollTo({left:0,top:0,behavior:'instant'});return {left:el.scrollLeft,top:el.scrollTop,maxLeft:el.scrollWidth-el.clientWidth,maxTop:el.scrollHeight-el.clientHeight}});
+  assert.ok(panBefore.maxLeft>40&&panBefore.maxTop>20,'the canvas still exposes overflow after the interactive-control probe');
   const panStart=await canvas.evaluate(el=>{
     const viewport=el.getBoundingClientRect(),artboard=el.querySelector('.page-canvas').getBoundingClientRect();
     const left=Math.max(viewport.left+8,artboard.left+8),right=Math.min(viewport.right-8,artboard.right-8);

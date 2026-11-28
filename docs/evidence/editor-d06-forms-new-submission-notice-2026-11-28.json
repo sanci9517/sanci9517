@@ -69,11 +69,13 @@
         "id": 46136639243,
         "url": "https://github.com/sanci9517/sanci9517/actions/runs/46136639243",
         "sha": "1730ea98318aadfefa04a4258d445010f03ba578",
-        "status": "IN_PROGRESS",
-        "conclusion": null,
-        "current_step": "Run Editor browser layout regression",
-        "completed_steps": "15/24",
-        "completed_steps_result": "SUCCESS"
+        "status": "COMPLETED",
+        "conclusion": "FAILURE",
+        "failed_step": "Run Editor browser layout regression (16/24)",
+        "failure": "tests/browser/editor-ux-p0-workflow.test.js:86 — dragging left pans the overflowing canvas by the full available distance (before=434, max=979, after=56)",
+        "diagnosis": "The test captured its expected scroll baseline before Playwright auto-scrolled the absolute-positioned interactive probe button into view; the assertion compared a later drag against the stale pre-click value.",
+        "artifact_id": 15260781502,
+        "artifact": "editor-layout-screenshots.zip; retained by Actions for diagnosis"
       },
       "completed_exact_sha_workflows": [
         {
@@ -102,7 +104,7 @@
           "conclusion": "SUCCESS"
         }
       ],
-      "overall": "INCOMPLETE — Editor Core is still running; do not infer a full hosted-CI pass."
+      "overall": "NOT PASS — previous exact-SHA Editor Core run failed; regression baseline corrected locally; rerun on updated exact SHA is required."
     },
     "cloudflare_build_and_deployment": {
       "initial_automatic_build": {
@@ -127,7 +129,7 @@
         "direct_anonymous_hash": "UNVERIFIED — the legacy /admin-forms.html route intentionally returns 410; the authenticated /admin/forms route redirects anonymous requests to /admin/login."
       }
     },
-    "status": "PRODUCTION_DEPLOYED_EXACT_SOURCE_EDITOR_CORE_CI_IN_PROGRESS"
+    "status": "RUNTIME_DEPLOYED_EDITOR_CORE_CI_FAILURE_DIAGNOSED_LOCAL_FIX_VERIFIED_HOSTED_RERUN_REQUIRED"
   },
   "test_runner_notes": [
     "The first browser-suite attempt ran without loopback permission and failed before test execution; the rerun with the required loopback permission passed all 8 Forms browser tests.",
@@ -139,5 +141,14 @@
     "observed_invalid_record": "docs/evidence/dev-metrics/runs/2026-11-27/20261127175819-2ba04792.json",
     "regression_test": "tests/dev-metrics.test.mjs: report skips malformed historical records and identifies them without guessing time",
     "verification": "node tests/dev-metrics.test.mjs — 5/5 PASS; isolated temporary Git repository and invalid UTF-8 record."
+  },
+  "browser_layout_failure_followup": {
+    "scope": "test-only correction in tests/browser/editor-ux-p0-workflow.test.js",
+    "runtime_changed": false,
+    "root_cause": "The test compared the drag result with a scroll snapshot taken before an intervening interactive-probe gesture. CI reported the later scrollLeft (56) below the earlier snapshot (434), so that snapshot was not the actual drag start. The corrected assertion records a fresh baseline immediately before the real drag.",
+    "fix": "Measure overflow separately, then immediately before the real pan gesture restore scroll to (0,0) and capture the actual baseline used for the drag assertion.",
+    "verification": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-ux-p0-workflow.test.js — 3 consecutive repetitions PASS (3/3).",
+    "hosted_followup": "A new exact-SHA Editor Core run after pushing this test/evidence correction is required to clear the prior CI failure; do not rerun before this corrected source is pushed.",
+    "worker": "Unchanged; latest Cloudflare deployment readback remains 3cad8ca4-8fc7-460b-ae17-e326e5e2fb97 with d6d91041-94f8-4060-82f5-b8940c0cb4db at 100%."
   }
 }
