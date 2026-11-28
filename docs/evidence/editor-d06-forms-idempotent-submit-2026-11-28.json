@@ -1,0 +1,62 @@
+{
+  "evidence_id": "editor-d06-forms-idempotent-submit-2026-11-28",
+  "date_utc": "2026-11-28",
+  "canonical_plan_point": "77.44.7.D / D-06 / WEB-020 Forms",
+  "feature": "Idempotent public Forms submissions",
+  "base_commit": "265e948b834ad72d801ef18d11049bf95a3dd045",
+  "remote_base_verified": "v2/foundation was identical to base_commit via GitHub compare before edits.",
+  "implementation": {
+    "server": "The optional Idempotency-Key is strictly validated as RFC 4122 UUID v4 and used as the existing form_submissions.id primary key. Existing rows are replayed only when site, form, page, published revision/version, normalized values, and consent text/version match; otherwise the endpoint returns 409 without exposing submission data. D1 batch guards prevent the same key from consuming another rate-limit attempt or inserting a second submission under a race.",
+    "browser": "The public form keeps the same UUID for an unchanged retry after an ambiguous failure. Editing the values produces a new key, a 409 rotates the key for the next explicit retry, and accepted success clears the pending key.",
+    "schema": "No schema change, migration, new dependency, external provider, R2 operation, or Save/Publish behavior change.",
+    "cache_bust": "The public renderer asset query changed to 20261128-d06-form-submit-idempotency-v1."
+  },
+  "local_checks": {
+    "npm run test:forms": "PASS; 5/5 test files, including same-key replay, conflict on payload reuse, distinct-key identical content, malformed key rejection and simultaneous duplicate requests.",
+    "npm run test:forms:browser": "PASS; 3 browser files / 9 tests, including accept-then-lost-response retry and new-key behavior after content edit.",
+    "npm run test:editor": "PASS; 25/25 test files, including public asset cache contract.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS; safe deploy remains migration-free.",
+    "python3 tests/plan-contract.test.py": "PASS; 17/17.",
+    "python3 scripts/check-canonical-plan.py": "PASS; one 13-file canonical master and 396 mappings; functional acceptance remains NOT CERTIFIED.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396/396 source mappings.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor remains 77.44.7.D, source status 149 PARTIAL_SOURCE / 247 UNVERIFIED, neither status is acceptance.",
+    "git diff --check": "PASS.",
+    "npx wrangler deploy --dry-run": "PASS, exit 0; Wrangler 4.130.0 read 206 public assets, 495.71 KiB / 122.22 KiB gzip. The sandbox emitted EROFS only when Wrangler tried to write its log under a read-only /home path; dry-run completed and did not deploy."
+  },
+  "production_d1_preflight": {
+    "mode": "SELECT-only Cloudflare D1 Query API",
+    "queries": [
+      "SELECT type,name,sql FROM sqlite_master WHERE name IN ('form_submissions','form_submission_rate_limits') ORDER BY type,name",
+      "SELECT id,name,applied_at FROM d1_migrations ORDER BY id DESC LIMIT 3"
+    ],
+    "observed": "form_submissions.id is the existing TEXT PRIMARY KEY; latest migration is 0032_forms_service.sql (ledger id 38). Each executed query returned rows_written=0, changes=0, changed_db=false; no D1 schema or data mutation was performed.",
+    "restricted_diagnostics": "Auto-review rejected PRAGMA foreign_key_check and PRAGMA quick_check because the production preflight requires literal SELECT-only statements; neither PRAGMA executed and no alternate diagnostic route was used."
+  },
+  "hosted_release": {
+    "runtime_commit": "PENDING",
+    "github_ci": "PENDING exact-SHA workflow status.",
+    "cloudflare_build": "PENDING exact-SHA result.",
+    "worker_deployment": "PENDING.",
+    "traffic_version": "PENDING.",
+    "production_health": "PENDING.",
+    "production_asset_sha256": {
+      "public/assets/page-renderer.js": {
+        "local": "828a7a2cf3c2970849818f0c8b5a85fb82453890e9c33ec60fdc2d3c4b80e45f",
+        "live": "PENDING"
+      },
+      "public/visual-page.html": {
+        "local": "ef6d7722d05ee24e9b3868081bf65ea927850e2fa0ca6c01b635158e1d234d68",
+        "live": "PENDING"
+      }
+    }
+  },
+  "cost_and_scope": {
+    "new_cost": "No new paid service or quota overage was initiated. Actual account-wide monthly usage is not measured by this evidence.",
+    "production_d1_write_or_migration": false,
+    "r2_operations": false,
+    "save_publish_separation_preserved": true,
+    "d06_status": "OPEN / NOT CERTIFIED",
+    "full_visual_editor_acceptance": "OPEN / DEFERRED until the full Editor is complete"
+  }
+}

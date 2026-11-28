@@ -139,6 +139,73 @@ test("public submission is bound to the published schema and snapshots its conse
   assert.doesNotMatch(JSON.stringify(db.prepare("SELECT client_hash FROM form_submission_rate_limits").get()), /203\.0\.113\.23/);
 });
 
+test("same idempotency key and payload replays success without a second row or rate-limit attempt", async t => {
+  const { db, env } = makeDb();
+  t.after(() => db.close());
+  bindPublishedForm(db);
+  const key = crypto.randomUUID();
+  const request = () => publicRequest("POST", validSubmission(), {
+    headers: { "CF-Connecting-IP": "203.0.113.41", "Idempotency-Key": key }
+  });
+  const first = await publicFormRoute(request(), env, siteId);
+  const retry = await publicFormRoute(request(), env, siteId);
+  assert.equal(first.status, 200);
+  assert.deepEqual(await retry.json(), await first.clone().json());
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM form_submissions").get().n, 1);
+  assert.equal(db.prepare("SELECT attempts FROM form_submission_rate_limits").get().attempts, 1,
+    "a replay is resolved before consuming another public rate-limit attempt");
+  assert.equal(db.prepare("SELECT id FROM form_submissions").get().id, key);
+});
+
+test("concurrent requests that race on one idempotency key converge on one accepted submission", async t => {
+  const { db, env } = makeDb();
+  t.after(() => db.close());
+  bindPublishedForm(db);
+  const key = crypto.randomUUID();
+  const request = () => publicRequest("POST", validSubmission(), {
+    headers: { "CF-Connecting-IP": "203.0.113.44", "Idempotency-Key": key }
+  });
+  const responses = await Promise.all([
+    publicFormRoute(request(), env, siteId),
+    publicFormRoute(request(), env, siteId)
+  ]);
+  assert.deepEqual(responses.map(response => response.status), [200, 200]);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM form_submissions").get().n, 1);
+  assert.equal(db.prepare("SELECT attempts FROM form_submission_rate_limits").get().attempts, 1);
+});
+
+test("idempotency keys cannot be reused for different content, while separate keys preserve deliberate duplicate submissions", async t => {
+  const { db, env } = makeDb();
+  t.after(() => db.close());
+  bindPublishedForm(db);
+  const firstKey = crypto.randomUUID();
+  const headers = key => ({ "CF-Connecting-IP": "203.0.113.42", "Idempotency-Key": key });
+  assert.equal((await publicFormRoute(publicRequest("POST", validSubmission(), { headers: headers(firstKey) }), env, siteId)).status, 200);
+  const reused = await publicFormRoute(publicRequest("POST", validSubmission({
+    values: { email: "creator@example.test", message: "Másik üzenet" }
+  }), { headers: headers(firstKey) }), env, siteId);
+  assert.equal(reused.status, 409);
+  assert.equal((await reused.json()).error.code, "IDEMPOTENCY_KEY_REUSED");
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM form_submissions").get().n, 1);
+
+  assert.equal((await publicFormRoute(publicRequest("POST", validSubmission(), { headers: headers(crypto.randomUUID()) }), env, siteId)).status, 200);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM form_submissions").get().n, 2,
+    "identical content with a new key remains an intentional new submission");
+});
+
+test("malformed idempotency keys are rejected before rate-limit or submission writes", async t => {
+  const { db, env } = makeDb();
+  t.after(() => db.close());
+  bindPublishedForm(db);
+  const response = await publicFormRoute(publicRequest("POST", validSubmission(), {
+    headers: { "CF-Connecting-IP": "203.0.113.43", "Idempotency-Key": "client-chosen" }
+  }), env, siteId);
+  assert.equal(response.status, 400);
+  assert.equal((await response.json()).error.code, "INVALID_IDEMPOTENCY_KEY");
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM form_submissions").get().n, 0);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM form_submission_rate_limits").get().n, 0);
+});
+
 test("public submission rejects a malformed email without writing a submission", async t => {
   const { db, env } = makeDb();
   t.after(() => db.close());

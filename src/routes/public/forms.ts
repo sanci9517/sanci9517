@@ -6,6 +6,36 @@ type PublishedForm = {
   id: string; name: string; retention_days: number; version: number; definition_json: string;
 };
 type PublishedPage = { id: string; published_revision_id: string | null; published_content_json: string | null };
+type ExistingSubmission = {
+  id: string; site_id: string; form_id: string; form_version: number; page_id: string;
+  page_revision_id: string | null; values_json: string; consent_text: string; consent_version: string;
+};
+
+function validIdempotencyKey(value: string): boolean {
+  // The browser uses crypto.randomUUID(). Keep the key inside the submission
+  // primary key so retries need no second index or schema migration.
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+}
+
+function sameSubmission(existing: ExistingSubmission, expected: Omit<ExistingSubmission, "id">): boolean {
+  return existing.site_id === expected.site_id && existing.form_id === expected.form_id &&
+    existing.form_version === expected.form_version && existing.page_id === expected.page_id &&
+    existing.page_revision_id === expected.page_revision_id && existing.values_json === expected.values_json &&
+    existing.consent_text === expected.consent_text && existing.consent_version === expected.consent_version;
+}
+
+async function resolveIdempotencyReplay(
+  env: Env, key: string, expected: Omit<ExistingSubmission, "id">,
+  successMessage: string
+): Promise<Response | null> {
+  const existing = await env.DB.prepare(`SELECT id,site_id,form_id,form_version,page_id,page_revision_id,
+      values_json,consent_text,consent_version FROM form_submissions WHERE id=? LIMIT 1`)
+    .bind(key).first<ExistingSubmission>();
+  if (!existing) return null;
+  return sameSubmission(existing, expected)
+    ? ok({ submitted: true, message: successMessage })
+    : error("IDEMPOTENCY_KEY_REUSED", 409, "A beküldési kulcs már más adatokhoz tartozik. Frissítsd az oldalt, majd próbáld újra.");
+}
 
 function safeFormBinding(page: PublishedPage, formId: string): boolean {
   try {
@@ -113,6 +143,8 @@ export async function publicFormRoute(request: Request, env: Env, siteId: string
     const body = await readBody(request);
     if (isResponse(body)) return body;
     if (Object.keys(body).some(key => !["values", "consentAccepted", "website"].includes(key))) return error("INVALID_FORM_SUBMISSION", 400);
+    const suppliedKey = request.headers.get("Idempotency-Key");
+    if (suppliedKey !== null && !validIdempotencyKey(suppliedKey)) return error("INVALID_IDEMPOTENCY_KEY", 400);
     const normalized = normalizeFormSubmission(published.definition, body);
     if (!normalized.ok) return error(normalized.code, 400);
     if (normalized.value.spam) return error("FORM_REJECTED", 422, "A beküldést nem tudtuk feldolgozni.");
@@ -123,25 +155,44 @@ export async function publicFormRoute(request: Request, env: Env, siteId: string
     const windowSeconds = 900;
     const windowStart = Math.floor(nowSeconds / windowSeconds) * windowSeconds;
     const clientHash = await clientDigest(siteId, formId, clientIp, env.SESSION_SECRET);
-    const submissionId = crypto.randomUUID();
+    const submissionId = suppliedKey?.toLowerCase() || crypto.randomUUID();
     const consentAcceptedAt = new Date().toISOString();
     const valuesJson = JSON.stringify(normalized.value.values);
+    const expectedSubmission = {
+      site_id: siteId, form_id: formId, form_version: published.form.version, page_id: pageId,
+      page_revision_id: published.page.published_revision_id, values_json: valuesJson,
+      consent_text: published.definition.consent.text, consent_version: published.definition.consent.version
+    };
+    if (suppliedKey) {
+      const replay = await resolveIdempotencyReplay(env, submissionId, expectedSubmission, published.definition.successMessage);
+      if (replay) return replay;
+    }
     await env.DB.prepare(`DELETE FROM form_submission_rate_limits
       WHERE expires_at<=? AND rowid IN (SELECT rowid FROM form_submission_rate_limits WHERE expires_at<=? LIMIT 100)`)
       .bind(nowSeconds, nowSeconds).run();
     const result = await env.DB.batch([
       env.DB.prepare(`INSERT INTO form_submission_rate_limits(site_id,form_id,client_hash,window_start,attempts,expires_at)
-        VALUES(?,?,?,?,1,?)
+        SELECT ?,?,?,?,1,? WHERE NOT EXISTS(SELECT 1 FROM form_submissions WHERE id=?)
         ON CONFLICT(site_id,form_id,client_hash,window_start) DO UPDATE SET attempts=form_submission_rate_limits.attempts+1
-        WHERE form_submission_rate_limits.attempts<5`)
-        .bind(siteId, formId, clientHash, windowStart, windowStart + windowSeconds * 2),
+        WHERE form_submission_rate_limits.attempts<5 AND NOT EXISTS(SELECT 1 FROM form_submissions WHERE id=?)`)
+        .bind(siteId, formId, clientHash, windowStart, windowStart + windowSeconds * 2, submissionId, submissionId),
       env.DB.prepare(`INSERT INTO form_submissions
         (id,site_id,form_id,form_version,page_id,page_revision_id,values_json,consent_text,consent_version,consent_accepted_at,received_at,expires_at)
-        SELECT ?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,datetime('now','+' || ? || ' days') WHERE changes()=1`)
+        SELECT ?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,datetime('now','+' || ? || ' days')
+        WHERE changes()=1 AND NOT EXISTS(SELECT 1 FROM form_submissions WHERE id=?)
+        ON CONFLICT(id) DO NOTHING`)
         .bind(submissionId, siteId, formId, published.form.version, pageId, published.page.published_revision_id,
           valuesJson, published.definition.consent.text, published.definition.consent.version,
-          consentAcceptedAt, published.definition.retentionDays)
+          consentAcceptedAt, published.definition.retentionDays, submissionId)
     ]);
+    if (Number(result[1]?.meta?.changes || 0) !== 1) {
+      if (suppliedKey) {
+        // A concurrent request may have committed the same key after the
+        // initial lookup. Resolve it without revealing any other submission.
+        const replay = await resolveIdempotencyReplay(env, submissionId, expectedSubmission, published.definition.successMessage);
+        if (replay) return replay;
+      }
+    }
     if (Number(result[0]?.meta?.changes || 0) !== 1 || Number(result[1]?.meta?.changes || 0) !== 1) {
       return error("FORM_RATE_LIMITED", 429, "Túl sok beküldés érkezett. Próbáld újra később.");
     }

@@ -362,6 +362,9 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
    const trap=document.createElement('input');trap.type='text';trap.name='website';trap.tabIndex=-1;trap.autocomplete='off';trapWrap.append(trap);form.append(trapWrap);
    const status=document.createElement('p');status.className='creator-form-status';status.setAttribute('role','status');status.setAttribute('aria-live','polite');status.setAttribute('aria-atomic','true');
    const submit=document.createElement('button');submit.type='submit';submit.textContent='Küldés';form.append(submit,status);mount.replaceChildren(form);
+   // Keep one opaque request key for a retry after an ambiguous network
+   // failure. A changed payload or accepted submission starts a new attempt.
+   let pendingSubmission=null;
    const validationMessage=(control,label)=>{
     const validity=control.validity;
     if(validity.valueMissing)return label==='Adatkezelési hozzájárulás'?'A beküldéshez el kell fogadnod az adatkezelési feltételeket.':`A(z) „${label}” mező kitöltése kötelező.`;
@@ -426,13 +429,19 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
    form.addEventListener('submit',async event=>{
      event.preventDefault();updateConditionalFields();if(!form.checkValidity()){updateValidationErrors({focus:true});return}updateValidationErrors();submit.disabled=true;status.textContent='Küldés…';
      const values=Object.fromEntries([...fieldControls].filter(([id])=>!fieldWrappers.get(id)?.hidden).map(([id,control])=>[id,control.classList?.contains('creator-form-radio-group')?(control.querySelector('input:checked')?.value||''):control.type==='checkbox'?control.checked:control.value]));
+     const fingerprint=JSON.stringify({values,consentAccepted:consent.checked});
+     if(!pendingSubmission||pendingSubmission.fingerprint!==fingerprint)pendingSubmission={fingerprint,key:crypto.randomUUID()};
     try{
      const result=await fetch('/api/public/forms?formId='+encodeURIComponent(formId)+'&pageId='+encodeURIComponent(pageId),{
-      method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},
+      method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','Idempotency-Key':pendingSubmission.key},
       body:JSON.stringify({values,consentAccepted:consent.checked,website:trap.value})
      });
      const resultPayload=await result.json().catch(()=>null);
-     if(!result.ok||resultPayload?.ok!==true)throw new Error(result.status===429?'Túl sok beküldés érkezett. Próbáld újra később.':'A beküldést most nem tudtuk fogadni. Ellenőrizd az adatokat, majd próbáld újra.');
+     if(!result.ok||resultPayload?.ok!==true){
+      if(result.status===409)pendingSubmission={fingerprint,key:crypto.randomUUID()};
+      throw new Error(result.status===429?'Túl sok beküldés érkezett. Próbáld újra később.':result.status===409?'A beküldési adatok megváltoztak. Küldd el újra az űrlapot.':'A beküldést most nem tudtuk fogadni. Ellenőrizd az adatokat, majd próbáld újra.');
+     }
+      pendingSubmission=null;
       form.reset();updateConditionalFields();status.textContent=typeof resultPayload.data?.message==='string'?resultPayload.data.message:'Köszönöm, a beküldés megérkezett.';
      emitAcceptedPublicFormSubmission(form);
     }catch(error){status.textContent=error?.message||'A beküldés most nem sikerült. Próbáld újra később.'}

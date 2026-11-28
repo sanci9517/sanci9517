@@ -51,6 +51,8 @@ async function fixture(t, { withSubmitInteraction = false, definitionOverride = 
   const draftPage = structuredClone(publishedPage);
   let formGetCount = 0;
   const submissions = [];
+  const submissionKeys = [];
+  const acceptedSubmissions = new Map();
   let submissionOutcome = 'success';
   const publicRoot = resolve(import.meta.dirname, '../../public');
   const server = createServer(async (request, response) => {
@@ -66,8 +68,20 @@ async function fixture(t, { withSubmitInteraction = false, definitionOverride = 
       if (request.method === 'GET') { formGetCount++; return json({ ok: true, data: { id: formId, name: activeDefinition.name, version: 1, definition: activeDefinition } }); }
       if (request.method === 'POST') {
         let body = ''; for await (const chunk of request) body += chunk;
-        submissions.push(JSON.parse(body));
+        const values = JSON.parse(body), key = request.headers['idempotency-key'];
+        submissions.push(values); submissionKeys.push(key);
+        if (submissionOutcome === 'accepted-response-lost') {
+          if (!acceptedSubmissions.has(key)) {
+            acceptedSubmissions.set(key, values);
+            return json({ ok: false, error: { message: 'A válasz elveszett.' } }, 503);
+          }
+          if (JSON.stringify(acceptedSubmissions.get(key)) !== JSON.stringify(values)) {
+            return json({ ok: false, error: { code: 'IDEMPOTENCY_KEY_REUSED' } }, 409);
+          }
+          return json({ ok: true, data: { submitted: true, message: activeDefinition.successMessage } });
+        }
         if (submissionOutcome !== 'success') return json({ ok: false, error: { message: 'A beküldés most nem sikerült.' } }, 503);
+        acceptedSubmissions.set(key, values);
         return json({ ok: true, data: { submitted: true, message: activeDefinition.successMessage } });
       }
     }
@@ -86,7 +100,9 @@ async function fixture(t, { withSubmitInteraction = false, definitionOverride = 
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   page.setDefaultTimeout(8000);
   page.on('pageerror', error => { throw error; });
-  return { page, base: `http://127.0.0.1:${server.address().port}`, submissions, getFormReads: () => formGetCount, tabsId, setSubmissionOutcome: outcome => { submissionOutcome = outcome; } };
+  return { page, base: `http://127.0.0.1:${server.address().port}`, submissions, submissionKeys,
+    acceptedSubmissionCount: () => acceptedSubmissions.size, getFormReads: () => formGetCount, tabsId,
+    setSubmissionOutcome: outcome => { submissionOutcome = outcome; } };
 }
 
 test('public form renders only data, enforces browser consent and submits first-party values', async t => {
@@ -280,6 +296,44 @@ test('EDT-039 Form actions run only after an accepted public submission', async 
   await tab(1).waitFor({ state: 'visible' });
   assert.equal(await tab(1).getAttribute('aria-selected'), 'true', 'the existing safe same-page action runs after the accepted response');
   assert.equal(f.submissions.length, 2);
+  assert.equal(f.submissionKeys[0], f.submissionKeys[1], 'a retry after an ambiguous failure reuses the logical submission key');
+});
+
+test('a retry after the server accepts but its response is lost reuses the key; edits start a new submission', async t => {
+  const f = await fixture(t);
+  await f.page.goto(f.base + '/p/forms-test');
+  const region = f.page.getByRole('region', { name: 'Írj a Sanci9517-nek' });
+  await region.waitFor();
+  await region.getByRole('textbox', { name: 'E-mail', exact: true }).fill('creator@example.test');
+  await region.getByLabel('Üzenet', { exact: true }).fill('Első üzenet');
+  await region.getByLabel('Téma', { exact: true }).selectOption('Együttműködés');
+  await region.getByLabel('Telefon', { exact: true }).check();
+  await region.getByLabel('Időpont', { exact: true }).fill('2024-02-29');
+  await region.getByLabel('Elfogadom az adatkezelési <szabályokat>.').check();
+
+  f.setSubmissionOutcome('accepted-response-lost');
+  await region.getByRole('button', { name: 'Küldés' }).click();
+  await region.getByRole('status').filter({ hasText: 'nem tudtuk fogadni' }).waitFor();
+  const firstKey = f.submissionKeys[0];
+  assert.match(firstKey, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+  assert.equal(f.acceptedSubmissionCount(), 1, 'the simulated server accepted the request before the client saw a failure');
+
+  await region.getByRole('button', { name: 'Küldés' }).click();
+  await region.getByRole('status').filter({ hasText: 'Köszönöm a megkeresést.' }).waitFor();
+  assert.equal(f.submissionKeys[1], firstKey);
+  assert.equal(f.acceptedSubmissionCount(), 1, 'same-key retry resolves to the already accepted submission');
+
+  await region.getByRole('textbox', { name: 'E-mail', exact: true }).fill('creator@example.test');
+  await region.getByLabel('Üzenet', { exact: true }).fill('Második üzenet');
+  await region.getByLabel('Téma', { exact: true }).selectOption('Együttműködés');
+  await region.getByLabel('Telefon', { exact: true }).check();
+  await region.getByLabel('Időpont', { exact: true }).fill('2024-02-29');
+  await region.getByLabel('Elfogadom az adatkezelési <szabályokat>.').check();
+  f.setSubmissionOutcome('success');
+  await region.getByRole('button', { name: 'Küldés' }).click();
+  await region.getByRole('status').filter({ hasText: 'Köszönöm a megkeresést.' }).waitFor();
+  assert.notEqual(f.submissionKeys[2], firstKey, 'a successful submit or payload edit must never reuse the previous key');
+  assert.equal(f.acceptedSubmissionCount(), 2, 'edited content is a distinct deliberate submission');
 });
 
 test('draft preview displays an inert form notice and never reads or submits the public form API', async t => {

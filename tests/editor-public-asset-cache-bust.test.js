@@ -35,7 +35,7 @@ test('the Editor and public renderer release tokens bust the structured accessib
   const editorTreeVersion='20261126-edt007-canvas-pan-v1';
   const trustedFormSubmitVersion='20261127-edt039-form-submit-trusted-v2';
   const mediaPlaybackVersion='20261125-forms-service-v1';
-  const publicRendererVersion='20261127-d06-slider-fields-v1';
+  const publicRendererVersion='20261128-d06-form-submit-idempotency-v1';
   assert.match(html,new RegExp(`src="/editor-v2/app\\.js\\?v=${editorScriptVersion}"`),
     'the deployed entry page must request the active conditional Forms Inspector');
   assert.match(html,new RegExp(`href="/editor-v2/editor\\.css\\?v=${editorTreeVersion}"`),
@@ -136,7 +136,7 @@ test('the EDT-040 in-view trigger refreshes both renderers and the shared motion
   const editorEntryVersion='20261125-edt016-child-reference-limit-v1';
   const editorScriptVersion='20261127-edt042-page-load-recovery-v1';
   const mediaPlaybackVersion='20261125-forms-service-v1';
-  const publicRendererVersion='20261127-d06-slider-fields-v1';
+  const publicRendererVersion='20261128-d06-form-submit-idempotency-v1';
   assert.match(editorHtml,new RegExp(`editor-motion\\.css\\?v=${motionVersion}`));
   assert.match(editorHtml,new RegExp(`app\\.js\\?v=${editorScriptVersion}`));
   assert.match(editor,new RegExp(`core/property-registry\\.js\\?v=${motionVersion}`));
