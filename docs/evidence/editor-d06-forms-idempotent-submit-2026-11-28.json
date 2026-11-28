@@ -34,20 +34,20 @@
     "restricted_diagnostics": "Auto-review rejected PRAGMA foreign_key_check and PRAGMA quick_check because the production preflight requires literal SELECT-only statements; neither PRAGMA executed and no alternate diagnostic route was used."
   },
   "hosted_release": {
-    "runtime_commit": "PENDING",
-    "github_ci": "PENDING exact-SHA workflow status.",
-    "cloudflare_build": "PENDING exact-SHA result.",
-    "worker_deployment": "PENDING.",
-    "traffic_version": "PENDING.",
-    "production_health": "PENDING.",
+    "runtime_commit": "cd156c2d966cdd0b1834e8e11befb8b5931ffc84 (https://github.com/sanci9517/sanci9517/commit/cd156c2d966cdd0b1834e8e11befb8b5931ffc84)",
+    "github_ci": "PARTIAL exact-SHA checks: canonical-plan, source-audit, F0 baseline and twitch-integration SUCCESS; editor-core run 46155346877 still IN_PROGRESS, with typecheck, editor tests, Forms schema/route regressions and Forms Inspector/public Chromium regressions passed; isolated real-Worker media API step still running and remaining Editor/browser/domain steps pending. Full CI is NOT PASS until terminal success.",
+    "cloudflare_build": "SUCCESS for exact source commit via check run https://github.com/sanci9517/sanci9517/runs/141010685465 (build 9be0dc18-e7bc-431c-9902-30e90bf70538).",
+    "worker_deployment": "56bba8e7-212c-4db3-960a-30cb82b22217; Cloudflare exact version readback e38bc34a-be3e-4418-a81d-600f015cb681 (version #4236), created 2026-11-28T14:34:42Z.",
+    "traffic_version": "e38bc34a-be3e-4418-a81d-600f015cb681 at 100% traffic, verified from Cloudflare deployments API.",
+    "production_health": "PASS exact-SHA production source-smoke check run 46155346885; direct read-only GET https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?release=cd156c2d966cdd0b1834e8e11befb8b5931ffc84 returned HTTP 200 and {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}.",
     "production_asset_sha256": {
       "public/assets/page-renderer.js": {
         "local": "828a7a2cf3c2970849818f0c8b5a85fb82453890e9c33ec60fdc2d3c4b80e45f",
-        "live": "PENDING"
+        "live": "828a7a2cf3c2970849818f0c8b5a85fb82453890e9c33ec60fdc2d3c4b80e45f"
       },
       "public/visual-page.html": {
         "local": "ef6d7722d05ee24e9b3868081bf65ea927850e2fa0ca6c01b635158e1d234d68",
-        "live": "PENDING"
+        "live": "ef6d7722d05ee24e9b3868081bf65ea927850e2fa0ca6c01b635158e1d234d68"
       }
     }
   },

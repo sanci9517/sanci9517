@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261128140339-85e72e30",
+  "task": "77.44.7.D-next-editor-feature",
+  "trigger": "manual",
+  "started_at": "2026-11-28T14:03:39.818Z",
+  "finished_at": "2026-11-28T14:37:22.750Z",
+  "wall_seconds": 2023,
+  "paused_seconds": 0,
+  "measured_seconds": 2023,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06 Forms idempotency implemented, locally verified, pushed and deployed; exact-SHA production health/assets pass; Editor Core GitHub gate remains in progress.",
+  "evidence": [
+    "docs/evidence/editor-d06-forms-idempotent-submit-2026-11-28.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "265e948b834ad72d801ef18d11049bf95a3dd045",
+  "finished_revision": "cd156c2d966cdd0b1834e8e11befb8b5931ffc84",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
