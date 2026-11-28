@@ -229,12 +229,25 @@ async function listSubmissions(request: Request, env: Env, siteId: string): Prom
   return ok({ items, nextCursor: items.length === limit && last ? `${last.receivedAt}|${last.id}` : null });
 }
 
+async function countNewSubmissions(env: Env, siteId: string, formId: string): Promise<Response> {
+  if (!/^[0-9a-f-]{36}$/i.test(formId)) return error("INVALID_FORM_ID", 400);
+  const result = await env.DB.prepare(`SELECT
+      (SELECT COUNT(*) FROM form_submissions s
+        WHERE s.site_id=f.site_id AND s.form_id=f.id AND s.status='new'
+          AND s.expires_at>CURRENT_TIMESTAMP) AS count
+    FROM forms f WHERE f.id=? AND f.site_id=? LIMIT 1`)
+    .bind(formId, siteId).first<{ count: number }>();
+  if (!result) return error("FORM_NOT_FOUND", 404);
+  return ok({ count: Math.max(0, Number(result.count) || 0) });
+}
+
 export async function adminFormsRoute(request: Request, env: Env, siteId: string): Promise<Response> {
   const grant = await authorize(request, env, siteId);
   if (grant instanceof Response) return grant;
   try {
     if (request.method === "GET") {
       const url = new URL(request.url);
+      if (url.searchParams.has("newCount")) return await countNewSubmissions(env, siteId, url.searchParams.get("newCount") || "");
       if (url.searchParams.has("submissions")) return await listSubmissions(request, env, siteId);
       const selectedFormId = url.searchParams.get("formId");
       if (selectedFormId !== null) {

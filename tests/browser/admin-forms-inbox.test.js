@@ -22,6 +22,7 @@ test("Admin Forms inbox is scoped to the selected form, searchable, cursor-pagin
   let deleted = false;
   let deleteDenied = true;
   let currentStatus = "new";
+  let newCount = 3;
   const items = Array.from({ length: 50 }, (_, index) => submission(index + 1));
   const server = createServer(async (request, response) => {
     const url = new URL(request.url, "http://localhost");
@@ -33,6 +34,12 @@ test("Admin Forms inbox is scoped to the selected form, searchable, cursor-pagin
     if (url.pathname === "/assets/admin-forms.js") {
       response.setHeader("Content-Type", "text/javascript; charset=utf-8");
       return response.end(await readFile(resolve(publicRoot, "assets/admin-forms.js"), "utf8"));
+    }
+    if (url.pathname === "/api/admin/forms" && request.method === "GET" && url.searchParams.has("newCount")) {
+      const selectedId = url.searchParams.get("newCount");
+      calls.push({ method: "GET", newCountFormId: selectedId });
+      assert.ok([formId, otherFormId].includes(selectedId), "notice counts must be requested for an explicit selected form");
+      return json({ count: selectedId === otherFormId ? 0 : newCount });
     }
     if (url.pathname === "/api/admin/forms" && request.method === "GET" && !url.searchParams.has("formId") && !url.searchParams.has("submissions")) {
       calls.push({ method: "GET", url: url.pathname });
@@ -84,7 +91,7 @@ test("Admin Forms inbox is scoped to the selected form, searchable, cursor-pagin
       const body = JSON.parse(Buffer.concat(chunks).toString("utf8"));
       calls.push({ method: request.method, body });
       assert.equal(body.formId, formId, "mutations must remain tied to the selected form");
-      if (request.method === "PATCH") { currentStatus = body.status; return json({ id: body.submissionId, status: currentStatus }); }
+      if (request.method === "PATCH") { currentStatus = body.status; newCount = currentStatus === "reviewed" ? 2 : 3; return json({ id: body.submissionId, status: currentStatus }); }
       if (deleteDenied) {
         response.writeHead(403, { "Content-Type": "application/json; charset=utf-8" });
         return response.end(JSON.stringify({ ok: false, error: { code: "FORBIDDEN" } }));
@@ -102,6 +109,7 @@ test("Admin Forms inbox is scoped to the selected form, searchable, cursor-pagin
   page.on("dialog", async dialog => { dialogMessages.push(dialog.message()); await dialog.accept(); });
   await page.goto(`http://127.0.0.1:${server.address().port}/`);
   await page.locator(".submission").first().waitFor();
+  await page.waitForFunction(() => document.querySelector("#newSubmissionNotice")?.textContent === "3 új beküldés vár átnézésre.");
   assert.equal(await page.getByRole("button", { name: "CSV export (Admin)" }).isDisabled(), false);
   assert.equal(await page.getByRole("heading", { level: 1, name: "Űrlapbeküldések" }).count(), 1);
   assert.equal(await page.getByRole("navigation", { name: "Admin navigáció" }).count(), 1);
@@ -170,6 +178,7 @@ test("Admin Forms inbox is scoped to the selected form, searchable, cursor-pagin
   const statusSelect = page.getByRole("combobox", { name: /Beküldés állapota/ });
   await statusSelect.selectOption("reviewed");
   await page.getByText("A beküldés állapota frissült.").waitFor();
+  await page.waitForFunction(() => document.querySelector("#newSubmissionNotice")?.textContent === "2 új beküldés vár átnézésre.");
   assert.equal(await statusSelect.inputValue(), "reviewed");
   assert.equal(await page.getByText("Állapot: Átnézve").count(), 1);
   assert.ok(calls.some(call => call.method === "PATCH" && call.body.status === "reviewed"));
@@ -190,6 +199,9 @@ test("Admin Forms inbox is scoped to the selected form, searchable, cursor-pagin
   await page.getByRole("searchbox", { name: "Keresés a beküldött adatokban" }).fill("");
   await page.getByLabel("Űrlap").selectOption(otherFormId);
   await page.getByText("Ehhez az űrlaphoz még nem érkezett beküldés.").waitFor();
+  await page.waitForFunction(() => document.querySelector("#newSubmissionNotice")?.textContent === "Nincs új beküldés.");
   assert.equal(await page.locator(".submission").count(), 0, "changing the selected form must not leak prior form rows into the inbox");
   assert.ok(calls.filter(call => call.method === "GET" && call.formId).some(call => call.formId === otherFormId));
+  assert.ok(calls.filter(call => call.newCountFormId).every(call => [formId, otherFormId].includes(call.newCountFormId)),
+    "the notice count is always scoped to an explicit selected form ID");
 });

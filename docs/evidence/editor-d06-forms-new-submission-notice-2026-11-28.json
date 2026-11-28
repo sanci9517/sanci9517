@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "date_utc": "2026-11-28",
+  "task": "77.44.7.D / WEB-020 — Forms new-submission notice",
+  "status": "LOCAL_VERIFICATION_PASS_PENDING_REMOTE_EXACT_SHA_RELEASE",
+  "plan": {
+    "master": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "feature_owner": "WEB-020 FORM SUBMISSION; 49.2.Forms lifecycle",
+    "active_cursor": "77.44 / WEB-011 -> 77.44.7.D",
+    "acceptance": "D-06, D-01–D-07 and full Visual Editor acceptance remain OPEN / NOT_CERTIFIED. Full manual/physical Editor acceptance remains deferred until the planned Editor scope is complete."
+  },
+  "scope": {
+    "change": "The Forms Admin inbox shows the count of unexpired submissions in the existing new state for the selected site-owned form. The count refreshes after form selection, explicit refresh, status change, visibility return and every 60 seconds while the page is visible.",
+    "read_state": "Reuses the existing form_submissions.status lifecycle: changing a submission to reviewed clears it from the notice. No separate notification inbox or duplicate business state is introduced.",
+    "privacy": "The count query returns only an integer and is scoped by the authenticated site grant and selected site-owned form. It does not read or return values_json, email, consent text, IP digest or submission identifiers.",
+    "delivery": "Explicitly an in-app Forms inbox notice only; it makes no email, push, or external delivery claim.",
+    "save_publish": "Unchanged and separate.",
+    "schema_or_production_data": "No D1 schema, migration, or data mutation; no R2 operation.",
+    "dependencies_and_cost": "No new dependency, paid provider, quota use or new cost (0 HUF)."
+  },
+  "files": [
+    "src/routes/admin/forms.ts",
+    "public/admin-forms.html",
+    "public/assets/admin-forms.js",
+    "tests/forms-routes.test.js",
+    "tests/browser/admin-forms-inbox.test.js",
+    "docs/evidence/feature-traceability.json"
+  ],
+  "verification": {
+    "npm run test:forms": "PASS — 5/5 files; includes count privacy, invalid ID, absent/foreign form and cross-site authorization cases.",
+    "CHROMIUM_PATH=/usr/bin/chromium npm run test:forms:browser": "PASS — 3 real Chromium files, 8/8 tests; checks selected-form announcement, status transition from new to reviewed, and zero count for another form.",
+    "npm run test:editor": "PASS — 25/25 Editor unit files; preferences 12/12; Linux subreaper 4/4.",
+    "npm run typecheck -- --pretty false": "PASS",
+    "npm run test:web013:migration-gate": "PASS — deploy:safe does not apply migrations.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS — 396 mappings.",
+    "python3 scripts/check-canonical-plan.py": "PASS — one canonical 13-part master.",
+    "python3 scripts/audit-active-plan-point.py": "PASS — cursor 77.44.7.D; acceptance NOT_CERTIFIED.",
+    "python3 tests/plan-contract.test.py": "PASS — 17/17.",
+    "node --check public/assets/admin-forms.js and tests/browser/admin-forms-inbox.test.js": "PASS",
+    "git diff --check": "PASS",
+    "Wrangler 4.130.0 deploy --dry-run": "PASS — 206 public assets; 493.17 KiB / 121.73 KiB gzip; dry run only."
+  },
+  "production_read_only_preflight": {
+    "method": "Cloudflare D1 API; SELECT statements only.",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "queries": [
+      "SELECT name,type FROM sqlite_schema WHERE name IN ('forms','form_submissions','form_submission_rate_limits','audit_log','site_memberships') ORDER BY type,name",
+      "SELECT name,applied_at FROM d1_migrations ORDER BY name DESC LIMIT 5"
+    ],
+    "forms_tables_present": true,
+    "latest_migration": "0032_forms_service.sql",
+    "changed_db": false,
+    "rows_written": 0,
+    "changes": 0
+  },
+  "cloudflare_build_minutes": {
+    "has_reached_build_minutes_limit": false,
+    "refresh_on": "2026-11-30T23:59:59.999Z"
+  },
+  "release": {
+    "runtime_sha": "PENDING_COMMIT",
+    "github_branch_push": "PENDING",
+    "exact_sha_github_ci": "PENDING",
+    "cloudflare_build_and_deployment": "PENDING",
+    "production_health_and_modified_asset_hashes": "PENDING"
+  },
+  "test_runner_notes": [
+    "The first browser-suite attempt ran without loopback permission and failed before test execution; the rerun with the required loopback permission passed all 8 Forms browser tests.",
+    "The initial assertion searched for a live-region text as the role=status accessible name; Playwright correctly found no such name. The regression now asserts the live-region content directly, and the actual status region remains role=status with aria-live=polite."
+  ]
+}

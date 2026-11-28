@@ -4,6 +4,7 @@ const formSelect = $("formSelect");
 const searchInput = $("searchInput");
 const list = $("submissions");
 const status = $("status");
+const newSubmissionNotice = $("newSubmissionNotice");
 const pageStatus = $("pageStatus");
 const previousButton = $("previousPage");
 const nextButton = $("nextPage");
@@ -18,10 +19,18 @@ let nextCursor = null;
 let requestSequence = 0;
 let searchTimer = 0;
 let pending = false;
+let noticeRequestSequence = 0;
 
 function message(text, kind = "info") {
   status.textContent = text;
   status.dataset.kind = kind;
+}
+
+function notificationMessage(text, kind = "info", count = null) {
+  if (newSubmissionNotice.textContent !== text) newSubmissionNotice.textContent = text;
+  newSubmissionNotice.dataset.kind = kind;
+  if (count === null) delete newSubmissionNotice.dataset.count;
+  else newSubmissionNotice.dataset.count = String(count);
 }
 
 async function request(url, options = {}) {
@@ -172,9 +181,10 @@ async function loadForms() {
     if (forms.length) {
       formSelect.value = forms[0].id;
       await loadFormDefinition(forms[0].id);
-      await loadSubmissions(null);
+      await Promise.all([loadSubmissions(null), loadNewSubmissionCount()]);
     } else {
       message("Nincs elérhető űrlap.");
+      notificationMessage("Nincs kiválasztott űrlap.", "info", 0);
       renderItems([]);
     }
   } catch (cause) {
@@ -183,6 +193,26 @@ async function loadForms() {
     renderItems([]);
   } finally {
     setBusy(false);
+  }
+}
+
+async function loadNewSubmissionCount() {
+  const formId = formSelect.value;
+  const sequence = ++noticeRequestSequence;
+  if (!formId) {
+    notificationMessage("Nincs kiválasztott űrlap.", "info", 0);
+    return;
+  }
+  try {
+    const data = await request(`/api/admin/forms?newCount=${encodeURIComponent(formId)}`);
+    if (sequence !== noticeRequestSequence || formId !== formSelect.value) return;
+    const count = Number(data?.count);
+    if (!Number.isSafeInteger(count) || count < 0) throw new Error("Érvénytelen darabszám.");
+    notificationMessage(count === 0 ? "Nincs új beküldés." : `${count} új beküldés vár átnézésre.`, "info", count);
+  } catch {
+    if (sequence === noticeRequestSequence && formId === formSelect.value) {
+      notificationMessage("Az új beküldések darabszáma most nem frissíthető.", "error");
+    }
   }
 }
 
@@ -234,6 +264,7 @@ async function updateStatus(item, select) {
     const statusValue = article?.querySelector(".meta span:last-child");
     if (statusValue) statusValue.textContent = `Állapot: ${STATUS_LABELS[nextStatus]}`;
     message("A beküldés állapota frissült.", "success");
+    await loadNewSubmissionCount();
   } catch (cause) {
     select.value = oldStatus;
     message(`Az állapot nem menthető: ${cause.message}`, "error");
@@ -248,7 +279,7 @@ async function deleteSubmission(item) {
   try {
     await request("/api/admin/forms", { method: "DELETE", body: JSON.stringify({ formId: formSelect.value, submissionId: item.id }) });
     if (cursors.length > 1 && list.querySelectorAll(".submission").length === 1) cursors.pop();
-    await loadSubmissions(cursors.at(-1));
+    await Promise.all([loadSubmissions(cursors.at(-1)), loadNewSubmissionCount()]);
     message("A beküldés törölve.", "success");
   } catch (cause) {
     const reason = /FORBIDDEN|Admin role required/i.test(cause.message)
@@ -301,7 +332,11 @@ async function exportSubmissions() {
 }
 
 formSelect.addEventListener("change", async () => {
-  if (!formSelect.value) return;
+  if (!formSelect.value) {
+    notificationMessage("Nincs kiválasztott űrlap.", "info", 0);
+    renderItems([]);
+    return;
+  }
   cursors = [null];
   nextCursor = null;
   pageStatus.textContent = "";
@@ -309,7 +344,7 @@ formSelect.addEventListener("change", async () => {
   setBusy(true);
   try {
     await loadFormDefinition(formSelect.value);
-    await loadSubmissions(null);
+    await Promise.all([loadSubmissions(null), loadNewSubmissionCount()]);
   } catch (cause) {
     message(`Az űrlap adatai nem tölthetők be: ${cause.message}`, "error");
     setBusy(false);
@@ -319,7 +354,7 @@ searchInput.addEventListener("input", () => {
   clearTimeout(searchTimer);
   searchTimer = setTimeout(() => { cursors = [null]; nextCursor = null; loadSubmissions(null); }, 250);
 });
-refreshButton.addEventListener("click", () => loadSubmissions(cursors.at(-1)));
+refreshButton.addEventListener("click", () => Promise.all([loadSubmissions(cursors.at(-1)), loadNewSubmissionCount()]));
 exportButton.addEventListener("click", exportSubmissions);
 previousButton.addEventListener("click", () => {
   if (cursors.length < 2 || pending) return;
@@ -333,3 +368,9 @@ nextButton.addEventListener("click", () => {
 });
 
 loadForms();
+setInterval(() => {
+  if (document.visibilityState === "visible") void loadNewSubmissionCount();
+}, 60_000);
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") void loadNewSubmissionCount();
+});

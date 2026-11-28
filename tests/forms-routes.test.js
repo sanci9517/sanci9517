@@ -363,6 +363,38 @@ test("an unpublished, archived, unbound, or foreign-site form is never public", 
   assert.equal(response.status, 404);
 });
 
+test("new-submission notice count is site/form scoped and excludes reviewed or expired private rows", async t => {
+  const { db, env } = makeDb();
+  t.after(() => db.close());
+  bindPublishedForm(db);
+  await addSession(db, editorToken, "editor");
+  const insert = db.prepare(`INSERT INTO form_submissions
+    (id,site_id,form_id,form_version,page_id,page_revision_id,values_json,consent_text,consent_version,consent_accepted_at,received_at,expires_at,status)
+    VALUES(?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?,?)`);
+  const add = (email, expiresAt, state) => insert.run(crypto.randomUUID(), siteId, formId, 1, pageId, "page-revision-v1",
+    JSON.stringify({ email }), "Sensitive consent text", "privacy-v1", "2026-11-27T12:00:00.000Z", expiresAt, state);
+  add("new-1@example.test", "2999-01-01 00:00:00", "new");
+  add("new-2@example.test", "2999-01-01 00:00:00", "new");
+  add("reviewed@example.test", "2999-01-01 00:00:00", "reviewed");
+  add("expired@example.test", "2000-01-01 00:00:00", "new");
+  const request = url => new Request(`https://creator.test${url}`, {
+    headers: { Cookie: `sanci9517_session=${editorToken}`, "Sec-Fetch-Site": "same-origin" }
+  });
+
+  const response = await adminFormsRoute(request(`/api/admin/forms?newCount=${formId}`), env, siteId);
+  assert.equal(response.status, 200);
+  assert.deepEqual((await response.json()).data, { count: 2 });
+  assert.equal(db.prepare("SELECT COUNT(*) AS count FROM audit_log").get().count, 0,
+    "a read-only count does not create an audit event or change submission state");
+
+  const invalid = await adminFormsRoute(request("/api/admin/forms?newCount=bad"), env, siteId);
+  assert.equal(invalid.status, 400);
+  const otherForm = await adminFormsRoute(request("/api/admin/forms?newCount=33333333-3333-4333-8333-333333333333"), env, siteId);
+  assert.equal(otherForm.status, 404, "a form outside the active site returns no submission metadata");
+  const foreignSite = await adminFormsRoute(request(`/api/admin/forms?newCount=${formId}`), env, "foreign-site");
+  assert.equal(foreignSite.status, 403, "a valid form ID cannot be counted from a different site context");
+});
+
 test("a legacy or manually published form without a privacy URL fails closed on the public endpoint", async t => {
   const { db, env } = makeDb();
   t.after(() => db.close());
