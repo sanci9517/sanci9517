@@ -77,8 +77,9 @@
     },
     "exact_sha_provenance_limit": "The live deployment/version is confirmed as the first rollout immediately after the exact commit push; the 46 public-source hashes match that commit. Cloudflare version/deployment metadata does not expose a Git SHA, and the build-config GET returned 404, so exact Git-SHA-to-Worker-build provenance is not asserted beyond the observed post-push rollout and source-hash readback.",
     "workflow_followup": {
-      "status": "LOCAL_FIX_PENDING_PUSH",
-      "summary": "Correct the smoke asset list to exclude only the private, intentionally denied Admin HTML backing file; retain exact JS hash coverage. Workflow-only follow-up will use [skip ci] and will not redeploy the Worker."
+      "status": "PUSHED",
+      "commit": "32fc08c5deb7a08c81c2d1d29eb27a0996530136",
+      "summary": "Workflow/test/evidence-only correction was pushed to v2/foundation with [skip ci]. It excludes the protected Admin HTML backing path while retaining the public JS hash. No runtime deployment was triggered by this follow-up."
     }
   },
   "data_safety": {
