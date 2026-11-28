@@ -104,7 +104,17 @@
           "conclusion": "SUCCESS"
         }
       ],
-      "overall": "NOT PASS — previous exact-SHA Editor Core run failed; regression baseline corrected locally; rerun on updated exact SHA is required."
+      "overall": "INCOMPLETE — four other exact-SHA checks are SUCCESS; Editor Core 46148273062 is still running the full browser-layout regression, no hosted PASS claimed.",
+      "editor_core_followup_run": {
+        "id": 46148273062,
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/46148273062",
+        "sha": "5e4a5e07cbae0e90321345ec3eeb9041112a08b4",
+        "status": "IN_PROGRESS",
+        "conclusion": null,
+        "active_step": "Run Editor browser layout regression",
+        "completed_steps": "15/24",
+        "completed_steps_result": "SUCCESS"
+      }
     },
     "cloudflare_build_and_deployment": {
       "initial_automatic_build": {
@@ -148,7 +158,7 @@
     "root_cause": "The test compared the drag result with a scroll snapshot taken before an intervening interactive-probe gesture. CI reported the later scrollLeft (56) below the earlier snapshot (434), so that snapshot was not the actual drag start. The corrected assertion records a fresh baseline immediately before the real drag.",
     "fix": "Measure overflow separately, then immediately before the real pan gesture restore scroll to (0,0) and capture the actual baseline used for the drag assertion.",
     "verification": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-ux-p0-workflow.test.js — 3 consecutive repetitions PASS (3/3).",
-    "hosted_followup": "A new exact-SHA Editor Core run after pushing this test/evidence correction is required to clear the prior CI failure; do not rerun before this corrected source is pushed.",
+    "hosted_followup": "Exact-SHA Editor Core run 46148273062 is IN_PROGRESS at Run Editor browser layout regression (15/24 steps complete); no hosted Editor Core PASS claimed yet.",
     "worker": "Unchanged; latest Cloudflare deployment readback remains 3cad8ca4-8fc7-460b-ae17-e326e5e2fb97 with d6d91041-94f8-4060-82f5-b8940c0cb4db at 100%."
   }
 }

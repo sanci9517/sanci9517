@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261128134002-93f3f6d5",
+  "task": "77.44.7.D-06-Editor-Core-CI-follow-up",
+  "trigger": "scheduled",
+  "started_at": "2026-11-28T13:40:02.432Z",
+  "finished_at": "2026-11-28T13:42:40.790Z",
+  "wall_seconds": 158,
+  "paused_seconds": 98,
+  "measured_seconds": 60,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "Read back exact-SHA Editor Core run; it is still in the browser layout step. Updated canonical plan and release evidence without claiming PASS.",
+  "evidence": [
+    "docs/evidence/editor-d06-forms-new-submission-notice-2026-11-28.json",
+    "46148273062"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "5e4a5e07cbae0e90321345ec3eeb9041112a08b4",
+  "finished_revision": "5e4a5e07cbae0e90321345ec3eeb9041112a08b4",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
