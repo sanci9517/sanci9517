@@ -117,7 +117,7 @@
     "src/routes/public/forms.ts": "62de3ae94a4b9e23a2cf1e6febb7f5750f9fa37c9016f13a0cde6a4888e111b9",
     "src/routes/public/pages.ts": "4eae3fc245dd45b4befaf891b7950898e52010064cf0a1bb79a4e431c79253e5",
     "src/routes/public/seo.ts": "fa73a6c252df558862136e85e9a6594d84a19d2fffb130ac5dd38656074be60f",
-    "tests/browser/admin-forms-inbox.test.js": "44d6b760407553af3b17dc8e59fbb610ba67dd914f23558b38dfd74ffdcacab1",
+    "tests/browser/admin-forms-inbox.test.js": "c57e26deff03b6c7d6e8d8bfcc7776413a10e9f18e5160bbfaab55f7d017ba41",
     "tests/browser/admin-media-organization.test.js": "c8be2bd093487861c2fc8dbdeaaac4b22f2aae7a8104e2a4311ffeee167f0850",
     "tests/browser/editor-diagnostics-redaction.test.js": "c534abc0d1f89cf51b929b870017a14c4f039383226137c705f4dd2c1eed1842",
     "tests/browser/editor-element-insertion.test.js": "238ce1f64f459c1d0ab6423f4a660acd72efc63fb8f206e63d02fb149b8884ab",

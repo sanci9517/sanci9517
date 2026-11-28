@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "date_utc": "2026-11-28",
+  "task": "77.44.7.D / WEB-020 — Forms new-submission notice refresh lifecycle regression",
+  "status": "LOCAL_TESTS_AND_EDITOR_CORE_CI_PASS",
+  "plan": {
+    "master": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "feature_owner": "WEB-020 FORM SUBMISSION; 49.2.Forms lifecycle",
+    "active_cursor": "77.44 / WEB-011 -> 77.44.7.D",
+    "acceptance": "This verifies the notice's existing refresh lifecycle and does not complete D-06, D-01–D-07, the full Visual Editor, or manual/physical acceptance. All remain OPEN / NOT_CERTIFIED."
+  },
+  "scope": {
+    "change": "Extend the existing Admin Forms inbox Chromium regression to cover visibility-aware refresh, the 60-second refresh timer, explicit selected-form scoping, and stale-response protection when switching forms.",
+    "runtime_changed": false,
+    "behavior_under_test": [
+      "A hidden page does not issue visibility-return or minute-poll count requests.",
+      "Returning to a visible page refreshes only the selected form's count.",
+      "The 60-second refresh while visible requests only the selected form's count.",
+      "A late response from the previously selected form cannot overwrite the current form's notice."
+    ],
+    "save_publish": "Unchanged and separate.",
+    "database_or_storage": "No D1 query, migration, data write, or R2 operation was performed for this test-only change.",
+    "dependencies_and_cost": "No new dependency, paid service, CI dispatch, Worker deployment, or new cost (0 HUF)."
+  },
+  "verification": {
+    "CHROMIUM_PATH=/usr/bin/chromium npm run test:forms:browser": "PASS — 3 real Chromium files, 8/8 tests.",
+    "npm run test:forms": "PASS — 5/5 files.",
+    "python3 scripts/check-canonical-plan.py": "PASS — one complete 13-file master; functional acceptance remains NOT_CERTIFIED.",
+    "python3 tests/plan-contract.test.py": "PASS — 17/17.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS — 396 source mappings.",
+    "python3 scripts/audit-active-plan-point.py": "PASS — active cursor 77.44.7.D; acceptance NOT_CERTIFIED.",
+    "node --check tests/browser/admin-forms-inbox.test.js": "PASS",
+    "git diff --check": "PASS",
+    "test_source_sha256": "c57e26deff03b6c7d6e8d8bfcc7776413a10e9f18e5160bbfaab55f7d017ba41"
+  },
+  "github": {
+    "branch": "v2/foundation",
+    "base_sha": "fdcc7db0e6d4c10b094f767ca6a3a775f8755620",
+    "editor_core_run": {
+      "id": 46148273062,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/46148273062",
+      "sha": "5e4a5e07cbae0e90321345ec3eeb9041112a08b4",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS",
+      "completed_steps": "24/24",
+      "browser_layout_step": "SUCCESS"
+    },
+    "this_test_only_followup": "No new Actions run was dispatched; the completed Editor Core run is from its exact source SHA, not from the test-only follow-up commit."
+  },
+  "production": {
+    "runtime_source_sha": "1730ea98318aadfefa04a4258d445010f03ba578",
+    "deployment_id": "3cad8ca4-8fc7-460b-ae17-e326e5e2fb97",
+    "worker_version": "d6d91041-94f8-4060-82f5-b8940c0cb4db",
+    "traffic": "100%",
+    "readback": "Cloudflare Workers deployments API; unchanged during this test-only verification.",
+    "release_or_smoke": "NOT RUN — runtime is unchanged; no redundant deployment or smoke run was created. The earlier exact-runtime smoke remains documented in editor-d06-forms-new-submission-notice-2026-11-28.json."
+  },
+  "limitations": [
+    "The regression verifies the inbox notice lifecycle, not email/push delivery or the full notification domain.",
+    "Passing Chromium tests and Editor Core CI do not certify all Visual Editor features or close D-06."
+  ]
+}

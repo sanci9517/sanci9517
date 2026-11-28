@@ -23,6 +23,7 @@ test("Admin Forms inbox is scoped to the selected form, searchable, cursor-pagin
   let deleteDenied = true;
   let currentStatus = "new";
   let newCount = 3;
+  let nextHeldCount = null;
   const items = Array.from({ length: 50 }, (_, index) => submission(index + 1));
   const server = createServer(async (request, response) => {
     const url = new URL(request.url, "http://localhost");
@@ -39,6 +40,12 @@ test("Admin Forms inbox is scoped to the selected form, searchable, cursor-pagin
       const selectedId = url.searchParams.get("newCount");
       calls.push({ method: "GET", newCountFormId: selectedId });
       assert.ok([formId, otherFormId].includes(selectedId), "notice counts must be requested for an explicit selected form");
+      if (nextHeldCount?.formId === selectedId) {
+        const held = nextHeldCount;
+        nextHeldCount = null;
+        held.started();
+        await held.response;
+      }
       return json({ count: selectedId === otherFormId ? 0 : newCount });
     }
     if (url.pathname === "/api/admin/forms" && request.method === "GET" && !url.searchParams.has("formId") && !url.searchParams.has("submissions")) {
@@ -105,11 +112,47 @@ test("Admin Forms inbox is scoped to the selected form, searchable, cursor-pagin
   const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROMIUM_PATH || "/usr/bin/chromium", args: ["--no-sandbox"] });
   t.after(async () => { await browser.close(); await new Promise(resolve => server.close(resolve)); });
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  await page.addInitScript(() => {
+    let visibility = "visible";
+    const intervals = [];
+    const noticeRequests = [];
+    const noticeResponses = [];
+    const originalFetch = window.fetch.bind(window);
+    Object.defineProperty(document, "visibilityState", { configurable: true, get: () => visibility });
+    window.setInterval = (callback, delay, ...args) => {
+      if (delay === 60_000) {
+        intervals.push(() => callback(...args));
+        return intervals.length;
+      }
+      return 0;
+    };
+    window.fetch = async (input, init) => {
+      const rawUrl = typeof input === "string" ? input : input.url;
+      const url = new URL(rawUrl, location.href);
+      const isNotice = url.pathname === "/api/admin/forms" && url.searchParams.has("newCount");
+      if (isNotice) noticeRequests.push(url.searchParams.get("newCount"));
+      const response = await originalFetch(input, init);
+      if (isNotice) noticeResponses.push(url.searchParams.get("newCount"));
+      return response;
+    };
+    window.__formsInboxTest = {
+      noticeRequests,
+      noticeResponses,
+      setVisibility(value) {
+        visibility = value;
+        document.dispatchEvent(new Event("visibilitychange"));
+      },
+      fireMinute() { for (const callback of intervals) callback(); }
+    };
+  });
   const dialogMessages = [];
   page.on("dialog", async dialog => { dialogMessages.push(dialog.message()); await dialog.accept(); });
   await page.goto(`http://127.0.0.1:${server.address().port}/`);
   await page.locator(".submission").first().waitFor();
   await page.waitForFunction(() => document.querySelector("#newSubmissionNotice")?.textContent === "3 új beküldés vár átnézésre.");
+  assert.equal(await page.locator("#newSubmissionNotice").getAttribute("role"), "status");
+  assert.equal(await page.locator("#newSubmissionNotice").getAttribute("aria-live"), "polite");
+  assert.equal(await page.evaluate(() => window.__formsInboxTest.noticeRequests.length), 1, "initial load makes one explicit count request");
   assert.equal(await page.getByRole("button", { name: "CSV export (Admin)" }).isDisabled(), false);
   assert.equal(await page.getByRole("heading", { level: 1, name: "Űrlapbeküldések" }).count(), 1);
   assert.equal(await page.getByRole("navigation", { name: "Admin navigáció" }).count(), 1);
@@ -183,6 +226,22 @@ test("Admin Forms inbox is scoped to the selected form, searchable, cursor-pagin
   assert.equal(await page.getByText("Állapot: Átnézve").count(), 1);
   assert.ok(calls.some(call => call.method === "PATCH" && call.body.status === "reviewed"));
 
+  const noticeRequestCount = () => page.evaluate(() => window.__formsInboxTest.noticeRequests.length);
+  const beforeHidden = await noticeRequestCount();
+  await page.evaluate(() => window.__formsInboxTest.setVisibility("hidden"));
+  await page.evaluate(() => window.__formsInboxTest.fireMinute());
+  await page.waitForTimeout(50);
+  assert.equal(await noticeRequestCount(), beforeHidden, "hidden tabs suppress both visibility and minute-poll refreshes");
+  await page.evaluate(() => window.__formsInboxTest.setVisibility("visible"));
+  await page.waitForFunction(expected => window.__formsInboxTest.noticeRequests.length === expected + 1, beforeHidden);
+  assert.equal((await page.evaluate(() => window.__formsInboxTest.noticeRequests)).at(-1), formId,
+    "returning to the visible page refreshes only the currently selected form");
+  const beforeVisibleMinute = await noticeRequestCount();
+  await page.evaluate(() => window.__formsInboxTest.fireMinute());
+  await page.waitForFunction(expected => window.__formsInboxTest.noticeRequests.length === expected + 1, beforeVisibleMinute);
+  assert.equal((await page.evaluate(() => window.__formsInboxTest.noticeRequests)).at(-1), formId,
+    "the 60-second refresh requests only the selected form");
+
   await page.getByRole("button", { name: /Beküldés törlése/ }).click();
   await page.getByText(/A beküldés törléséhez Admin jogosultság szükséges/).waitFor();
   assert.equal(await page.locator(".submission").count(), 1, "a forbidden delete must leave the submission visible");
@@ -197,9 +256,23 @@ test("Admin Forms inbox is scoped to the selected form, searchable, cursor-pagin
   assert.equal(await page.getByText("Nincs a keresésnek megfelelő beküldés.").count(), 1);
   assert.deepEqual(calls.filter(call => call.method === "POST").map(call => call.body.action), ["export"], "the inbox only invokes its explicit export action, never form/page Save or Publish");
   await page.getByRole("searchbox", { name: "Keresés a beküldött adatokban" }).fill("");
+  let releaseStaleCount;
+  let startStaleCount;
+  const staleCountStarted = new Promise(resolve => { startStaleCount = resolve; });
+  nextHeldCount = { formId, started: startStaleCount, response: new Promise(resolve => { releaseStaleCount = resolve; }) };
+  const beforeStale = await noticeRequestCount();
+  await page.evaluate(() => window.__formsInboxTest.fireMinute());
+  await staleCountStarted;
+  assert.equal(await noticeRequestCount(), beforeStale + 1, "the prior form's refresh is now in flight");
   await page.getByLabel("Űrlap").selectOption(otherFormId);
   await page.getByText("Ehhez az űrlaphoz még nem érkezett beküldés.").waitFor();
   await page.waitForFunction(() => document.querySelector("#newSubmissionNotice")?.textContent === "Nincs új beküldés.");
+  await page.waitForFunction(expected => window.__formsInboxTest.noticeRequests.length === expected + 1, beforeStale + 1);
+  releaseStaleCount();
+  await page.waitForFunction(expectedFormId => window.__formsInboxTest.noticeResponses.filter(id => id === expectedFormId).length >= 5, formId);
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  assert.equal(await page.locator("#newSubmissionNotice").textContent(), "Nincs új beküldés.",
+    "an older count response cannot overwrite the newly selected form's notice");
   assert.equal(await page.locator(".submission").count(), 0, "changing the selected form must not leak prior form rows into the inbox");
   assert.ok(calls.filter(call => call.method === "GET" && call.formId).some(call => call.formId === otherFormId));
   assert.ok(calls.filter(call => call.newCountFormId).every(call => [formId, otherFormId].includes(call.newCountFormId)),

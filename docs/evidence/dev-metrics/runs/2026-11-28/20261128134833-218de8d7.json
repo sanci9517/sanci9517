@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261128134833-218de8d7",
+  "task": "77.44.7.D-WEB-020-notice-refresh-lifecycle-test",
+  "trigger": "scheduled",
+  "started_at": "2026-11-28T13:48:33.039Z",
+  "finished_at": "2026-11-28T13:58:59.993Z",
+  "wall_seconds": 627,
+  "paused_seconds": 0,
+  "measured_seconds": 627,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "WEB-020 notice refresh/race regression verified; exact-SHA Editor Core CI success; canonical plan and evidence updated.",
+  "evidence": [
+    "docs/evidence/editor-d06-forms-notice-refresh-lifecycle-2026-11-28.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "tests/browser/admin-forms-inbox.test.js"
+  ],
+  "checks": "npm run test:forms; CHROMIUM_PATH=/usr/bin/chromium npm run test:forms:browser; plan contract 17/17; traceability 396/396; canonical plan and active-point audit PASS",
+  "started_revision": "fdcc7db0e6d4c10b094f767ca6a3a775f8755620",
+  "finished_revision": "fdcc7db0e6d4c10b094f767ca6a3a775f8755620",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
