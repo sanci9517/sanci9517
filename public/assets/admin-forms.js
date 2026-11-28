@@ -7,6 +7,7 @@ const status = $("status");
 const pageStatus = $("pageStatus");
 const previousButton = $("previousPage");
 const nextButton = $("nextPage");
+const exportButton = $("exportButton");
 const refreshButton = $("refreshButton");
 const STATUS_LABELS = { new: "Új", reviewed: "Átnézve", archived: "Archivált" };
 const STATUS_ORDER = ["new", "reviewed", "archived"];
@@ -45,6 +46,7 @@ function setBusy(value) {
   list.setAttribute("aria-busy", String(value));
   formSelect.disabled = value || forms.length === 0;
   searchInput.disabled = value || !formSelect.value;
+  exportButton.disabled = value || !formSelect.value;
   refreshButton.disabled = value || !formSelect.value;
   previousButton.disabled = value || cursors.length < 2;
   nextButton.disabled = value || !nextCursor;
@@ -258,6 +260,46 @@ async function deleteSubmission(item) {
   }
 }
 
+async function exportSubmissions() {
+  if (pending || !formSelect.value) return;
+  setBusy(true);
+  message("Beküldések biztonságos CSV-exportja…");
+  try {
+    const query = searchInput.value.trim();
+    const response = await fetch("/api/admin/forms", {
+      method: "POST",
+      cache: "no-store",
+      credentials: "same-origin",
+      headers: { Accept: "text/csv", "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "export", formId: formSelect.value, ...(query ? { query } : {}) })
+    });
+    if (!response.ok) {
+      let body = {};
+      try { body = await response.json(); } catch { /* report the HTTP status below */ }
+      const reason = body?.error?.message || body?.error?.code || `HTTP ${response.status}`;
+      throw new Error(typeof reason === "string" ? reason : JSON.stringify(reason));
+    }
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const selectedForm = forms.find(form => form.id === formSelect.value);
+    const filenameBase = String(selectedForm?.name || "urlap").normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 48) || "urlap";
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `${filenameBase}-${formSelect.value.slice(-8)}.csv`;
+    document.body.append(anchor);
+    anchor.click();
+    anchor.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1_000);
+    const count = Number(response.headers.get("X-Export-Rows"));
+    message(`${Number.isInteger(count) ? count : "A kiválasztott"} beküldés CSV-exportja elkészült. Az export admin naplóba került.`, "success");
+  } catch (cause) {
+    message(`A CSV-export nem készült el: ${cause.message}`, "error");
+  } finally {
+    setBusy(false);
+  }
+}
+
 formSelect.addEventListener("change", async () => {
   if (!formSelect.value) return;
   cursors = [null];
@@ -278,6 +320,7 @@ searchInput.addEventListener("input", () => {
   searchTimer = setTimeout(() => { cursors = [null]; nextCursor = null; loadSubmissions(null); }, 250);
 });
 refreshButton.addEventListener("click", () => loadSubmissions(cursors.at(-1)));
+exportButton.addEventListener("click", exportSubmissions);
 previousButton.addEventListener("click", () => {
   if (cursors.length < 2 || pending) return;
   cursors.pop();

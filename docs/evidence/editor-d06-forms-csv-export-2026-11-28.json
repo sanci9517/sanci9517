@@ -1,0 +1,67 @@
+{
+  "date": "2026-11-28",
+  "plan": {
+    "master": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "active_cursor": "77.44.7.D",
+    "scope": "77.44.7.D / D-06; WEB-020 Forms export slice",
+    "status": "OPEN_PARTIAL_NOT_CERTIFIED",
+    "acceptance": "Full Visual Editor manual/physical acceptance remains deferred until the entire planned Editor scope is implemented."
+  },
+  "git": {
+    "branch": "v2/foundation",
+    "base_sha": "0e42f8c43cb86d884583ae717d58ddcc5d4fdf8e",
+    "expected_runtime_parent": "0e42f8c43cb86d884583ae717d58ddcc5d4fdf8e",
+    "runtime_commit": null,
+    "runtime_changes_pushed": false,
+    "exact_sha_ci": "PENDING",
+    "cloudflare_build": "PENDING",
+    "deployment": "PENDING",
+    "worker_version": "PENDING",
+    "worker_traffic_percent": null,
+    "production_smoke": "PENDING"
+  },
+  "implementation": {
+    "summary": [
+      "Adds an explicit POST action to export only the selected site-owned form's active submissions; same-origin JSON checks and site Admin authorization remain mandatory.",
+      "Exports the historical form revision and schema-versioned columns, row ID/status/timestamps, consent version/time/text; expired submissions are excluded and malformed/unknown historic rows fail closed without partial output.",
+      "Bounds exports to 500 rows, 96 union columns, and 16 MiB; CSV cells are quoted, formula-like user text is neutralized, and the UTF-8 BOM/CRLF format is spreadsheet-friendly.",
+      "Sets private no-store and nosniff headers and records only row count, filtered flag and format in the success audit; no search text, submitted values, or consent text is copied to audit metadata.",
+      "Adds a keyboard-accessible Admin CSV button to the site-scoped inbox; it carries only the selected form and current filter and does not invoke page/form Save or Publish.",
+      "Adds admin-forms.html and admin-forms.js to the exact-source production Worker smoke hash set and updates the WEB-020 source/test crosswalk while retaining NOT_RECERTIFIED acceptance."
+    ],
+    "public_assets_sha256": {
+      "public/admin-forms.html": "265793fce761a9f584590c80523c6d4df36d1e2237dfbc1b85d0cd27520f0c84",
+      "public/assets/admin-forms.js": "d11b7d9643dcb68fa0010766f38cd3b291273d7ccd3460a183a692a8b4cb144b"
+    },
+    "production_schema_changed": false,
+    "external_notification_provider_added": false
+  },
+  "verification": {
+    "pass": [
+      "npm run test:forms: 5/5 files PASS, including site/Admin authorization, cross-origin rejection, corrupt legacy row fail-closed, 500-row cap, formula neutralization, retention exclusion and audit privacy",
+      "CHROMIUM_PATH=/usr/bin/chromium npm run test:forms:browser with loopback permission: 8/8 real browser tests PASS across public form, Inspector and Admin inbox export download",
+      "npm run test:editor: 25/25 unit files PASS; preferences 12/12 and Linux subreaper 4/4 PASS",
+      "npm run typecheck -- --pretty false PASS",
+      "node --test tests/worker-production-source-smoke.test.mjs PASS",
+      "python3 tests/plan-contract.test.py PASS: 17/17",
+      "python3 scripts/check-canonical-plan.py PASS: one complete 13-part master, one cursor, 396 mappings",
+      "python3 scripts/build-feature-traceability.py --check PASS: WEB-020 source/test references present, acceptance NOT_RECERTIFIED; 149 PARTIAL_SOURCE / 247 UNVERIFIED",
+      "python3 scripts/audit-active-plan-point.py PASS: next cursor 77.44.7.D; functional acceptance NOT_CERTIFIED",
+      "npm run test:web013:migration-gate PASS",
+      "node --check public/assets/admin-forms.js; node --check tests/browser/admin-forms-inbox.test.js; git diff --check PASS",
+      "npx wrangler deploy --dry-run PASS: Wrangler 4.130.0, 206 public assets, 492.44 KiB / 121.59 KiB gzip; read-only sandbox EROFS log warning did not affect dry-run exit 0",
+      "Production D1 preflight used seven SELECT/PRAGMA reads through the Cloudflare D1 Query API: 45 indexes, 37 tables, 29 triggers, 38 migration markers (latest 0032_forms_service.sql), foreign_key_check empty, quick_check ok; all queries reported rows_written=0 and changes=0; changed_db=false; site-ownership/settings preflight counts 1/0/0/0"
+    ],
+    "not_run_or_pending": [
+      "GitHub exact-SHA CI and Cloudflare build/deployment/source smoke are pending push and direct verification."
+    ],
+    "sandbox_note": "A no-loopback-permission Chromium attempt failed to bind its test server. The same complete Forms browser command passed after granting the required loopback network permission."
+  },
+  "data_safety": {
+    "production_d1_migration_or_write": false,
+    "r2_operation": false,
+    "new_dependency": false,
+    "new_cost_huf": 0
+  },
+  "save_publish": "The export action is separate from form/page Save and Publish."
+}

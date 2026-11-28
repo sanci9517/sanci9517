@@ -386,14 +386,18 @@ test("form inbox returns only unexpired site-scoped rows, records status changes
   const submissionId = crypto.randomUUID();
   insert.run(submissionId, siteId, formId, 1, pageId, "page-revision-v1", JSON.stringify({ email: "creator@example.test", message: "Segítség" }),
     "Hozzájárulási szöveg", "privacy-v1", "2026-11-25T12:00:00.000Z", "2999-01-01 00:00:00");
+  const formulaSubmissionId = crypto.randomUUID();
+  insert.run(formulaSubmissionId, siteId, formId, 1, pageId, "page-revision-v1",
+    JSON.stringify({ email: "=HYPERLINK(\"https://attacker.test\")", message: "-SUM(1,1)" }),
+    "Hozzájárulási szöveg", "privacy-v1", "2026-11-25T12:00:00.000Z", "2999-01-01 00:00:00");
   insert.run(crypto.randomUUID(), siteId, formId, 1, pageId, "page-revision-v1", JSON.stringify({ email: "expired@example.test", message: "Régi" }),
     "Hozzájárulási szöveg", "privacy-v1", "2026-11-25T12:00:00.000Z", "2000-01-01 00:00:00");
-  const request = (token, method, url, body) => new Request(`https://creator.test${url}`, {
+  const request = (token, method, url, body, origin = "https://creator.test") => new Request(`https://creator.test${url}`, {
     method,
-    headers: { Cookie: `sanci9517_session=${token}`, Origin: "https://creator.test", "Content-Type": "application/json" },
+    headers: { Cookie: `sanci9517_session=${token}`, Origin: origin, "Content-Type": "application/json" },
     ...(body === undefined ? {} : { body: JSON.stringify(body) })
   });
-  const inbox = await adminFormsRoute(request(editorToken, "GET", `/api/admin/forms?submissions=${formId}&q=creator`), env, siteId);
+  const inbox = await adminFormsRoute(request(editorToken, "GET", `/api/admin/forms?submissions=${formId}&q=creator%40example.test`), env, siteId);
   assert.equal(inbox.status, 200);
   const payload = (await inbox.json()).data;
   assert.equal(payload.items.length, 1);
@@ -404,6 +408,51 @@ test("form inbox returns only unexpired site-scoped rows, records status changes
   assert.equal(changed.status, 200);
   assert.equal(db.prepare("SELECT status FROM form_submissions WHERE id=?").get(submissionId).status, "reviewed");
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action='form.submission.status'").get().n, 1);
+  const editorExport = await adminFormsRoute(request(editorToken, "POST", "/api/admin/forms", { action: "export", formId, query: "" }), env, siteId);
+  assert.equal(editorExport.status, 403, "PII export is reserved for an Admin-granted user");
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action='form.submission.export'").get().n, 0,
+    "a denied export must not create an audit record");
+  const exported = await adminFormsRoute(request(adminToken, "POST", "/api/admin/forms", { action: "export", formId, query: "" }), env, siteId);
+  assert.equal(exported.status, 200);
+  assert.match(exported.headers.get("content-type"), /text\/csv; charset=utf-8/i);
+  assert.match(exported.headers.get("content-disposition"), /attachment; filename="Kapcsolat-[0-9a-f]{8}\.csv"/i);
+  assert.match(exported.headers.get("cache-control"), /private, no-store/i);
+  assert.equal(exported.headers.get("x-export-rows"), "2");
+  const csvBytes = new Uint8Array(await exported.arrayBuffer());
+  assert.deepEqual([...csvBytes.slice(0, 3)], [0xef, 0xbb, 0xbf], "UTF-8 BOM preserves accented CSV headers in spreadsheet applications");
+  const csv = new TextDecoder().decode(csvBytes);
+  assert.ok(csv.startsWith("\"Beküldés azonosítója\",\"Beküldés ideje\""));
+  assert.match(csv, /"E-mail · email"/);
+  assert.match(csv, /"'=HYPERLINK\(""https:\/\/attacker\.test""\)"/, "CSV quoting must neutralize formula-like submitted text");
+  assert.match(csv, /"'-SUM\(1,1\)"/);
+  assert.doesNotMatch(csv, /2000-01-01|expired@example\.test/, "expired private submissions are excluded from export");
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action='form.submission.export'").get().n, 1);
+  const exportAudit = JSON.parse(db.prepare("SELECT metadata_json FROM audit_log WHERE action='form.submission.export'").get().metadata_json);
+  assert.deepEqual(exportAudit, { rows: 2, filtered: false, format: "csv" }, "audit metadata never stores the search text or submitted values");
+  const foreignFormExport = await adminFormsRoute(request(adminToken, "POST", "/api/admin/forms", { action: "export", formId: "33333333-3333-4333-8333-333333333333", query: "" }), env, siteId);
+  assert.equal(foreignFormExport.status, 404, "export remains scoped to an existing form owned by the active site");
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action='form.submission.export'").get().n, 1,
+    "failed and foreign-site exports are not audited as successful downloads");
+  const wrongOrigin = await adminFormsRoute(request(adminToken, "POST", "/api/admin/forms", { action: "export", formId, query: "" }, "https://evil.test"), env, siteId);
+  assert.equal(wrongOrigin.status, 403, "an authenticated Admin still cannot trigger a cross-site export");
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action='form.submission.export'").get().n, 1,
+    "a cross-site request cannot create an export audit record");
+  const malformedSubmissionId = crypto.randomUUID();
+  insert.run(malformedSubmissionId, siteId, formId, 1, pageId, "page-revision-v1", JSON.stringify({ unknown: "untrusted" }),
+    "Hozzájárulási szöveg", "privacy-v1", "2026-11-25T12:00:00.000Z", "2999-01-01 00:00:00");
+  const malformedExport = await adminFormsRoute(request(adminToken, "POST", "/api/admin/forms", { action: "export", formId, query: "" }), env, siteId);
+  assert.equal(malformedExport.status, 503, "a corrupt historic row fails the whole export instead of leaking a partial file");
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action='form.submission.export'").get().n, 1,
+    "a rejected corrupt-data export is not logged as a successful download");
+  db.prepare("DELETE FROM form_submissions WHERE id=?").run(malformedSubmissionId);
+  for (let index = 0; index < 501; index++) {
+    insert.run(crypto.randomUUID(), siteId, formId, 1, pageId, "page-revision-v1", JSON.stringify({ email: "bulk@example.test", message: "Bulk row" }),
+      "Hozzájárulási szöveg", "privacy-v1", "2026-11-25T12:00:00.000Z", "2999-01-01 00:00:00");
+  }
+  const cappedExport = await adminFormsRoute(request(adminToken, "POST", "/api/admin/forms", { action: "export", formId, query: "" }), env, siteId);
+  assert.equal(cappedExport.status, 413, "large exports are capped instead of building unbounded CSV in Worker memory");
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action='form.submission.export'").get().n, 1,
+    "an over-limit export cannot create a success audit record");
   const editorDelete = await adminFormsRoute(request(editorToken, "DELETE", "/api/admin/forms", { formId, submissionId }), env, siteId);
   assert.equal(editorDelete.status, 403);
   const adminDelete = await adminFormsRoute(request(adminToken, "DELETE", "/api/admin/forms", { formId, submissionId }), env, siteId);

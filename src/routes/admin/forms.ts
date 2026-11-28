@@ -2,8 +2,12 @@ import { error, ok } from "../../core/response";
 import { getAuthenticatedUser, hasRole, type AuthUser } from "../../core/auth/require-auth";
 import { requireSiteGrant } from "../../core/auth/site-access";
 import { DEFAULT_SITE_ID } from "../../core/site-context";
-import { normalizeFormDefinition } from "../../core/forms-contract";
+import { MAX_FORM_FIELDS, normalizeFormDefinition } from "../../core/forms-contract";
 import type { Env } from "../../types/env";
+
+const MAX_FORM_EXPORT_ROWS = 500;
+const MAX_FORM_EXPORT_COLUMNS = MAX_FORM_FIELDS * 4;
+const MAX_FORM_EXPORT_BYTES = 16 * 1024 * 1024;
 
 type FormRow = {
   id: string; name: string; status: "draft" | "published" | "archived";
@@ -100,6 +104,97 @@ function requiredString(value: unknown, maximum: number): value is string {
   return typeof value === "string" && value.trim().length > 0 && value.trim().length <= maximum;
 }
 
+function csvCell(value: unknown): string {
+  const text = value === null || value === undefined ? "" : String(value);
+  // Prefix spreadsheet formulas with a literal apostrophe before CSV quoting.
+  // Quoting alone does not prevent Excel/Sheets from evaluating user input.
+  const isFiniteNumber = typeof value === "number" && Number.isFinite(value);
+  const safe = !isFiniteNumber && /^[\u0000-\u0020]*[=+@-]/.test(text) ? `'${text}` : text;
+  return `"${safe.replaceAll('"', '""')}"`;
+}
+
+async function exportSubmissions(env: Env, siteId: string, formId: string, query: string, userId: string): Promise<Response> {
+  if (!/^[0-9a-f-]{36}$/i.test(formId)) return error("INVALID_FORM_ID", 400);
+  if (query.length > 100) return error("INVALID_SEARCH", 400);
+  const form = await env.DB.prepare("SELECT id,name FROM forms WHERE id=? AND site_id=? LIMIT 1")
+    .bind(formId, siteId).first<{ id: string; name: string }>();
+  if (!form) return error("FORM_NOT_FOUND", 404);
+  const rows = await env.DB.prepare(`SELECT s.id,s.form_version AS formVersion,s.values_json AS valuesJson,
+      s.consent_text AS consentText,s.consent_version AS consentVersion,
+      s.consent_accepted_at AS consentAcceptedAt,s.status,s.received_at AS receivedAt,
+      r.definition_json AS definitionJson
+    FROM form_submissions s
+    LEFT JOIN form_revisions r ON r.site_id=s.site_id AND r.form_id=s.form_id AND r.version=s.form_version
+    WHERE s.site_id=? AND s.form_id=? AND s.expires_at>CURRENT_TIMESTAMP
+      AND (?='' OR lower(s.values_json) LIKE lower(?))
+    ORDER BY s.received_at DESC,s.id DESC LIMIT ?`)
+    .bind(siteId, formId, query, `%${query}%`, MAX_FORM_EXPORT_ROWS + 1)
+    .all<Record<string, unknown>>();
+  if (rows.results.length > MAX_FORM_EXPORT_ROWS) return error("FORM_EXPORT_TOO_LARGE", 413,
+    `Az export legfeljebb ${MAX_FORM_EXPORT_ROWS} aktív beküldést tartalmazhat. Szűkítsd a keresést, és próbáld újra.`);
+
+  const fields = new Map<string, string>();
+  const entries: Array<{ row: Record<string, unknown>; values: Record<string, string | number | boolean> }> = [];
+  for (const row of rows.results) {
+    let rawDefinition: unknown;
+    let values: unknown;
+    try {
+      rawDefinition = JSON.parse(String(row.definitionJson || "null"));
+      values = JSON.parse(String(row.valuesJson || "null"));
+    } catch {
+      return error("FORM_EXPORT_DATA_UNAVAILABLE", 503, "Egy beküldés vagy űrlapséma nem olvasható, ezért az exportot megszakítottuk.");
+    }
+    const definition = normalizeFormDefinition(rawDefinition);
+    if (!definition.ok || !values || typeof values !== "object" || Array.isArray(values) ||
+        Object.values(values as Record<string, unknown>).some(value =>
+          !(typeof value === "string" || typeof value === "boolean" || (typeof value === "number" && Number.isFinite(value))))) {
+      return error("FORM_EXPORT_DATA_UNAVAILABLE", 503, "Egy beküldés vagy űrlapséma nem érvényes, ezért az exportot megszakítottuk.");
+    }
+    const fieldIds = new Set(definition.value.fields.map(field => field.id));
+    if (Object.keys(values).some(id => !fieldIds.has(id))) {
+      return error("FORM_EXPORT_DATA_UNAVAILABLE", 503, "Egy beküldés ismeretlen mezőt tartalmaz, ezért az exportot megszakítottuk.");
+    }
+    for (const field of definition.value.fields) {
+      if (!fields.has(field.id)) fields.set(field.id, field.label);
+      if (fields.size > MAX_FORM_EXPORT_COLUMNS) return error("FORM_EXPORT_TOO_WIDE", 413,
+        "Az export túl sok korábbi mezőváltozatot tartalmaz. Szűkítsd a keresést, és próbáld újra.");
+    }
+    entries.push({ row, values: values as Record<string, string | number | boolean> });
+  }
+
+  const fixedHeaders = ["Beküldés azonosítója", "Beküldés ideje", "Állapot", "Űrlapséma verzió", "Hozzájárulás verzió", "Elfogadva", "Hozzájárulási szöveg"];
+  const fieldHeaders = [...fields].map(([id, label]) => `${label} · ${id}`);
+  const encoder = new TextEncoder();
+  const lines = [[...fixedHeaders, ...fieldHeaders].map(csvCell).join(",")];
+  let csvBytes = encoder.encode(lines[0]).byteLength + 2;
+  for (const { row, values } of entries) {
+    const line = [
+      row.id,
+      row.receivedAt, row.status, row.formVersion, row.consentVersion,
+      row.consentAcceptedAt, row.consentText,
+      ...[...fields.keys()].map(id => values[id] ?? "")
+    ].map(csvCell).join(",");
+    csvBytes += encoder.encode(line).byteLength + 2;
+    if (csvBytes > MAX_FORM_EXPORT_BYTES) return error("FORM_EXPORT_TOO_LARGE", 413,
+      "Az export fájlmérete meghaladja a 16 MiB-os biztonságos korlátot. Szűkítsd a keresést, és próbáld újra.");
+    lines.push(line);
+  }
+  const csv = `\uFEFF${lines.join("\r\n")}\r\n`;
+  const filenameBase = form.name.normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^A-Za-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 48) || "urlap";
+  await env.DB.prepare(`INSERT INTO audit_log(id,user_id,action,entity_type,entity_id,metadata_json)
+    VALUES(?,?,'form.submission.export','form',?,?)`)
+    .bind(crypto.randomUUID(), userId, formId, JSON.stringify({ rows: entries.length, filtered: Boolean(query), format: "csv" })).run();
+  return new Response(csv, { status: 200, headers: {
+    "Content-Type": "text/csv; charset=utf-8",
+    "Content-Disposition": `attachment; filename="${filenameBase}-${formId.slice(-8)}.csv"`,
+    "Cache-Control": "private, no-store",
+    "Pragma": "no-cache",
+    "X-Content-Type-Options": "nosniff",
+    "X-Export-Rows": String(entries.length)
+  } });
+}
+
 async function listSubmissions(request: Request, env: Env, siteId: string): Promise<Response> {
   const url = new URL(request.url);
   const formId = url.searchParams.get("submissions") || "";
@@ -171,6 +266,15 @@ export async function adminFormsRoute(request: Request, env: Env, siteId: string
 
     if (request.method === "POST") {
       const action = body.action;
+      if (action === "export") {
+        if (!hasOnlyKeys(body, ["action", "formId", "query"])) return error("INVALID_FORM_ACTION", 400);
+        const admin = await authorizeAdmin(request, env, siteId);
+        if (admin instanceof Response) return admin;
+        const formId = typeof body.formId === "string" ? body.formId : "";
+        const query = typeof body.query === "string" ? body.query.trim() : "";
+        if (body.query !== undefined && typeof body.query !== "string") return error("INVALID_SEARCH", 400);
+        return await exportSubmissions(env, siteId, formId, query, admin.id);
+      }
       if (action === "create") {
         if (!hasOnlyKeys(body, ["action", "name", "definition"])) return error("INVALID_FORM_ACTION", 400);
         const definition = normalizeFormDefinition(body.definition);

@@ -63,6 +63,21 @@ test("Admin Forms inbox is scoped to the selected form, searchable, cursor-pagin
       if (url.searchParams.has("before")) return json({ items: [submission(51), submission(52)], nextCursor: null });
       return json({ items: items.map(item => item.id === submission(1).id ? { ...item, status: currentStatus } : item), nextCursor: `${items.at(-1).receivedAt}|${items.at(-1).id}` });
     }
+    if (url.pathname === "/api/admin/forms" && request.method === "POST") {
+      const chunks = [];
+      for await (const chunk of request) chunks.push(chunk);
+      const body = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+      calls.push({ method: request.method, body });
+      assert.equal(body.action, "export");
+      assert.equal(body.formId, formId, "exports must stay tied to the selected form");
+      response.writeHead(200, {
+        "Content-Type": "text/csv; charset=utf-8",
+        "Content-Disposition": `attachment; filename="Kapcsolat-${formId.slice(-8)}.csv"`,
+        "Cache-Control": "private, no-store",
+        "X-Export-Rows": "1"
+      });
+      return response.end("\uFEFF\"Beküldés azonosítója\",\"Beküldés ideje\",\"E-mail cím\"\r\n\"submission-id\",\"2026-11-26 12:00:00\",\"user@example.test\"\r\n");
+    }
     if (url.pathname === "/api/admin/forms" && ["PATCH", "DELETE"].includes(request.method)) {
       const chunks = [];
       for await (const chunk of request) chunks.push(chunk);
@@ -87,11 +102,14 @@ test("Admin Forms inbox is scoped to the selected form, searchable, cursor-pagin
   page.on("dialog", async dialog => { dialogMessages.push(dialog.message()); await dialog.accept(); });
   await page.goto(`http://127.0.0.1:${server.address().port}/`);
   await page.locator(".submission").first().waitFor();
+  assert.equal(await page.getByRole("button", { name: "CSV export (Admin)" }).isDisabled(), false);
   assert.equal(await page.getByRole("heading", { level: 1, name: "Űrlapbeküldések" }).count(), 1);
   assert.equal(await page.getByRole("navigation", { name: "Admin navigáció" }).count(), 1);
   await page.getByLabel("Űrlap").focus();
   await page.keyboard.press("Tab");
   assert.equal(await page.evaluate(() => document.activeElement.id), "searchInput", "the toolbar is keyboard reachable in DOM order");
+  await page.keyboard.press("Tab");
+  assert.equal(await page.evaluate(() => document.activeElement.id), "exportButton", "CSV export follows the selected-form search control");
   await page.keyboard.press("Tab");
   assert.equal(await page.evaluate(() => document.activeElement.id), "refreshButton");
   const desktopFormY = await page.locator("#formSelect").evaluate(node => node.getBoundingClientRect().top);
@@ -129,6 +147,20 @@ test("Admin Forms inbox is scoped to the selected form, searchable, cursor-pagin
   assert.equal(await page.locator(".value dd").filter({ hasText: "<img src=x onerror=alert(1)>" }).count(), 1);
   assert.ok(calls.some(call => call.method === "GET" && call.q === "needle" && call.before === null));
 
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "CSV export (Admin)" }).click();
+  const download = await downloadPromise;
+  assert.equal(download.suggestedFilename(), `Kapcsolat-${formId.slice(-8)}.csv`);
+  const downloadPath = await download.path();
+  assert.ok(downloadPath);
+  const csv = await readFile(downloadPath, "utf8");
+  assert.match(csv, /^\uFEFF\"Beküldés azonosítója\",\"Beküldés ideje\"/);
+  assert.match(csv, /user@example\.test/);
+  assert.equal(await page.getByText("1 beküldés CSV-exportja elkészült. Az export admin naplóba került.").count(), 1);
+  assert.deepEqual(calls.filter(call => call.method === "POST").map(call => call.body), [
+    { action: "export", formId, query: "needle" }
+  ], "export downloads only the selected form/search result and never calls Save or Publish");
+
   await page.getByRole("searchbox", { name: "Keresés a beküldött adatokban" }).fill("failure");
   await page.getByText(/A beküldések nem tölthetők be/).waitFor();
   assert.equal(await page.locator(".submission").count(), 0, "a failed request must not leave stale rows visible");
@@ -154,7 +186,7 @@ test("Admin Forms inbox is scoped to the selected form, searchable, cursor-pagin
   for (const message of dialogMessages) assert.match(message, /végleg törlöd/);
   assert.ok(calls.some(call => call.method === "DELETE" && call.body.submissionId === submission(7).id));
   assert.equal(await page.getByText("Nincs a keresésnek megfelelő beküldés.").count(), 1);
-  assert.deepEqual(calls.filter(call => ["POST", "PUT"].includes(call.method)).map(call => call.method), [], "the inbox must not invoke form/page Save or Publish APIs");
+  assert.deepEqual(calls.filter(call => call.method === "POST").map(call => call.body.action), ["export"], "the inbox only invokes its explicit export action, never form/page Save or Publish");
   await page.getByRole("searchbox", { name: "Keresés a beküldött adatokban" }).fill("");
   await page.getByLabel("Űrlap").selectOption(otherFormId);
   await page.getByText("Ehhez az űrlaphoz még nem érkezett beküldés.").waitFor();

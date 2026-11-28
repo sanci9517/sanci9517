@@ -28,7 +28,7 @@ SOURCES = {
  'TEAM': ['src/core/auth/site-access.ts','src/core/site-domain.ts'],
 }
 PARTIAL = {
- 'ADM': [1,3,7,8,9,10,11], 'WEB': list(range(1,15))+[16,28,30,31,32],
+ 'ADM': [1,3,7,8,9,10,11], 'WEB': list(range(1,15))+[16,20,28,30,31,32],
  'EDT': list(range(1,40))+[40,41,42,43,44], 'DSN':[1,2,4,5,6,7],
  'RES':[1,2,3,4,5,6,7,8,9,10,11,15], 'INT':list(range(1,12))+[19,20],
  'SCH':[1,2,3,5,7,8,9,10,11], 'SEC':[1,2,3,4,5,6,8,10],
@@ -38,7 +38,7 @@ PARTIAL = {
 # Narrow references for requirements whose evidence is outside their module shell.
 EXACT_SOURCES = {
  'EDT-036':['public/editor-v2/ui/shell.js','public/editor-v2/index.html','tests/browser/editor-workspace-appearance.test.js'],
- 'WEB-020':['src/core/forms-contract.ts','src/routes/admin/forms.ts','src/routes/public/forms.ts','public/assets/page-renderer.js','scripts/pending/0032_forms_service.sql','tests/forms-contract.test.js','tests/forms-routes.test.js','tests/browser/editor-form-public-page.test.js'],
+ 'WEB-020':['src/core/forms-contract.ts','src/routes/admin/forms.ts','src/routes/public/forms.ts','public/assets/page-renderer.js','public/admin-forms.html','public/assets/admin-forms.js','scripts/pending/0032_forms_service.sql','tests/forms-contract.test.js','tests/forms-routes.test.js','tests/browser/editor-form-public-page.test.js','tests/browser/admin-forms-inbox.test.js'],
  'EDT-016':['public/editor-v2/core/hierarchy-limits.js','public/editor-v2/core/hierarchy-limits.d.ts','public/editor-v2/core/schema.js','public/editor-v2/core/validation.js','public/editor-v2/app.js','public/editor-v2/core/state.js','public/editor-v2/core/commands.js','public/editor-v2/core/editor-templates.js','public/editor-v2/core/design-system/template-catalog.js','src/core/editor-validation.ts','src/routes/admin/editor.ts','src/routes/admin/pages.ts','public/editor-v2/tests/core.test.js','tests/f0-3-route-integration.test.js','tests/editor-public-asset-cache-bust.test.js'],
  'EDT-038':['public/editor-v2/core/node-clipboard.js','public/editor-v2/core/commands.js','public/editor-v2/app.js','public/editor-v2/index.html','public/editor-v2/editor-refresh.css'],
  'RES-006':['src/routes/admin/media.ts','public/admin-media.html','public/assets/admin-media.js','public/assets/admin-media-organization.js','scripts/pending/0030_media_library_organization.sql','tests/media-api.test.js','tests/browser/admin-media-organization.test.js'],
@@ -63,7 +63,7 @@ EXACT_SOURCES = {
 }
 EXACT_TESTS = {
  'EDT-036':['tests/browser/editor-workspace-appearance.test.js'],
- 'WEB-020':['tests/forms-contract.test.js','tests/forms-routes.test.js','tests/browser/editor-form-public-page.test.js'],
+ 'WEB-020':['tests/forms-contract.test.js','tests/forms-routes.test.js','tests/browser/editor-form-public-page.test.js','tests/browser/admin-forms-inbox.test.js'],
  'EDT-042':['tests/browser/editor-diagnostics-redaction.test.js','tests/browser/editor-page-load-recovery.test.js'],
 }
 TEST_GLOBS = {
