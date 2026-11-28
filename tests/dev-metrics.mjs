@@ -115,12 +115,24 @@ try {
     if (!Number.isInteger(days) || days < 1 || days > 365 || !Number.isFinite(remaining) || remaining < 0 || remaining > 100000) fail('Invalid reporting window or remaining estimate.');
     const from = Date.now() - days * 86400000;
     const records = [];
+    const invalidRecords = [];
+    const readReportRecord = path => {
+      try {
+        return read(path);
+      } catch {
+        // Corrupt legacy evidence must not crash the report or contribute
+        // guessed time. Retain the path so the record can be repaired.
+        invalidRecords.push(path.slice(root.length + 1));
+        return null;
+      }
+    };
     if (existsSync(archiveDir)) for (const date of readdirSync(archiveDir)) {
       const dir = join(archiveDir, date);
       if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
       for (const file of readdirSync(dir)) {
         if (!file.endsWith('.json')) continue;
-        const record = read(join(dir, file));
+        const record = readReportRecord(join(dir, file));
+        if (!record) continue;
         if (record.schema === 1 && Number.isFinite(record.measured_seconds) && Date.parse(record.finished_at) >= from) records.push(record);
       }
     }
@@ -129,7 +141,8 @@ try {
       if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
       for (const file of readdirSync(join(interruptedDir, date))) {
         if (!file.endsWith('.json')) continue;
-        const value = read(join(interruptedDir, date, file));
+        const value = readReportRecord(join(interruptedDir, date, file));
+        if (!value) continue;
         if (value.status === 'interrupted' && Date.parse(value.abandoned_at) >= from) interrupted.push(value);
       }
     }
@@ -150,9 +163,12 @@ try {
       total_measured_hours: +(totalSeconds / 3600).toFixed(3),
       evidence_linked_code_test_hours: +(linkedSeconds / 3600).toFixed(3),
       statuses: Object.fromEntries(['pass', 'partial', 'blocked', 'failed'].map(s => [s, records.filter(r => r.status === s).length])),
+      invalid_records: invalidRecords,
       remaining_estimate_hours: remaining, estimated_weekly_evidence_linked_hours: +weeklyLinkedHours.toFixed(3),
       indicative_completion_date: eta,
-      caveat: 'Measured elapsed wall time, not verified Codex active time. Evidence links are operator-supplied; ETA is indicative and depends on a stable task estimate.'
+      caveat: invalidRecords.length
+        ? 'Malformed historical JSON records were skipped and listed in invalid_records; no duration was inferred.'
+        : 'Measured elapsed wall time, not verified Codex active time. Evidence links are operator-supplied; ETA is indicative and depends on a stable task estimate.'
     };
     if (flags.json === 'true') console.log(JSON.stringify(result, null, 2));
     else console.log(`Futások: ${result.runs} (lezáratlan: ${result.incomplete_sessions}); mért: ${result.total_measured_hours} óra; bizonyítékhoz kötött kód/teszt: ${result.evidence_linked_code_test_hours} óra; becsült befejezés: ${eta || 'még nincs elegendő adat'}\n${result.caveat}`);

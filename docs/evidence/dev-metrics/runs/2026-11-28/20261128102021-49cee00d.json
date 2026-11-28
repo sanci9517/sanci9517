@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261128102021-49cee00d",
+  "task": "77.44.7.D-06-forms-delivery-feasibility-and-next-slice",
+  "trigger": "manual",
+  "started_at": "2026-11-28T10:20:21.484Z",
+  "finished_at": "2026-11-28T10:58:29.789Z",
+  "wall_seconds": 2288,
+  "paused_seconds": 195,
+  "measured_seconds": 2093,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Forms inbox count deployed to the exact current Worker; docs/evidence updated; corrupt historical metrics records no longer crash reports. Exact-SHA Editor Core remains in progress at the layout browser regression.",
+  "evidence": [
+    "docs/evidence/editor-d06-forms-new-submission-notice-2026-11-28.json:production+CI+asset evidence",
+    "tests/dev-metrics.test.mjs:5/5"
+  ],
+  "checks": "typecheck PASS; forms unit 5/5; forms Chromium 8/8; editor unit 25/25; preferences 12/12; subreaper 4/4; plan contract 17/17; canonical plan, active cursor, traceability, migration gate, dry-run PASS; Editor Core exact SHA IN_PROGRESS",
+  "started_revision": "57533968978328437cb5d6f9518ba425e31a1cbe",
+  "finished_revision": "1730ea98318aadfefa04a4258d445010f03ba578",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

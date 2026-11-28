@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, existsSync, readdirSync, readFileSync, rmSync, copyFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, existsSync, readdirSync, readFileSync, rmSync, copyFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFileSync, spawnSync } from 'node:child_process';
@@ -71,6 +71,23 @@ test('interrupted runs are archived without invented duration', () => {
     assert.equal(report.runs, 0);
     assert.equal(report.interrupted_sessions, 1);
     assert.equal(report.total_measured_hours, 0);
+  } finally { f.cleanup(); }
+});
+test('report skips malformed historical records and identifies them without guessing time', () => {
+  const f = fixture();
+  try {
+    const dir = join(f.root, 'docs', 'evidence', 'dev-metrics', 'runs', '2026-11-28');
+    mkdirSync(dir, { recursive: true });
+    const badFile = join(dir, 'broken.json');
+    writeFileSync(badFile, Buffer.from([0x7b, 0xff, 0x00, 0x7d]));
+    const r = f.run('report', '--json=true');
+    assert.equal(r.status, 0, r.stderr);
+    const report = JSON.parse(r.stdout);
+    assert.equal(report.runs, 0);
+    assert.equal(report.total_measured_hours, 0);
+    assert.equal(report.evidence_linked_code_test_hours, 0);
+    assert.deepEqual(report.invalid_records, ['docs/evidence/dev-metrics/runs/2026-11-28/broken.json']);
+    assert.equal(report.indicative_completion_date, null);
   } finally { f.cleanup(); }
 });
 test('rejects unsupported CLI input', () => {

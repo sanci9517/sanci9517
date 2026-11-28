@@ -58,14 +58,86 @@
     "refresh_on": "2026-11-30T23:59:59.999Z"
   },
   "release": {
-    "runtime_sha": "PENDING_COMMIT",
-    "github_branch_push": "PENDING",
-    "exact_sha_github_ci": "PENDING",
-    "cloudflare_build_and_deployment": "PENDING",
-    "production_health_and_modified_asset_hashes": "PENDING"
+    "runtime_sha": "1730ea98318aadfefa04a4258d445010f03ba578",
+    "github_branch_push": {
+      "branch": "v2/foundation",
+      "method": "normal fast-forward",
+      "verified_ref_sha": "1730ea98318aadfefa04a4258d445010f03ba578"
+    },
+    "exact_sha_github_ci": {
+      "editor_core_run": {
+        "id": 46136639243,
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/46136639243",
+        "sha": "1730ea98318aadfefa04a4258d445010f03ba578",
+        "status": "IN_PROGRESS",
+        "conclusion": null,
+        "current_step": "Run Editor browser layout regression",
+        "completed_steps": "15/24",
+        "completed_steps_result": "SUCCESS"
+      },
+      "completed_exact_sha_workflows": [
+        {
+          "id": 46136639214,
+          "name": "Canonical Creator Platform Plan",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "id": 46136639346,
+          "name": "Canonical Plan Active Point Audit",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "id": 46136639182,
+          "name": "Twitch Integration Check",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "id": 46136639235,
+          "name": "F0 baseline checks",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "id": 46136639284,
+          "name": "Production Worker source smoke",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "overall": "INCOMPLETE — Editor Core is still running; do not infer a full hosted-CI pass."
+    },
+    "cloudflare_build_and_deployment": {
+      "initial_automatic_build": {
+        "id": "6dd83a17-20e8-41cb-bc7a-23bebe5da2b0",
+        "status": "FAILED",
+        "reason": "Corrupt optional @cloudflare/workerd-linux-64 package tarball; required optional package was unavailable."
+      },
+      "safe_fallback": "npm run deploy:safe — SUCCESS; migration safety gate passed and no migration was applied.",
+      "deployment_id": "3cad8ca4-8fc7-460b-ae17-e326e5e2fb97",
+      "worker_version": "d6d91041-94f8-4060-82f5-b8940c0cb4db",
+      "traffic": "100%",
+      "deployment_verified_by": "Cloudflare Workers deployments API"
+    },
+    "production_health_and_modified_asset_hashes": {
+      "exact_sha_source_smoke_run": 46136639284,
+      "exact_sha_source_smoke_result": "SUCCESS",
+      "health": "HTTP 200",
+      "modified_public_asset": "/assets/admin-forms.js",
+      "asset_sha256_local_and_live": "1640d9f132406ce7c2067eefee8884e0cde04d5f50f65d222bd99e59fdb841ef",
+      "admin_html_asset": {
+        "uploaded_by_deployment": true,
+        "direct_anonymous_hash": "UNVERIFIED — the legacy /admin-forms.html route intentionally returns 410; the authenticated /admin/forms route redirects anonymous requests to /admin/login."
+      }
+    },
+    "status": "PRODUCTION_DEPLOYED_EXACT_SOURCE_EDITOR_CORE_CI_IN_PROGRESS"
   },
   "test_runner_notes": [
     "The first browser-suite attempt ran without loopback permission and failed before test execution; the rerun with the required loopback permission passed all 8 Forms browser tests.",
     "The initial assertion searched for a live-region text as the role=status accessible name; Playwright correctly found no such name. The regression now asserts the live-region content directly, and the actual status region remains role=status with aria-live=polite."
-  ]
+  ],
+  "developer_tooling": {
+    "issue": "A dev-metrics report crashed on an existing malformed UTF-8/JSON archive record instead of producing the remaining valid metrics.",
+    "fix": "Malformed historical archive records are skipped, their repository-relative filenames are listed in invalid_records, and no elapsed time or ETA is inferred from them.",
+    "observed_invalid_record": "docs/evidence/dev-metrics/runs/2026-11-27/20261127175819-2ba04792.json",
+    "regression_test": "tests/dev-metrics.test.mjs: report skips malformed historical records and identifies them without guessing time",
+    "verification": "node tests/dev-metrics.test.mjs — 5/5 PASS; isolated temporary Git repository and invalid UTF-8 record."
+  }
 }
