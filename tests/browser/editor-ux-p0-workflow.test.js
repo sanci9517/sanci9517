@@ -70,10 +70,16 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   await tab.mouse.move(interactiveBox.x+interactiveBox.width/2,interactiveBox.y+interactiveBox.height/2);await tab.mouse.down();await tab.mouse.move(interactiveBox.x+interactiveBox.width/2-36,interactiveBox.y+interactiveBox.height/2-24,{steps:4});await tab.mouse.up();
   assert.deepEqual(await canvas.evaluate(el=>({left:el.scrollLeft,top:el.scrollTop,panning:el.classList.contains('is-panning')})),{...interactiveCanvasControl,panning:false},'dragging an interactive canvas control never starts viewport panning or steals its pointer');
   await interactiveButton.click();assert.equal(await interactiveButton.getAttribute('data-activations'),'1','interactive controls remain clickable while Pan mode is selected');
-  const panBox=await panNode.boundingBox();assert.ok(panBox,'a real canvas node is available as a drag surface');
-  await tab.mouse.move(panBox.x+panBox.width/2,panBox.y+panBox.height/2);
+  const panStart=await canvas.evaluate(el=>{
+    const viewport=el.getBoundingClientRect(),artboard=el.querySelector('.page-canvas').getBoundingClientRect();
+    const left=Math.max(viewport.left+8,artboard.left+8),right=Math.min(viewport.right-8,artboard.right-8);
+    const top=Math.max(viewport.top+8,artboard.top+8),bottom=Math.min(viewport.bottom-8,artboard.bottom-8);
+    return {x:left+(right-left)/2,y:top+(bottom-top)/2};
+  });
+  assert.equal(await canvas.evaluate((el,{x,y})=>{const target=document.elementFromPoint(x,y);return Boolean(target?.closest('button,input,select,textarea,summary,a,video,audio,[contenteditable]:not([contenteditable="false"])'))},panStart),false,'the Pan drag uses visible, non-interactive artboard space rather than a text/control surface');
+  await tab.mouse.move(panStart.x,panStart.y);
   await tab.mouse.down();
-  await tab.mouse.move(panBox.x+panBox.width/2-56,panBox.y+panBox.height/2-32,{steps:5});
+  await tab.mouse.move(panStart.x-56,panStart.y-32,{steps:5});
   await tab.mouse.up();
   const panAfter=await canvas.evaluate(el=>({left:el.scrollLeft,top:el.scrollTop,cursor:getComputedStyle(el).cursor,panning:el.classList.contains('is-panning')}));
   assert.ok(panAfter.left>=panBefore.left+50,'dragging left pans the overflowing canvas to the right');

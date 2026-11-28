@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "evidence_id": "editor-d06-pan-test-regression-2026-11-28",
+  "plan_point": "77.44 / WEB-011 -> 77.44.7.D / D-06; Pan-mode canvas regression test",
+  "status": "LOCAL_EDITOR_LAYOUT_REGRESSION_PASS; D_BLOCK_OPEN_NOT_CERTIFIED",
+  "scope": "Corrects a browser-test drag origin that could land on an interactive or off-viewport part of a node. The runtime correctly ignores interactive descendants for canvas panning; the test now chooses the visible intersection of the artboard and canvas viewport and asserts that the pointer target is non-interactive before dragging. No runtime code changed.",
+  "branch": "v2/foundation",
+  "base_sha": "991866be99b3d57ce7b6976fe2e4e5a4b3f3fbd7",
+  "canonical_plan_sha256": "7fa60aee137d7568d72da6e22ce1d7b6ba1e4681704e8a40d52619f6188d749a",
+  "changes": {
+    "runtime": {
+      "changed": false,
+      "files": [],
+      "worker_deploy_required": false
+    },
+    "tests": {
+      "files": ["tests/browser/editor-ux-p0-workflow.test.js"],
+      "coverage": [
+        "Pan drag begins at the visible intersection of the canvas and artboard",
+        "The chosen pointer target is asserted to be non-interactive before the drag",
+        "Viewport pan, selection, node position and Page Model isolation remain covered",
+        "Save persists the draft and Publish remains a distinct operation"
+      ],
+      "sha256": "682ebbd8f8e9eaacbb6bd706e326ac66054814be407d28c2b81b37ece380e88b"
+    }
+  },
+  "checks": [
+    {
+      "command": "node --test tests/browser/editor-ux-p0-workflow.test.js (three consecutive runs)",
+      "result": "PASS",
+      "summary": "3/3 real-Chromium runs passed with the deterministic visible, non-interactive Pan drag target."
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+      "result": "PASS",
+      "summary": "All 63/63 isolated Chromium browser-test files passed; 0 fail, cancelled, or skipped. Includes Pan, Save/Publish lifecycle, D-06 media, and D-07 corrupt Page Model browser regressions."
+    },
+    {
+      "command": "npm run typecheck -- --pretty false && node --check tests/browser/editor-ux-p0-workflow.test.js",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py && python3 scripts/check-canonical-plan.py && python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "summary": "17/17 plan contract checks; canonical plan intact; active cursor remains 77.44 / WEB-011 -> 77.44.7.D, with 148 PARTIAL_SOURCE and 248 UNVERIFIED mappings; acceptance remains NOT_CERTIFIED."
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "previous_github_ci": {
+    "workflow": "Editor Core Test",
+    "run_id": 46081700005,
+    "sha": "b3312c14bfe1597fb3ea34e1a31989f4e5dafd92",
+    "url": "https://github.com/sanci9517/sanci9517/actions/runs/46081700005",
+    "result": "FAILURE at editor layout step: dragging left pans the overflowing canvas to the right",
+    "diagnosis": "The browser test used a node bounding-box center as the drag origin. That point is not guaranteed to be visible or non-interactive; the runtime intentionally ignores interactive descendants. The corrected test now computes a visible artboard/viewport intersection and asserts a non-interactive target."
+  },
+  "release": {
+    "github_actions_rerun": "NOT STARTED: the connected read-only GitHub API does not expose current free compute or artifact quota; repository evidence records owner-reported artifact usage near 0.45/0.50 GB. This test/evidence-only update is intended for a [skip ci] fast-forward; the full browser layout job was executed locally instead.",
+    "production_worker": {
+      "changed": false,
+      "latest_read_only_deployment": "9720997f-0b58-4721-8630-2914b3cdbd46",
+      "version_id": "ec6edd7e-adc9-4dbd-92a3-4d0371a5b265",
+      "traffic_percentage": 100,
+      "deployed_at": "2026-11-27T23:18:24.468766Z",
+      "note": "This test/evidence-only change does not alter Worker assets and does not require redeployment or a new production smoke."
+    },
+    "production_d1_mutation": false,
+    "r2_operation": false,
+    "new_dependency": false,
+    "cost_huf": 0,
+    "save_publish_separation": "Unchanged."
+  },
+  "acceptance": {
+    "pan_browser_regression": "PASS locally across three targeted runs and the full 63-file Editor layout suite",
+    "77.44.7.D": "OPEN / NOT_CERTIFIED",
+    "D01_D07": "OPEN / NOT_CERTIFIED",
+    "complete_visual_editor": "OPEN / NOT_CERTIFIED",
+    "manual_physical_acceptance": "Deferred until the complete planned Editor scope is implemented"
+  },
+  "next_gate": "Continue implementation and acceptance in 77.44.7.D/D-06. The hosted Editor Core failure above is tied to b3312c14 and is not re-labeled PASS by local tests; any hosted rerun must first have a verified zero-cost quota path."
+}
