@@ -14,7 +14,9 @@
       "worker_deploy_required": false
     },
     "tests": {
-      "files": ["tests/browser/editor-ux-p0-workflow.test.js"],
+      "files": [
+        "tests/browser/editor-ux-p0-workflow.test.js"
+      ],
       "coverage": [
         "Pan drag begins at the visible intersection of the canvas and artboard",
         "The chosen pointer target is asserted to be non-interactive before the drag",
@@ -71,7 +73,10 @@
     "r2_operation": false,
     "new_dependency": false,
     "cost_huf": 0,
-    "save_publish_separation": "Unchanged."
+    "save_publish_separation": "Unchanged.",
+    "test_evidence_commit": "017be02ad6540bb1fbea7afb79b58ab582fe8acf",
+    "branch_head_after_test_push": "017be02ad6540bb1fbea7afb79b58ab582fe8acf (verified by GitHub refs API)",
+    "actions_for_test_commit": "No workflow runs or check-runs; commit used [skip ci]."
   },
   "acceptance": {
     "pan_browser_regression": "PASS locally across three targeted runs and the full 63-file Editor layout suite",
@@ -80,5 +85,11 @@
     "complete_visual_editor": "OPEN / NOT_CERTIFIED",
     "manual_physical_acceptance": "Deferred until the complete planned Editor scope is implemented"
   },
-  "next_gate": "Continue implementation and acceptance in 77.44.7.D/D-06. The hosted Editor Core failure above is tied to b3312c14 and is not re-labeled PASS by local tests; any hosted rerun must first have a verified zero-cost quota path."
+  "next_gate": "Continue implementation and acceptance in 77.44.7.D/D-06. The hosted Editor Core failure above is tied to b3312c14 and is not re-labeled PASS by local tests; any hosted rerun must first have a verified zero-cost quota path.",
+  "development_metrics": {
+    "run_id": "20261128070627-c7d32724",
+    "status": "partial",
+    "archive": "docs/evidence/dev-metrics/runs/2026-11-28/20261128070627-c7d32724.json",
+    "reason": "Local regression work completed; hosted CI was intentionally not started because current free compute/artifact quota is not readable via the connected GitHub API."
+  }
 }
