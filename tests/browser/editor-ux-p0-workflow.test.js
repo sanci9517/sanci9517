@@ -82,8 +82,9 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   await tab.mouse.move(panStart.x-56,panStart.y-32,{steps:5});
   await tab.mouse.up();
   const panAfter=await canvas.evaluate(el=>({left:el.scrollLeft,top:el.scrollTop,cursor:getComputedStyle(el).cursor,panning:el.classList.contains('is-panning')}));
-  assert.ok(panAfter.left>=panBefore.left+50,'dragging left pans the overflowing canvas to the right');
-  assert.ok(panAfter.top>=panBefore.top+26,'dragging up pans the overflowing canvas down');
+  const expectedPanLeft=Math.min(56,panBefore.maxLeft),expectedPanTop=Math.min(32,panBefore.maxTop);
+  assert.ok(panAfter.left>=panBefore.left+expectedPanLeft-2,`dragging left pans the overflowing canvas by the full available distance (before=${panBefore.left}, max=${panBefore.maxLeft}, after=${panAfter.left})`);
+  assert.ok(panAfter.top>=panBefore.top+expectedPanTop-2,`dragging up pans the overflowing canvas by the full available distance (before=${panBefore.top}, max=${panBefore.maxTop}, after=${panAfter.top})`);
   assert.equal(panAfter.cursor,'grab');assert.equal(panAfter.panning,false,'pointerup restores the Pan cursor');
   assert.deepEqual(await panNode.evaluate(el=>({left:getComputedStyle(el).left,top:getComputedStyle(el).top,selected:el.classList.contains('selected')})),nodeBeforePan,'panning over a node does not move or select it');
   assert.equal(JSON.stringify(draft),modelBeforePan,'viewport pan never changes the draft Page Model');

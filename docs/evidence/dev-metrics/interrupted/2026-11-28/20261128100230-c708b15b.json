@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261128100230-c708b15b",
+  "task": "77.44.7.D-06-next-editor-gap-investigation",
+  "trigger": "scheduled",
+  "started_at": "2026-11-28T10:02:30.028Z",
+  "abandoned_at": "2026-11-28T10:07:41.957Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Interruption/context transition before the feature and targeted CI diagnosis block was completed.",
+  "started_revision": "d6e4ed725b8d1a67c656fbbbd6399c32a7e82de6",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

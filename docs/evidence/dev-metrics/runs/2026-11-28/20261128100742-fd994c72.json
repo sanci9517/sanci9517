@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261128100742-fd994c72",
+  "task": "77.44.7.D-06-pan-layout-regression-followup",
+  "trigger": "manual",
+  "started_at": "2026-11-28T10:07:42.005Z",
+  "finished_at": "2026-11-28T10:10:33.854Z",
+  "wall_seconds": 172,
+  "paused_seconds": 0,
+  "measured_seconds": 172,
+  "status": "partial",
+  "kind": "test",
+  "summary": "Diagnosed the exact-SHA hosted Editor layout failure as a pan assertion whose fixed pixel thresholds could exceed permitted scroll range; adjusted the test to require all available movement, then reran the target Chromium test, Editor unit suite, canonical plan and traceability checks. Hosted rerun withheld under zero-cost quota policy.",
+  "evidence": [
+    "docs/evidence/editor-d06-pan-layout-assertion-followup-2026-11-28.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "d6e4ed725b8d1a67c656fbbbd6399c32a7e82de6",
+  "finished_revision": "d6e4ed725b8d1a67c656fbbbd6399c32a7e82de6",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

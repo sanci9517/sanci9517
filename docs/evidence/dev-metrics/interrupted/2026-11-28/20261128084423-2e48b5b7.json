@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261128084423-2e48b5b7",
+  "task": "77.44.7.D-06-Next-Feature-Audit",
+  "trigger": "scheduled",
+  "started_at": "2026-11-28T08:44:23.040Z",
+  "abandoned_at": "2026-11-28T08:50:29.534Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Session handoff interrupted the read-only next-feature audit before implementation began; do not count idle time.",
+  "started_revision": "0e42f8c43cb86d884583ae717d58ddcc5d4fdf8e",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

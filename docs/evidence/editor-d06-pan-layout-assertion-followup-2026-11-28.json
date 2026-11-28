@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "evidence_id": "editor-d06-pan-layout-assertion-followup-2026-11-28",
+  "date": "2026-11-28",
+  "plan": {
+    "master": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "master_blob_sha": "85e57ba2811c8f3ab1476bf3d2fb39ab1c150dd4",
+    "master_sha256": "7fa60aee137d7568d72da6e22ce1d7b6ba1e4681704e8a40d52619f6188d749a",
+    "active_cursor": "77.44 / WEB-011 -> 77.44.7.D / D-06",
+    "feature_count": 396,
+    "acceptance": "D-06, D-block and complete Visual Editor remain OPEN / NOT CERTIFIED; manual/physical acceptance is deferred until the full planned editor is implemented."
+  },
+  "git": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_sha": "d6e4ed725b8d1a67c656fbbbd6399c32a7e82de6",
+    "branch_head_verified_via_github_api": true,
+    "runtime_commit": "f47835ac8076350d381319881dd0e0f586ae2f25",
+    "runtime_changed": false
+  },
+  "issue": {
+    "workflow": "Editor Core Test",
+    "run_id": 46131048253,
+    "job_id": 140936034164,
+    "source_sha": "f47835ac8076350d381319881dd0e0f586ae2f25",
+    "failed_test": "tests/browser/editor-ux-p0-workflow.test.js — empty Rich Text has direct desktop and mobile editing, typed presets, Save and separate Publish",
+    "failure": "Assertion at line 85 expected scrollLeft >= initial + 50 after a 56px drag; line 86 similarly expected scrollTop >= initial + 26 after a 32px drag.",
+    "diagnosis": "The test preconditions allowed maxLeft > 40 and maxTop > 20. Therefore the fixed 50px and 26px thresholds could demand more scroll distance than the browser viewport had available (for ranges 41–49px and 21–25px). The hosted log did not expose the actual geometry, so the mismatch is a credible source of flakiness, not proof that this was the exact hosted geometry. No product-code defect was established."
+  },
+  "change": {
+    "kind": "test-only",
+    "file": "tests/browser/editor-ux-p0-workflow.test.js",
+    "sha256": "0a5fa181471d179b4be9e73b75f1e7b3fd60b5e0a29d44f52892a7d606047383",
+    "summary": "The pan assertion now requires the lesser of the pointer drag and available scroll range, with 2px browser rounding tolerance. It continues to require the full physically available movement and retains the checks that panning does not move nodes, alter the Page Model, Save, or Publish. Failure diagnostics now include initial, maximum, and final scroll offsets.",
+    "runtime_files_changed": [],
+    "save_publish_contract": "Unchanged; pan remains viewport-only."
+  },
+  "verification": {
+    "pass": [
+      "node --test tests/browser/editor-ux-p0-workflow.test.js — 1/1 real Chromium PASS after the test assertion adjustment.",
+      "npm run test:editor — 25/25 unit files PASS, including editor and worker source-smoke contracts.",
+      "node --check tests/browser/editor-ux-p0-workflow.test.js — PASS.",
+      "git diff --check — PASS.",
+      "python3 tests/plan-contract.test.py — 17/17 PASS.",
+      "python3 scripts/check-canonical-plan.py — PASS: one complete master, 13 sections, 396 mappings.",
+      "python3 scripts/build-feature-traceability.py --check — PASS: 396 mappings; acceptance not certified.",
+      "python3 scripts/audit-active-plan-point.py — PASS: active cursor 77.44.7.D; 149 PARTIAL_SOURCE and 247 UNVERIFIED; functional acceptance NOT_CERTIFIED."
+    ],
+    "not_run": [
+      "Full 63-file browser layout suite was not repeated locally; the specific failing test passed locally.",
+      "No GitHub Actions rerun/dispatch was started. The canonical plan records exhausted GitHub Actions free compute; avoiding paid usage is required.",
+      "No production deployment or production smoke was needed because only a test assertion changed."
+    ],
+    "sandbox": "The initial default-sandbox browser attempt could not bind the required local fixture socket (EPERM). The targeted test passed after loopback permission was granted; this used no external service."
+  },
+  "release": {
+    "test_docs_only": true,
+    "worker_deploy_required": false,
+    "production_d1_migration_or_write": false,
+    "r2_operation": false,
+    "new_dependency": false,
+    "new_cost_huf": 0,
+    "push_convention": "After verification, push evidence/test/metrics only with [skip ci]; do not trigger a redundant Worker deployment."
+  },
+  "next_step": "Continue the remaining planned Visual Editor functionality at 77.44.7.D. The hosted Editor Core run remains failed for its original exact SHA and is not re-labelled PASS by local verification; no hosted rerun is made while free Actions compute is exhausted."
+}
