@@ -11,14 +11,21 @@
     "branch": "v2/foundation",
     "base_sha": "0e42f8c43cb86d884583ae717d58ddcc5d4fdf8e",
     "expected_runtime_parent": "0e42f8c43cb86d884583ae717d58ddcc5d4fdf8e",
-    "runtime_commit": null,
-    "runtime_changes_pushed": false,
-    "exact_sha_ci": "PENDING",
-    "cloudflare_build": "PENDING",
-    "deployment": "PENDING",
-    "worker_version": "PENDING",
-    "worker_traffic_percent": null,
-    "production_smoke": "PENDING"
+    "runtime_commit": "f47835ac8076350d381319881dd0e0f586ae2f25",
+    "runtime_changes_pushed": true,
+    "exact_sha_ci": {
+      "f0_baseline": "PASS — https://github.com/sanci9517/sanci9517/actions/runs/46131048275",
+      "twitch_integration": "PASS — https://github.com/sanci9517/sanci9517/actions/runs/46131048233",
+      "canonical_plan": "PASS — https://github.com/sanci9517/sanci9517/actions/runs/46131048219",
+      "active_point_audit": "PASS — https://github.com/sanci9517/sanci9517/actions/runs/46131048279",
+      "editor_core": "IN_PROGRESS — https://github.com/sanci9517/sanci9517/actions/runs/46131048253 (hosted Editor browser-layout regression)",
+      "production_source_smoke": "FAIL on private-page path — https://github.com/sanci9517/sanci9517/actions/runs/46131048283"
+    },
+    "cloudflare_build": "A new Worker version was created after the push; Build-configuration API GET returned 404 (no build configuration associated with script tag), so no build ID/provenance is claimed.",
+    "deployment": "9a598686-a9af-48e0-b5a8-98d743d9e130",
+    "worker_version": "33146ad3-c93b-4662-b5ed-e1899a4e61d0 (#4234)",
+    "worker_traffic_percent": 100,
+    "production_smoke": "PASS manual exact-source GET: HTTP 200 /api/health and all 46 paths listed by corrected unauthenticated public-source smoke returned HTTP 200 with SHA-256 matching commit f47835ac8076350d381319881dd0e0f586ae2f25. The authenticated Admin HTML backing path /admin-forms.html intentionally returns 410; /admin/forms returns 302 to login without credentials and is not hashable from unauthenticated smoke."
   },
   "implementation": {
     "summary": [
@@ -50,12 +57,29 @@
       "npm run test:web013:migration-gate PASS",
       "node --check public/assets/admin-forms.js; node --check tests/browser/admin-forms-inbox.test.js; git diff --check PASS",
       "npx wrangler deploy --dry-run PASS: Wrangler 4.130.0, 206 public assets, 492.44 KiB / 121.59 KiB gzip; read-only sandbox EROFS log warning did not affect dry-run exit 0",
-      "Production D1 preflight used seven SELECT/PRAGMA reads through the Cloudflare D1 Query API: 45 indexes, 37 tables, 29 triggers, 38 migration markers (latest 0032_forms_service.sql), foreign_key_check empty, quick_check ok; all queries reported rows_written=0 and changes=0; changed_db=false; site-ownership/settings preflight counts 1/0/0/0"
+      "Production D1 preflight used seven SELECT/PRAGMA reads through the Cloudflare D1 Query API: 45 indexes, 37 tables, 29 triggers, 38 migration markers (latest 0032_forms_service.sql), foreign_key_check empty, quick_check ok; all queries reported rows_written=0 and changes=0; changed_db=false; site-ownership/settings preflight counts 1/0/0/0",
+      "Corrected smoke harness regression: node --test tests/worker-production-source-smoke.test.mjs PASS; asserts the intentionally denied admin HTML alias is excluded while admin-forms.js remains hashed.",
+      "Direct exact-source production smoke after deployment: /api/health HTTP 200; all 46 accessible public source paths returned HTTP 200 and SHA-256 matched f47835ac8076350d381319881dd0e0f586ae2f25; admin-forms.js live hash d11b7d9643dcb68fa0010766f38cd3b291273d7ccd3460a183a692a8b4cb144b.",
+      "Production route policy readback: /admin-forms.html HTTP 410 (intentionally blocked backing alias); unauthenticated /admin/forms HTTP 302 to login; the smoke job must not attempt to fetch private admin HTML directly."
     ],
     "not_run_or_pending": [
-      "GitHub exact-SHA CI and Cloudflare build/deployment/source smoke are pending push and direct verification."
+      "Hosted Editor Core full layout run remains IN_PROGRESS (run 46131048253); do not mark the overall hosted editor gate PASS until it completes.",
+      "Original exact-SHA GitHub smoke run 46131048283 failed because it attempted the deliberately inaccessible /admin-forms.html backing path (HTTP 410); it initially observed pre-propagation JS mismatch, then the live deployment converged. A corrected unauthenticated smoke list excludes the auth-gated HTML and retains the public JS."
     ],
-    "sandbox_note": "A no-loopback-permission Chromium attempt failed to bind its test server. The same complete Forms browser command passed after granting the required loopback network permission."
+    "sandbox_note": "A no-loopback-permission Chromium attempt failed to bind its test server. The same complete Forms browser command passed after granting the required loopback network permission.",
+    "deployment_readback": {
+      "deployment_id": "9a598686-a9af-48e0-b5a8-98d743d9e130",
+      "version_id": "33146ad3-c93b-4662-b5ed-e1899a4e61d0",
+      "version_number": 4234,
+      "traffic_percent": 100,
+      "created_on": "2026-11-28T09:34:34Z",
+      "api_source": "Cloudflare Workers deployments API, read-only"
+    },
+    "exact_sha_provenance_limit": "The live deployment/version is confirmed as the first rollout immediately after the exact commit push; the 46 public-source hashes match that commit. Cloudflare version/deployment metadata does not expose a Git SHA, and the build-config GET returned 404, so exact Git-SHA-to-Worker-build provenance is not asserted beyond the observed post-push rollout and source-hash readback.",
+    "workflow_followup": {
+      "status": "LOCAL_FIX_PENDING_PUSH",
+      "summary": "Correct the smoke asset list to exclude only the private, intentionally denied Admin HTML backing file; retain exact JS hash coverage. Workflow-only follow-up will use [skip ci] and will not redeploy the Worker."
+    }
   },
   "data_safety": {
     "production_d1_migration_or_write": false,

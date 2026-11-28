@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261128092057-a2d74ab7",
+  "task": "77.44.7.D-06-Forms-CSV-export",
+  "trigger": "scheduled",
+  "started_at": "2026-11-28T09:20:57.803Z",
+  "finished_at": "2026-11-28T09:47:05.286Z",
+  "wall_seconds": 1567,
+  "paused_seconds": 0,
+  "measured_seconds": 1567,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Implemented, tested and pushed bounded audited Forms CSV export on v2/foundation. Production Worker 33146ad3… is at 100%; health and all 46 accessible source hashes match. Corrected smoke harness locally after its first exact-SHA run failed on intentionally gated /admin-forms.html; hosted Editor Core is still in progress.",
+  "evidence": [
+    "docs/evidence/editor-d06-forms-csv-export-2026-11-28.json",
+    "46131048253",
+    "46131048283"
+  ],
+  "checks": "npm-test-forms,forms-chromium-8of8,editor-unit-25of25,typecheck,plan-contract-17of17,wrangler-dry-run,production-health-200,public-hashes-46of46",
+  "started_revision": "0e42f8c43cb86d884583ae717d58ddcc5d4fdf8e",
+  "finished_revision": "f47835ac8076350d381319881dd0e0f586ae2f25",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

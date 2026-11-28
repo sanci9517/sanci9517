@@ -11,7 +11,6 @@ test('production source smoke hashes changed public Editor runtime modules befor
   assert.equal(new Set(sources).size, sources.length, 'source list contains no duplicate paths');
   for (const path of [
     'public/editor-v2/core/page-interactions.js',
-    'public/admin-forms.html',
     'public/assets/admin-forms.js',
     'public/editor-v2/core/authored-content.js',
     'public/editor-v2/core/schema.js',
@@ -41,6 +40,12 @@ test('production source smoke hashes changed public Editor runtime modules befor
     assert.ok(sources.includes(path), `${path} is checked against the live Worker bytes`);
     assert.doesNotThrow(() => readFileSync(new URL(`../${path}`, import.meta.url)));
   }
+});
+
+test('production source smoke does not fetch authentication-gated Admin HTML through its denied backing path', () => {
+  assert.ok(!sources.includes('public/admin-forms.html'), 'the backing HTML returns 410 outside the authenticated /admin/forms route');
+  assert.ok(sources.includes('public/assets/admin-forms.js'), 'the browser-loadable Admin Forms behavior is verified byte-for-byte');
+  assert.match(workflow, /Admin HTML is deliberately gated at \/admin\/forms and its backing \/admin-forms\.html path returns 410/);
 });
 
 test('production source smoke checks Editor index through its routed public URL', () => {
